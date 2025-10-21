@@ -1,5 +1,10 @@
 <template>
   <div class="app-container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h2><i class="el-icon-delete"></i> 错题回收站</h2>
+      <p class="page-desc">管理已删除的错题，可以恢复或彻底删除</p>
+    </div>
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="题目内容" prop="questionContent">
         <el-input
@@ -84,13 +89,14 @@
       <el-table-column label="题目内容" align="center" prop="questionContent" :show-overflow-tooltip="true" />
       <el-table-column label="题目图片" align="center" prop="questionImages" width="100">
         <template slot-scope="scope">
-          <el-image
-            v-if="scope.row.questionImages"
-            :src="scope.row.questionImages.split(',')[0]"
-            :preview-src-list="scope.row.questionImages.split(',')"
-            style="width: 60px; height: 60px"
-            fit="cover"
-          />
+            <el-image
+              v-if="scope.row.questionImages"
+              :src="getImageUrl(scope.row.questionImages.split(',')[0])"
+              :preview-src-list="scope.row.questionImages.split(',').map(img => getImageUrl(img))"
+              style="width: 60px; height: 60px"
+              fit="cover"
+            />
+            <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column label="题目类型" align="center" prop="questionType" width="100" />
@@ -132,7 +138,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -207,6 +213,17 @@ export default {
       this.queryParams.pageNum = 1;
       this.getList();
     },
+    /** 获取完整的图片URL */
+    getImageUrl(imagePath) {
+      if (!imagePath) return '';
+      // 如果已经是完整URL，直接返回
+      if (imagePath.startsWith('http')) {
+        return imagePath;
+      }
+      // 如果是相对路径，添加baseUrl前缀
+      const baseUrl = process.env.VUE_APP_BASE_API;
+      return baseUrl + (imagePath.startsWith('/') ? imagePath : '/' + imagePath);
+    },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
@@ -269,4 +286,47 @@ export default {
 };
 </script>
 
+<style scoped>
+.page-header {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  color: white;
+}
 
+.page-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.page-header h2 i {
+  margin-right: 10px;
+  font-size: 28px;
+}
+
+.page-desc {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .page-header h2 {
+    font-size: 20px;
+  }
+
+  .page-header h2 i {
+    font-size: 24px;
+  }
+}
+</style>

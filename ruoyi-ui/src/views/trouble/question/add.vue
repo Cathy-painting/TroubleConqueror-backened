@@ -91,54 +91,6 @@
           </el-col>
         </el-row>
 
-        <!-- 拍照识别区域 -->
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="拍照识别">
-              <div class="camera-section">
-                <!-- 移动端拍照按钮 -->
-                <div class="camera-buttons">
-                  <input 
-                    type="file" 
-                    id="camera-input" 
-                    accept="image/*" 
-                    capture="camera" 
-                    @change="handleCameraCapture"
-                    style="display: none;"
-                  />
-                  <el-button 
-                    type="primary" 
-                    icon="el-icon-camera" 
-                    size="medium"
-                    @click="triggerCamera"
-                  >
-                    拍照识别题目
-                  </el-button>
-                  
-                  <!-- 桌面端文件选择 -->
-                  <el-upload
-                    class="camera-uploader"
-                    :action="uploadUrl"
-                    :headers="uploadHeaders"
-                    :show-file-list="false"
-                    :on-success="handleOCRSuccess"
-                    :before-upload="beforeUpload"
-                    accept="image/*"
-                    style="display: inline-block; margin-left: 10px;"
-                  >
-                    <el-button type="success" icon="el-icon-upload" size="medium">
-                      选择图片
-                    </el-button>
-                  </el-upload>
-                </div>
-                <div class="camera-tip">
-                  <p>📱 移动端：点击"拍照识别题目"调用相机</p>
-                  <p>💻 桌面端：点击"选择图片"上传文件</p>
-                </div>
-              </div>
-            </el-form-item>
-          </el-col>
-        </el-row>
 
         <el-row>
           <el-col :span="24" style="text-align: center;">
@@ -154,7 +106,6 @@
 
 <script>
 import { addQuestion } from "@/api/trouble/question";
-import { getToken } from "@/utils/auth";
 
 export default {
   name: "QuestionAdd",
@@ -177,12 +128,7 @@ export default {
         ]
       },
       // 提交状态
-      submitLoading: false,
-      // 上传配置
-      uploadUrl: process.env.VUE_APP_BASE_API + "/common/upload",
-      uploadHeaders: {
-        Authorization: "Bearer " + getToken()
-      }
+      submitLoading: false
     };
   },
   methods: {
@@ -222,78 +168,6 @@ export default {
     handleTagsInput(value) {
       // 可以在这里添加标签提示逻辑
     },
-    /** 拍照上传前检查 */
-    beforeUpload(file) {
-      const isImage = file.type.indexOf('image/') === 0;
-      const isLt10M = file.size / 1024 / 1024 < 10;
-      
-      if (!isImage) {
-        this.$modal.msgError('只能上传图片文件!');
-        return false;
-      }
-      if (!isLt10M) {
-        this.$modal.msgError('上传图片大小不能超过 10MB!');
-        return false;
-      }
-      return true;
-    },
-    /** OCR识别成功回调 */
-    handleOCRSuccess(response, file) {
-      if (response.code === 200) {
-        // 这里可以调用OCR识别接口，将识别结果填入题目内容
-        this.form.questionContent = response.data || '';
-        this.$modal.msgSuccess("图片上传成功，请检查识别的题目内容");
-      } else {
-        this.$modal.msgError(response.msg || "图片上传失败");
-      }
-    },
-    
-    /** 触发相机拍照 */
-    triggerCamera() {
-      const cameraInput = document.getElementById('camera-input');
-      if (cameraInput) {
-        cameraInput.click();
-      }
-    },
-    
-    /** 处理拍照结果 */
-    handleCameraCapture(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.uploadCameraImage(file);
-      }
-    },
-    
-    /** 上传拍照图片 */
-    uploadCameraImage(file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      this.$http.post(this.uploadUrl, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': 'Bearer ' + this.$store.getters.token
-        }
-      }).then(response => {
-        if (response.data.code === 200) {
-          // 将图片URL添加到题目图片中
-          if (this.form.questionImages) {
-            this.form.questionImages += ',' + response.data.url;
-          } else {
-            this.form.questionImages = response.data.url;
-          }
-          
-          // 模拟OCR识别结果
-          this.form.questionContent = '识别到的题目内容：\n' + (response.data.url || '这是一道数学题，请计算...');
-          
-          this.$message.success('拍照成功，图片已上传');
-        } else {
-          this.$message.error(response.data.msg || '图片上传失败');
-        }
-      }).catch(error => {
-        this.$message.error('图片上传失败：' + error.message);
-      });
-    }
   }
 };
 </script>
@@ -303,30 +177,10 @@ export default {
   margin: 20px;
 }
 
-.upload-tip, .tag-tip, .camera-tip {
+.upload-tip, .tag-tip {
   font-size: 12px;
   color: #999;
   margin-top: 5px;
-}
-
-.camera-section {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  padding: 20px;
-  text-align: center;
-  background-color: #fafafa;
-}
-
-.camera-uploader {
-  margin-bottom: 10px;
-}
-
-.camera-buttons {
-  margin-bottom: 15px;
-}
-
-.camera-buttons .el-button {
-  margin-right: 10px;
 }
 
 .clearfix:before,
@@ -336,5 +190,65 @@ export default {
 }
 .clearfix:after {
   clear: both;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .box-card {
+    margin: 10px;
+  }
+  
+  .el-form-item {
+    margin-bottom: 15px;
+  }
+  
+  .el-input,
+  .el-textarea,
+  .el-select {
+    width: 100%;
+  }
+  
+  .el-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .el-row {
+    margin: 0;
+  }
+  
+  .el-col {
+    padding: 0 5px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .box-card {
+    margin: 15px;
+  }
+  
+  .el-form-item {
+    margin-bottom: 12px;
+  }
+}
+
+/* 表单优化 */
+.el-form-item__label {
+  font-weight: 500;
+}
+
+.el-textarea__inner {
+  resize: vertical;
+}
+
+/* 按钮组优化 */
+.el-button + .el-button {
+  margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+  .el-button + .el-button {
+    margin-left: 0;
+  }
 }
 </style>

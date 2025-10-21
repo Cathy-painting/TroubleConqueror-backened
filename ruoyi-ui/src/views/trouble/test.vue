@@ -100,6 +100,26 @@
         </el-row>
       </el-card>
 
+      <!-- SQL查询测试区域 -->
+      <el-card class="sql-test-card" style="margin-top: 20px;">
+        <div slot="header" class="clearfix">
+          <span>🗄️ SQL查询测试</span>
+        </div>
+        
+        <el-row :gutter="15">
+          <el-col :span="12">
+            <el-button type="primary" @click="testTroubleQuestionSQL" :loading="sqlLoading.question" block>
+              <i class="el-icon-document"></i> 查询 trouble_question 表
+            </el-button>
+          </el-col>
+          <el-col :span="12">
+            <el-button type="success" @click="testTroubleQuestionTrashSQL" :loading="sqlLoading.trash" block>
+              <i class="el-icon-delete"></i> 查询 trouble_question_trash 表
+            </el-button>
+          </el-col>
+        </el-row>
+      </el-card>
+
       <!-- 测试结果展示 -->
       <el-card class="test-results" style="margin-top: 20px;" v-if="testResults.length > 0">
         <div slot="header" class="clearfix">
@@ -164,6 +184,7 @@
 <script>
 import { listQuestion, addQuestion } from "@/api/trouble/question";
 import { getTroubleStats } from "@/api/trouble/dashboard";
+import { getTroubleQuestionSQL, getTroubleQuestionTrashSQL } from "@/api/trouble/test";
 
 export default {
   name: "TroubleTest",
@@ -186,6 +207,11 @@ export default {
         add: false,
         upload: false,
         stats: false
+      },
+      // SQL查询加载状态
+      sqlLoading: {
+        question: false,
+        trash: false
       },
       // 测试结果
       testResults: []
@@ -309,6 +335,38 @@ export default {
       }).catch(error => {
         this.addTestResult('error', '统计API测试', '统计API调用失败: ' + error.message, null);
         this.apiLoading.stats = false;
+      });
+    },
+    
+    /** 测试错题表SQL查询 */
+    testTroubleQuestionSQL() {
+      this.sqlLoading.question = true;
+      
+      getTroubleQuestionSQL().then(response => {
+        const data = response.data;
+        this.addTestResult('success', 'SQL查询测试', 
+          `执行SQL: ${data.sql}\n查询结果: 共 ${data.count} 条记录`, 
+          data.data);
+        this.sqlLoading.question = false;
+      }).catch(error => {
+        this.addTestResult('error', 'SQL查询测试', 'trouble_question表查询失败: ' + error.message, null);
+        this.sqlLoading.question = false;
+      });
+    },
+    
+    /** 测试错题回收站表SQL查询 */
+    testTroubleQuestionTrashSQL() {
+      this.sqlLoading.trash = true;
+      
+      getTroubleQuestionTrashSQL().then(response => {
+        const data = response.data;
+        this.addTestResult('success', 'SQL查询测试', 
+          `执行SQL: ${data.sql}\n查询结果: 共 ${data.count} 条记录`, 
+          data.data);
+        this.sqlLoading.trash = false;
+      }).catch(error => {
+        this.addTestResult('error', 'SQL查询测试', 'trouble_question_trash表查询失败: ' + error.message, null);
+        this.sqlLoading.trash = false;
       });
     },
     

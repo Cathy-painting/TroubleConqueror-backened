@@ -1,39 +1,51 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="题目内容" prop="questionContent">
-        <el-input
-          v-model="queryParams.questionContent"
-          placeholder="请输入题目内容"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="题目类型" prop="questionType">
-        <el-select v-model="queryParams.questionType" placeholder="请选择题目类型" clearable>
-          <el-option label="未区分" value="未区分" />
-          <el-option label="选择题" value="选择题" />
-          <el-option label="填空题" value="填空题" />
-          <el-option label="解答题" value="解答题" />
-          <el-option label="其他" value="其他" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="标签" prop="tags">
-        <el-input
-          v-model="queryParams.tags"
-          placeholder="请输入标签"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
+    <!-- 搜索表单-->
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px" class="search-form">
+      <el-row :gutter="10">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+          <el-form-item label="题目内容" prop="questionContent">
+            <el-input
+              v-model="queryParams.questionContent"
+              placeholder="请输入题目内容"
+              clearable
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+          <el-form-item label="题目类型" prop="questionType">
+            <el-select v-model="queryParams.questionType" placeholder="请选择题目类型" clearable style="width: 100%">
+              <el-option label="未区分" value="未区分" />
+              <el-option label="选择题" value="选择题" />
+              <el-option label="填空题" value="填空题" />
+              <el-option label="解答题" value="解答题" />
+              <el-option label="其他" value="其他" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+          <el-form-item label="标签" prop="tags">
+            <el-input
+              v-model="queryParams.tags"
+              placeholder="请输入标签"
+              clearable
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+    <!-- 操作按钮-->
+    <el-row :gutter="10" class="mb8 action-buttons">
+      <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3">
         <el-button
           type="primary"
           plain
@@ -41,9 +53,10 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['trouble:question:add']"
+          class="full-width-btn"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3">
         <el-button
           type="success"
           plain
@@ -52,9 +65,10 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['trouble:question:edit']"
+          class="full-width-btn"
         >修改</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3">
         <el-button
           type="danger"
           plain
@@ -63,9 +77,10 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['trouble:question:remove']"
+          class="full-width-btn"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3">
         <el-button
           type="warning"
           plain
@@ -73,53 +88,111 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['trouble:question:export']"
+          class="full-width-btn"
         >导出</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <el-col :xs="24" :sm="24" :md="8" :lg="12" :xl="12">
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="questionList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="题目内容" align="center" prop="questionContent" :show-overflow-tooltip="true" />
-      <el-table-column label="题目图片" align="center" prop="questionImages" width="100">
-        <template slot-scope="scope">
-          <el-image
-            v-if="scope.row.questionImages"
-            :src="scope.row.questionImages.split(',')[0]"
-            :preview-src-list="scope.row.questionImages.split(',')"
-            style="width: 60px; height: 60px"
-            fit="cover"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column label="答案内容" align="center" prop="answerContent" :show-overflow-tooltip="true" />
-      <el-table-column label="题目类型" align="center" prop="questionType" />
-      <el-table-column label="标签" align="center" prop="tags" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['trouble:question:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['trouble:question:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    
+    <!-- 表格-->
+    <div class="table-container">
+      <el-table
+        v-loading="loading"
+        :data="questionList"
+        @selection-change="handleSelectionChange"
+        :default-sort="{prop: 'createTime', order: 'descending'}"
+        stripe
+        border
+        class="responsive-table"
+      >
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column
+          label="题目内容"
+          align="center"
+          prop="questionContent"
+          :show-overflow-tooltip="true"
+          min-width="200"
+          class-name="question-content"
+        />
+        <el-table-column
+          label="题目图片"
+          align="center"
+          prop="questionImages"
+          width="100"
+          class-name="hidden-xs-only"
+        >
+          <template slot-scope="scope">
+            <el-image
+              v-if="scope.row.questionImages"
+              :src="getImageUrl(scope.row.questionImages.split(',')[0])"
+              :preview-src-list="scope.row.questionImages.split(',').map(img => getImageUrl(img))"
+              style="width: 60px; height: 60px"
+              fit="cover"
+            />
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="答案内容"
+          align="center"
+          prop="answerContent"
+          :show-overflow-tooltip="true"
+          min-width="150"
+          class-name="hidden-xs-only"
+        />
+        <el-table-column
+          label="题目类型"
+          align="center"
+          prop="questionType"
+          width="100"
+        />
+        <el-table-column
+          label="标签"
+          align="center"
+          prop="tags"
+          :show-overflow-tooltip="true"
+          min-width="120"
+          class-name="hidden-xs-only"
+        />
+        <el-table-column
+          label="创建时间"
+          align="center"
+          prop="createTime"
+          width="180"
+          sortable
+        >
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          class-name="small-padding fixed-width"
+          width="150"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['trouble:question:edit']"
+            >修改</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['trouble:question:remove']"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -128,36 +201,96 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改错题对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="题目内容" prop="questionContent">
-          <el-input v-model="form.questionContent" type="textarea" :rows="4" placeholder="请输入题目内容" />
-        </el-form-item>
-        <el-form-item label="题目图片" prop="questionImages">
-          <image-upload v-model="form.questionImages"/>
-        </el-form-item>
-        <el-form-item label="答案内容" prop="answerContent">
-          <el-input v-model="form.answerContent" type="textarea" :rows="3" placeholder="请输入答案内容" />
-        </el-form-item>
-        <el-form-item label="答案图片" prop="answerImages">
-          <image-upload v-model="form.answerImages"/>
-        </el-form-item>
-        <el-form-item label="题目类型" prop="questionType">
-          <el-select v-model="form.questionType" placeholder="请选择题目类型">
-            <el-option label="未区分" value="未区分" />
-            <el-option label="选择题" value="选择题" />
-            <el-option label="填空题" value="填空题" />
-            <el-option label="解答题" value="解答题" />
-            <el-option label="其他" value="其他" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="标签" prop="tags">
-          <el-input v-model="form.tags" placeholder="请输入标签，多个用逗号分隔" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
+    <!-- 添加或修改错题对话框 - 响应式设计 -->
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      :width="dialogWidth"
+      :fullscreen="isMobile"
+      append-to-body
+      class="responsive-dialog"
+    >
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" class="dialog-form">
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="题目内容" prop="questionContent">
+              <el-input
+                v-model="form.questionContent"
+                type="textarea"
+                :rows="4"
+                placeholder="请输入题目内容"
+                maxlength="2000"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :xs="24" :sm="12">
+            <el-form-item label="题目图片" prop="questionImages">
+              <image-upload v-model="form.questionImages" :limit="5"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12">
+            <el-form-item label="答案图片" prop="answerImages">
+              <image-upload v-model="form.answerImages" :limit="5"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="答案内容" prop="answerContent">
+              <el-input
+                v-model="form.answerContent"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入答案内容"
+                maxlength="2000"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :xs="24" :sm="12">
+            <el-form-item label="题目类型" prop="questionType">
+              <el-select v-model="form.questionType" placeholder="请选择题目类型" style="width: 100%">
+                <el-option label="未区分" value="未区分" />
+                <el-option label="选择题" value="选择题" />
+                <el-option label="填空题" value="填空题" />
+                <el-option label="解答题" value="解答题" />
+                <el-option label="其他" value="其他" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="12">
+            <el-form-item label="标签" prop="tags">
+              <el-input
+                v-model="form.tags"
+                placeholder="请输入标签，多个用逗号分隔"
+                maxlength="500"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="备注" prop="remark">
+              <el-input
+                v-model="form.remark"
+                type="textarea"
+                :rows="2"
+                placeholder="请输入备注信息（可选）"
+                maxlength="500"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -207,13 +340,46 @@ export default {
         questionContent: [
           { required: true, message: "题目内容不能为空", trigger: "blur" }
         ]
-      }
+      },
+      // 响应式相关
+      isMobile: false,
+      dialogWidth: '800px'
     };
+  },
+  computed: {
+    // 动态计算对话框宽度
+    computedDialogWidth() {
+      return this.isMobile ? '100%' : '800px';
+    }
+  },
+  mounted() {
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.handleResize);
   },
   created() {
     this.getList();
   },
   methods: {
+    /** 处理窗口大小变化 */
+    handleResize() {
+      const width = window.innerWidth;
+      this.isMobile = width < 768;
+      this.dialogWidth = this.isMobile ? '95%' : '800px';
+    },
+    /** 获取完整的图片URL */
+    getImageUrl(imagePath) {
+      if (!imagePath) return '';
+      // 如果已经是完整URL，直接返回
+      if (imagePath.startsWith('http')) {
+        return imagePath;
+      }
+      // 如果是相对路径，添加baseUrl前缀
+      const baseUrl = process.env.VUE_APP_BASE_API;
+      return baseUrl + (imagePath.startsWith('/') ? imagePath : '/' + imagePath);
+    },
     /** 查询错题列表 */
     getList() {
       this.loading = true;
@@ -320,4 +486,120 @@ export default {
 };
 </script>
 
+<style scoped>
+/* 响应式样式 */
+.search-form {
+  margin-bottom: 20px;
+}
 
+.action-buttons {
+  margin-bottom: 20px;
+}
+
+.full-width-btn {
+  width: 100%;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.responsive-table {
+  min-width: 600px;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .search-form .el-form-item {
+    margin-bottom: 15px;
+  }
+
+  .action-buttons .el-col {
+    margin-bottom: 10px;
+  }
+
+  .responsive-table {
+    font-size: 12px;
+  }
+
+  .responsive-table .el-table__cell {
+    padding: 8px 4px;
+  }
+
+  .dialog-form .el-form-item {
+    margin-bottom: 15px;
+  }
+
+  .dialog-form .el-input,
+  .dialog-form .el-textarea,
+  .dialog-form .el-select {
+    width: 100%;
+  }
+}
+
+/* 平板优化 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .search-form .el-col {
+    margin-bottom: 10px;
+  }
+
+  .responsive-table {
+    font-size: 13px;
+  }
+}
+
+/* 桌面端优化 */
+@media (min-width: 1025px) {
+  .search-form .el-col {
+    margin-bottom: 0;
+  }
+}
+
+/* 表格列隐藏控制 */
+.hidden-xs-only {
+  display: table-cell;
+}
+
+@media (max-width: 768px) {
+  .hidden-xs-only {
+    display: none;
+  }
+}
+
+/* 对话框响应式 */
+.responsive-dialog .el-dialog {
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .responsive-dialog .el-dialog {
+    margin: 0;
+    width: 100% !important;
+    height: 100%;
+  }
+
+  .responsive-dialog .el-dialog__body {
+    padding: 15px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+}
+
+/* 表格内容优化 */
+.question-content {
+  max-width: 200px;
+  word-break: break-word;
+}
+
+/* 按钮组优化 */
+.action-buttons .el-button {
+  margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+  .action-buttons .el-button {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+}
+</style>
