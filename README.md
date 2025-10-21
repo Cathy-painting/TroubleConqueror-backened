@@ -1,9 +1,7 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">错题征服者 - Trouble Conqueror</h1>
 <h4 align="center">中小学生错题管理系统 - 让学习更高效，让错题不再困扰</h4>
 <p align="center">
-	<a href="https://gitee.com/y_project/RuoYi-Vue/stargazers"><img src="https://gitee.com/y_project/RuoYi-Vue/badge/star.svg?theme=dark"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue"><img src="https://img.shields.io/badge/RuoYi-v3.9.0-brightgreen.svg"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
+	<a href="https://github.com/Elowen-yu/TroubleConqueror-backened">GitHub</a>
 </p>
 
 ## 项目简介
@@ -35,90 +33,42 @@
 5. **知识图谱**：构建知识点关联图谱，发现知识薄弱环节
 6. **练习功能**：智能推荐练习题目，个性化学习路径
 
-### 系统管理功能
-1. **用户管理**：学生、教师、家长多角色用户管理
-2. **权限管理**：基于角色的权限控制，支持数据权限
-3. **学科管理**：配置学科信息，支持多学科学习
-4. **知识点管理**：维护知识点体系，支持层级结构
-5. **通知公告**：系统通知公告信息发布维护
-6. **操作日志**：系统操作日志记录和查询
-7. **数据统计**：学习数据统计和分析报告
-8. **系统监控**：系统性能监控和健康检查
 
-## 快速开始
+## TODO
 
-### 环境要求
-- JDK 1.8+
-- MySQL 5.7+
-- Redis 3.0+
-- Maven 3.0+
+### 增量1：完善首页与“添加错题”功能
+- [ ] 设计首页布局与导航栏（Home Page UI）
+- [x] 初始化后端管理页面
+- [x] 增加“添加错题”功能
+- [ ] 连接后端 API，实现错题创建功能
+- [ ] 添加错题成功提示与跳转逻辑
+- [ ] OCR
+- [ ] Latex
 
-### 默认账号
-- 管理员账号：admin/admin123
-- 测试账号：student/student123
+### 增量2：错题管理功能
+- [ ] 实现错题列表展示（分页、搜索、过滤）
+- [ ] 增加错题编辑、删除功能
+- [ ] 实现收藏功能（Favorite）
+- [ ] 实现分组功能（Grouping）
+- [ ] 添加熟练度管理（Proficiency Level）
+- [ ] 添加重要性管理（Importance Level）
 
-## 安装部署
+### 增量3：查询与统计 + 知识图谱
+- [ ] 实现错题查询功能（按关键字、分组、标签）
+- [ ] 统计功能：错题数、熟练度分布、掌握进度
+- [ ] 添加知识图谱模块（Knowledge Graph）
+  - [ ] 支持用户手动建立错题间的双向/反向链接
+  - [ ] 图谱可视化展示（力导向图、节点信息）
+- [ ] 优化图谱交互（点击节点查看详情、编辑链接）
 
-### 1. 克隆项目
-```bash
-git clone https://github.com/your-username/TroubleConqueror-backened.git
-cd TroubleConqueror-backened
-```
+### 增量4：练习与导出功能
+- [ ] 题目选择功能（支持批量勾选错题）
+- [ ] 组卷逻辑实现（生成练习卷）
+- [ ] 支持练习模式（限时 / 复习）
+- [ ] 实现导出为 PDF（Export as PDF）
+- [ ] 添加打印样式（Print-friendly Layout）
+- [ ] 记录练习结果与错题回流机制
 
-### 2. 数据库配置
-```bash
-# 创建数据库
-CREATE DATABASE trouble_conqueror DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-# 导入数据库脚本
-mysql -u root -p trouble_conqueror < sql/ry_20250522.sql
-```
-
-### 3. 修改配置
-修改 `ruoyi-admin/src/main/resources/application-druid.yml` 中的数据库连接信息
-
-### 4. 启动后端
-```bash
-# 进入项目目录
-cd ruoyi-admin
-
-# 启动项目
-mvn spring-boot:run
-```
-
-### 5. 启动前端
-```bash
-# 进入前端目录
-cd ruoyi-ui
-
-# 安装依赖
-npm install
-
-# 启动前端
-npm run dev
-```
-
-### 6. 访问系统
-- 后端地址：http://localhost:8080
-- 前端地址：http://localhost:80
-
-
-## 项目特色
-
-### 🎯 智能错题管理
-- **OCR识别**：拍照即可自动识别题目内容，支持数学公式识别
-- **智能分类**：自动识别学科、难度，智能推荐标签
-- **批量导入**：支持Excel批量导入错题数据
-
-### 📊 学习分析
-- **错题统计**：多维度错题统计分析
-- **学习进度**：可视化学习进度跟踪
-- **知识图谱**：构建知识点关联图谱
-
-### 🚀 技术优势
-- **高性能**：基于Spring Boot微服务架构
-- **易扩展**：模块化设计，支持功能扩展
-- **安全可靠**：完善的权限控制和数据安全
 
 ## 贡献指南
 

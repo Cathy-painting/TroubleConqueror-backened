@@ -14,23 +14,6 @@
           <el-tag type="info">📊 学习分析</el-tag>
           <el-tag type="warning">🚀 知识图谱</el-tag>
         </p>
-        <p>
-          <el-button
-            type="primary"
-            size="mini"
-            icon="el-icon-camera"
-            plain
-            @click="goTarget('#')"
-            >拍照识别</el-button
-          >
-          <el-button
-            size="mini"
-            icon="el-icon-edit"
-            plain
-            @click="goTarget('#')"
-            >添加错题</el-button
-          >
-        </p>
       </el-col>
 
       <el-col :sm="24" :lg="12" style="padding-left: 50px">
@@ -75,7 +58,7 @@ export default {
   data() {
     return {
       // 版本号
-      version: "3.9.0"
+      version: "0.2.0"
     }
   },
   methods: {
