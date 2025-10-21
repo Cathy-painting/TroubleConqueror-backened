@@ -75,6 +75,45 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/trouble',
+    component: Layout,
+    redirect: '/trouble/dashboard',
+    name: 'Trouble',
+    meta: { title: '错题管理', icon: 'education' },
+    children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/trouble/dashboard'),
+        name: 'TroubleDashboard',
+        meta: { title: '错题控制台', icon: 'dashboard' }
+      },
+      {
+        path: 'question',
+        component: () => import('@/views/trouble/question/index'),
+        name: 'TroubleQuestion',
+        meta: { title: '错题列表', icon: 'list', permissions: ['trouble:question:list'] }
+      },
+      {
+        path: 'question/add',
+        component: () => import('@/views/trouble/question/add'),
+        name: 'TroubleQuestionAdd',
+        meta: { title: '添加错题', icon: 'edit', permissions: ['trouble:question:add'], activeMenu: '/trouble/question' }
+      },
+      {
+        path: 'test',
+        component: () => import('@/views/trouble/test'),
+        name: 'TroubleTest',
+        meta: { title: '功能测试', icon: 'bug' }
+      },
+      {
+        path: 'recycle',
+        component: () => import('@/views/trouble/recycle'),
+        name: 'TroubleRecycle',
+        meta: { title: '回收站管理', icon: 'delete', permissions: ['trouble:question:recycle'] }
+      }
+    ]
+  },
+  {
     path: '/user',
     component: Layout,
     hidden: true,

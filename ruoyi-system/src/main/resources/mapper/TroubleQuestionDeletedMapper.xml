@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TroubleQuestionDeletedMapper">
+    
+    <resultMap type="TroubleQuestionDeleted" id="TroubleQuestionDeletedResult">
+        <result property="id"    column="id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="questionContent"    column="question_content"    />
+        <result property="questionImages"    column="question_images"    />
+        <result property="answerContent"    column="answer_content"    />
+        <result property="answerImages"    column="answer_images"    />
+        <result property="questionType"    column="question_type"    />
+        <result property="tags"    column="tags"    />
+        <result property="deletedBy"    column="deleted_by"    />
+        <result property="deletedTime"    column="deleted_time"    />
+        <result property="originalCreateTime"    column="original_create_time"    />
+    </resultMap>
+
+    <sql id="selectTroubleQuestionDeletedVo">
+        select id, question_id, user_id, question_content, question_images, answer_content, answer_images, question_type, tags, deleted_by, deleted_time, original_create_time from trouble_question_deleted
+    </sql>
+
+    <select id="selectTroubleQuestionDeletedList" parameterType="TroubleQuestionDeleted" resultMap="TroubleQuestionDeletedResult">
+        <include refid="selectTroubleQuestionDeletedVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="questionContent != null  and questionContent != ''"> and question_content like concat('%', #{questionContent}, '%')</if>
+            <if test="questionImages != null  and questionImages != ''"> and question_images = #{questionImages}</if>
+            <if test="answerContent != null  and answerContent != ''"> and answer_content like concat('%', #{answerContent}, '%')</if>
+            <if test="answerImages != null  and answerImages != ''"> and answer_images = #{answerImages}</if>
+            <if test="questionType != null  and questionType != ''"> and question_type = #{questionType}</if>
+            <if test="tags != null  and tags != ''"> and tags like concat('%', #{tags}, '%')</if>
+            <if test="deletedBy != null  and deletedBy != ''"> and deleted_by = #{deletedBy}</if>
+            <if test="deletedTime != null "> and deleted_time = #{deletedTime}</if>
+        </where>
+        order by deleted_time desc
+    </select>
+    
+    <select id="selectTroubleQuestionDeletedById" parameterType="Long" resultMap="TroubleQuestionDeletedResult">
+        <include refid="selectTroubleQuestionDeletedVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTroubleQuestionDeleted" parameterType="TroubleQuestionDeleted" useGeneratedKeys="true" keyProperty="id">
+        insert into trouble_question_deleted
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">question_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="questionContent != null and questionContent != ''">question_content,</if>
+            <if test="questionImages != null">question_images,</if>
+            <if test="answerContent != null">answer_content,</if>
+            <if test="answerImages != null">answer_images,</if>
+            <if test="questionType != null">question_type,</if>
+            <if test="tags != null">tags,</if>
+            <if test="deletedBy != null">deleted_by,</if>
+            <if test="deletedTime != null">deleted_time,</if>
+            <if test="originalCreateTime != null">original_create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">#{questionId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="questionContent != null and questionContent != ''">#{questionContent},</if>
+            <if test="questionImages != null">#{questionImages},</if>
+            <if test="answerContent != null">#{answerContent},</if>
+            <if test="answerImages != null">#{answerImages},</if>
+            <if test="questionType != null">#{questionType},</if>
+            <if test="tags != null">#{tags},</if>
+            <if test="deletedBy != null">#{deletedBy},</if>
+            <if test="deletedTime != null">#{deletedTime},</if>
+            <if test="originalCreateTime != null">#{originalCreateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTroubleQuestionDeleted" parameterType="TroubleQuestionDeleted">
+        update trouble_question_deleted
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="questionContent != null">question_content = #{questionContent},</if>
+            <if test="questionImages != null">question_images = #{questionImages},</if>
+            <if test="answerContent != null">answer_content = #{answerContent},</if>
+            <if test="answerImages != null">answer_images = #{answerImages},</if>
+            <if test="questionType != null">question_type = #{questionType},</if>
+            <if test="tags != null">tags = #{tags},</if>
+            <if test="deletedBy != null">deleted_by = #{deletedBy},</if>
+            <if test="deletedTime != null">deleted_time = #{deletedTime},</if>
+            <if test="originalCreateTime != null">original_create_time = #{originalCreateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTroubleQuestionDeletedById" parameterType="Long">
+        delete from trouble_question_deleted where id = #{id}
+    </delete>
+
+    <delete id="deleteTroubleQuestionDeletedByIds" parameterType="String">
+        delete from trouble_question_deleted where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectExpiredDeletedQuestions" parameterType="int" resultMap="TroubleQuestionDeletedResult">
+        <include refid="selectTroubleQuestionDeletedVo"/>
+        where deleted_time &lt; DATE_SUB(NOW(), INTERVAL #{days} DAY)
+    </select>
+</mapper>
