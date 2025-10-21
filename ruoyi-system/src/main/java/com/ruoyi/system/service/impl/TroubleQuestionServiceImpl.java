@@ -3,13 +3,14 @@ package com.ruoyi.system.service.impl;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.TroubleQuestion;
+import com.ruoyi.system.domain.TroubleQuestionTrash;
+import com.ruoyi.system.mapper.TroubleQuestionMapper;
+import com.ruoyi.system.mapper.TroubleQuestionTrashMapper;
+import com.ruoyi.system.service.ITroubleQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.system.mapper.TroubleQuestionMapper;
-import com.ruoyi.system.mapper.TroubleQuestionDeletedMapper;
-import com.ruoyi.system.domain.TroubleQuestion;
-import com.ruoyi.system.domain.TroubleQuestionDeleted;
-import com.ruoyi.system.service.ITroubleQuestionService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 错题Service业务层处理
@@ -23,7 +24,7 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
     private TroubleQuestionMapper troubleQuestionMapper;
 
     @Autowired
-    private TroubleQuestionDeletedMapper troubleQuestionDeletedMapper;
+    private TroubleQuestionTrashMapper troubleQuestionTrashMapper;
 
     /**
      * 查询错题
@@ -76,65 +77,74 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
     }
 
     /**
-     * 批量删除错题
+     * 批量删除错题（软删除）
      * 
      * @param questionIds 需要删除的错题主键
      * @return 结果
      */
     @Override
+    @Transactional
     public int deleteTroubleQuestionByQuestionIds(Long[] questionIds)
     {
-        return troubleQuestionMapper.deleteTroubleQuestionByQuestionIds(questionIds);
+        int result = 0;
+        for (Long questionId : questionIds) {
+            result += softDeleteQuestion(questionId);
+        }
+        return result;
     }
 
     /**
-     * 删除错题信息
+     * 删除错题信息（软删除）
      * 
      * @param questionId 错题主键
      * @return 结果
      */
     @Override
+    @Transactional
     public int deleteTroubleQuestionByQuestionId(Long questionId)
     {
-        return troubleQuestionMapper.deleteTroubleQuestionByQuestionId(questionId);
+        return softDeleteQuestion(questionId);
     }
 
     /**
      * 软删除错题
      * 
-     * @param questionIds 需要软删除的错题主键
+     * @param questionId 错题主键
      * @return 结果
      */
-    @Override
-    public int softDeleteTroubleQuestionByQuestionIds(Long[] questionIds)
+    private int softDeleteQuestion(Long questionId)
     {
-        int result = 0;
-        for (Long questionId : questionIds) {
-            // 查询原错题信息
-            TroubleQuestion question = troubleQuestionMapper.selectTroubleQuestionByQuestionId(questionId);
-            if (question != null) {
-                // 创建软删除记录
-                TroubleQuestionDeleted deleted = new TroubleQuestionDeleted();
-                deleted.setQuestionId(question.getQuestionId());
-                deleted.setUserId(question.getUserId());
-                deleted.setQuestionContent(question.getQuestionContent());
-                deleted.setQuestionImages(question.getQuestionImages());
-                deleted.setAnswerContent(question.getAnswerContent());
-                deleted.setAnswerImages(question.getAnswerImages());
-                deleted.setQuestionType(question.getQuestionType());
-                deleted.setTags(question.getTags());
-                deleted.setDeletedBy(SecurityUtils.getUsername());
-                deleted.setDeletedTime(DateUtils.getNowDate());
-                deleted.setOriginalCreateTime(question.getCreateTime());
-                
-                // 插入软删除表
-                troubleQuestionDeletedMapper.insertTroubleQuestionDeleted(deleted);
-                
-                // 从原表删除
-                troubleQuestionMapper.deleteTroubleQuestionByQuestionId(questionId);
-                result++;
-            }
+        // 查询原错题记录
+        TroubleQuestion question = troubleQuestionMapper.selectTroubleQuestionByQuestionId(questionId);
+        if (question == null) {
+            return 0;
         }
+
+        // 创建回收站记录
+        TroubleQuestionTrash trash = new TroubleQuestionTrash();
+        trash.setQuestionId(question.getQuestionId());
+        trash.setUserId(question.getUserId());
+        trash.setQuestionContent(question.getQuestionContent());
+        trash.setQuestionImages(question.getQuestionImages());
+        trash.setAnswerContent(question.getAnswerContent());
+        trash.setAnswerImages(question.getAnswerImages());
+        trash.setQuestionType(question.getQuestionType());
+        trash.setTags(question.getTags());
+        trash.setDeleteReason("用户删除");
+        trash.setDeleteBy(SecurityUtils.getUsername());
+        trash.setDeleteTime(DateUtils.getDate());
+        trash.setOriginalCreateTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, question.getCreateTime()));
+        trash.setOriginalCreateBy(question.getCreateBy());
+        trash.setRemark("软删除记录");
+
+        // 插入回收站
+        int result = troubleQuestionTrashMapper.insertTroubleQuestionTrash(trash);
+        
+        // 删除原记录
+        if (result > 0) {
+            troubleQuestionMapper.deleteTroubleQuestionByQuestionId(questionId);
+        }
+
         return result;
     }
 }

@@ -57,12 +57,4 @@ public interface ITroubleQuestionService
      * @return 结果
      */
     public int deleteTroubleQuestionByQuestionId(Long questionId);
-
-    /**
-     * 软删除错题
-     * 
-     * @param questionIds 需要软删除的错题主键集合
-     * @return 结果
-     */
-    public int softDeleteTroubleQuestionByQuestionIds(Long[] questionIds);
 }

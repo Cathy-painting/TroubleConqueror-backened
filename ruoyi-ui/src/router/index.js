@@ -106,10 +106,10 @@ export const constantRoutes = [
         meta: { title: '功能测试', icon: 'bug' }
       },
       {
-        path: 'recycle',
-        component: () => import('@/views/trouble/recycle'),
-        name: 'TroubleRecycle',
-        meta: { title: '回收站管理', icon: 'delete', permissions: ['trouble:question:recycle'] }
+        path: 'trash',
+        component: () => import('@/views/trouble/trash/index'),
+        name: 'TroubleTrash',
+        meta: { title: '错题回收站', icon: 'delete', permissions: ['trouble:trash:list'] }
       }
     ]
   },

@@ -1,24 +1,22 @@
 package com.ruoyi.system.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 错题软删除表 trouble_question_deleted
+ * 错题回收站表 trouble_question_trash
  * 
  * @author ruoyi
  */
-public class TroubleQuestionDeleted extends BaseEntity
+public class TroubleQuestionTrash extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 软删除ID */
-    @Excel(name = "软删除ID", cellType = Excel.ColumnType.NUMERIC)
-    private Long id;
+    /** 回收站ID */
+    @Excel(name = "回收站ID", cellType = Excel.ColumnType.NUMERIC)
+    private Long trashId;
 
     /** 原错题ID */
     @Excel(name = "原错题ID", cellType = Excel.ColumnType.NUMERIC)
@@ -52,28 +50,34 @@ public class TroubleQuestionDeleted extends BaseEntity
     @Excel(name = "标签")
     private String tags;
 
+    /** 删除原因 */
+    @Excel(name = "删除原因")
+    private String deleteReason;
+
     /** 删除者 */
     @Excel(name = "删除者")
-    private String deletedBy;
+    private String deleteBy;
 
     /** 删除时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "删除时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    private Date deletedTime;
+    @Excel(name = "删除时间")
+    private String deleteTime;
 
     /** 原创建时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "原创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    private Date originalCreateTime;
+    @Excel(name = "原创建时间")
+    private String originalCreateTime;
 
-    public Long getId()
+    /** 原创建者 */
+    @Excel(name = "原创建者")
+    private String originalCreateBy;
+
+    public Long getTrashId()
     {
-        return id;
+        return trashId;
     }
 
-    public void setId(Long id)
+    public void setTrashId(Long trashId)
     {
-        this.id = id;
+        this.trashId = trashId;
     }
 
     public Long getQuestionId()
@@ -156,40 +160,60 @@ public class TroubleQuestionDeleted extends BaseEntity
         this.tags = tags;
     }
 
-    public String getDeletedBy()
+    public String getDeleteReason()
     {
-        return deletedBy;
+        return deleteReason;
     }
 
-    public void setDeletedBy(String deletedBy)
+    public void setDeleteReason(String deleteReason)
     {
-        this.deletedBy = deletedBy;
+        this.deleteReason = deleteReason;
     }
 
-    public Date getDeletedTime()
+    public String getDeleteBy()
     {
-        return deletedTime;
+        return deleteBy;
     }
 
-    public void setDeletedTime(Date deletedTime)
+    public void setDeleteBy(String deleteBy)
     {
-        this.deletedTime = deletedTime;
+        this.deleteBy = deleteBy;
     }
 
-    public Date getOriginalCreateTime()
+    public String getDeleteTime()
+    {
+        return deleteTime;
+    }
+
+    public void setDeleteTime(String deleteTime)
+    {
+        this.deleteTime = deleteTime;
+    }
+
+    public String getOriginalCreateTime()
     {
         return originalCreateTime;
     }
 
-    public void setOriginalCreateTime(Date originalCreateTime)
+    public void setOriginalCreateTime(String originalCreateTime)
     {
         this.originalCreateTime = originalCreateTime;
+    }
+
+    public String getOriginalCreateBy()
+    {
+        return originalCreateBy;
+    }
+
+    public void setOriginalCreateBy(String originalCreateBy)
+    {
+        this.originalCreateBy = originalCreateBy;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
+            .append("trashId", getTrashId())
             .append("questionId", getQuestionId())
             .append("userId", getUserId())
             .append("questionContent", getQuestionContent())
@@ -198,9 +222,12 @@ public class TroubleQuestionDeleted extends BaseEntity
             .append("answerImages", getAnswerImages())
             .append("questionType", getQuestionType())
             .append("tags", getTags())
-            .append("deletedBy", getDeletedBy())
-            .append("deletedTime", getDeletedTime())
+            .append("deleteReason", getDeleteReason())
+            .append("deleteBy", getDeleteBy())
+            .append("deleteTime", getDeleteTime())
             .append("originalCreateTime", getOriginalCreateTime())
+            .append("originalCreateBy", getOriginalCreateBy())
+            .append("remark", getRemark())
             .toString();
     }
 }

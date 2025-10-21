@@ -112,7 +112,7 @@ public class TroubleQuestionController extends BaseController
     }
 
     /**
-     * 删除错题（软删除）
+     * 删除错题
      */
     @PreAuthorize("@ss.hasPermi('trouble:question:remove')")
     @Log(title = "错题", businessType = BusinessType.DELETE)
@@ -126,6 +126,6 @@ public class TroubleQuestionController extends BaseController
                 return error("无权限删除该错题");
             }
         }
-        return toAjax(troubleQuestionService.softDeleteTroubleQuestionByQuestionIds(questionIds));
+        return toAjax(troubleQuestionService.deleteTroubleQuestionByQuestionIds(questionIds));
     }
 }

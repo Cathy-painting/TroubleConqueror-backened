@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.mapper.TroubleQuestionDeletedMapper">
+<mapper namespace="com.ruoyi.system.mapper.TroubleQuestionTrashMapper">
     
-    <resultMap type="TroubleQuestionDeleted" id="TroubleQuestionDeletedResult">
-        <result property="id"    column="id"    />
+    <resultMap type="TroubleQuestionTrash" id="TroubleQuestionTrashResult">
+        <result property="trashId"    column="trash_id"    />
         <result property="questionId"    column="question_id"    />
         <result property="userId"    column="user_id"    />
         <result property="questionContent"    column="question_content"    />
@@ -14,18 +14,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="answerImages"    column="answer_images"    />
         <result property="questionType"    column="question_type"    />
         <result property="tags"    column="tags"    />
-        <result property="deletedBy"    column="deleted_by"    />
-        <result property="deletedTime"    column="deleted_time"    />
+        <result property="deleteReason"    column="delete_reason"    />
+        <result property="deleteBy"    column="delete_by"    />
+        <result property="deleteTime"    column="delete_time"    />
         <result property="originalCreateTime"    column="original_create_time"    />
+        <result property="originalCreateBy"    column="original_create_by"    />
+        <result property="remark"    column="remark"    />
     </resultMap>
 
-    <sql id="selectTroubleQuestionDeletedVo">
-        select id, question_id, user_id, question_content, question_images, answer_content, answer_images, question_type, tags, deleted_by, deleted_time, original_create_time from trouble_question_deleted
+    <sql id="selectTroubleQuestionTrashVo">
+        select trash_id, question_id, user_id, question_content, question_images, answer_content, answer_images, question_type, tags, delete_reason, delete_by, delete_time, original_create_time, original_create_by, remark from trouble_question_trash
     </sql>
 
-    <select id="selectTroubleQuestionDeletedList" parameterType="TroubleQuestionDeleted" resultMap="TroubleQuestionDeletedResult">
-        <include refid="selectTroubleQuestionDeletedVo"/>
+    <select id="selectTroubleQuestionTrashList" parameterType="TroubleQuestionTrash" resultMap="TroubleQuestionTrashResult">
+        <include refid="selectTroubleQuestionTrashVo"/>
         <where>  
+            <if test="questionId != null "> and question_id = #{questionId}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="questionContent != null  and questionContent != ''"> and question_content like concat('%', #{questionContent}, '%')</if>
             <if test="questionImages != null  and questionImages != ''"> and question_images = #{questionImages}</if>
@@ -33,19 +37,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="answerImages != null  and answerImages != ''"> and answer_images = #{answerImages}</if>
             <if test="questionType != null  and questionType != ''"> and question_type = #{questionType}</if>
             <if test="tags != null  and tags != ''"> and tags like concat('%', #{tags}, '%')</if>
-            <if test="deletedBy != null  and deletedBy != ''"> and deleted_by = #{deletedBy}</if>
-            <if test="deletedTime != null "> and deleted_time = #{deletedTime}</if>
+            <if test="deleteReason != null  and deleteReason != ''"> and delete_reason like concat('%', #{deleteReason}, '%')</if>
+            <if test="deleteBy != null  and deleteBy != ''"> and delete_by = #{deleteBy}</if>
+            <if test="deleteTime != null  and deleteTime != ''"> and delete_time = #{deleteTime}</if>
+            <if test="originalCreateTime != null  and originalCreateTime != ''"> and original_create_time = #{originalCreateTime}</if>
+            <if test="originalCreateBy != null  and originalCreateBy != ''"> and original_create_by = #{originalCreateBy}</if>
         </where>
-        order by deleted_time desc
+        order by delete_time desc
     </select>
     
-    <select id="selectTroubleQuestionDeletedById" parameterType="Long" resultMap="TroubleQuestionDeletedResult">
-        <include refid="selectTroubleQuestionDeletedVo"/>
-        where id = #{id}
+    <select id="selectTroubleQuestionTrashByTrashId" parameterType="Long" resultMap="TroubleQuestionTrashResult">
+        <include refid="selectTroubleQuestionTrashVo"/>
+        where trash_id = #{trashId}
+    </select>
+
+    <select id="selectTroubleQuestionTrashByQuestionId" parameterType="Long" resultMap="TroubleQuestionTrashResult">
+        <include refid="selectTroubleQuestionTrashVo"/>
+        where question_id = #{questionId}
     </select>
         
-    <insert id="insertTroubleQuestionDeleted" parameterType="TroubleQuestionDeleted" useGeneratedKeys="true" keyProperty="id">
-        insert into trouble_question_deleted
+    <insert id="insertTroubleQuestionTrash" parameterType="TroubleQuestionTrash" useGeneratedKeys="true" keyProperty="trashId">
+        insert into trouble_question_trash
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="questionId != null">question_id,</if>
             <if test="userId != null">user_id,</if>
@@ -55,9 +67,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="answerImages != null">answer_images,</if>
             <if test="questionType != null">question_type,</if>
             <if test="tags != null">tags,</if>
-            <if test="deletedBy != null">deleted_by,</if>
-            <if test="deletedTime != null">deleted_time,</if>
+            <if test="deleteReason != null">delete_reason,</if>
+            <if test="deleteBy != null">delete_by,</if>
+            <if test="deleteTime != null">delete_time,</if>
             <if test="originalCreateTime != null">original_create_time,</if>
+            <if test="originalCreateBy != null">original_create_by,</if>
+            <if test="remark != null">remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="questionId != null">#{questionId},</if>
@@ -68,14 +83,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="answerImages != null">#{answerImages},</if>
             <if test="questionType != null">#{questionType},</if>
             <if test="tags != null">#{tags},</if>
-            <if test="deletedBy != null">#{deletedBy},</if>
-            <if test="deletedTime != null">#{deletedTime},</if>
+            <if test="deleteReason != null">#{deleteReason},</if>
+            <if test="deleteBy != null">#{deleteBy},</if>
+            <if test="deleteTime != null">#{deleteTime},</if>
             <if test="originalCreateTime != null">#{originalCreateTime},</if>
+            <if test="originalCreateBy != null">#{originalCreateBy},</if>
+            <if test="remark != null">#{remark},</if>
          </trim>
     </insert>
 
-    <update id="updateTroubleQuestionDeleted" parameterType="TroubleQuestionDeleted">
-        update trouble_question_deleted
+    <update id="updateTroubleQuestionTrash" parameterType="TroubleQuestionTrash">
+        update trouble_question_trash
         <trim prefix="SET" suffixOverrides=",">
             <if test="questionId != null">question_id = #{questionId},</if>
             <if test="userId != null">user_id = #{userId},</if>
@@ -85,26 +103,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="answerImages != null">answer_images = #{answerImages},</if>
             <if test="questionType != null">question_type = #{questionType},</if>
             <if test="tags != null">tags = #{tags},</if>
-            <if test="deletedBy != null">deleted_by = #{deletedBy},</if>
-            <if test="deletedTime != null">deleted_time = #{deletedTime},</if>
+            <if test="deleteReason != null">delete_reason = #{deleteReason},</if>
+            <if test="deleteBy != null">delete_by = #{deleteBy},</if>
+            <if test="deleteTime != null">delete_time = #{deleteTime},</if>
             <if test="originalCreateTime != null">original_create_time = #{originalCreateTime},</if>
+            <if test="originalCreateBy != null">original_create_by = #{originalCreateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
         </trim>
-        where id = #{id}
+        where trash_id = #{trashId}
     </update>
 
-    <delete id="deleteTroubleQuestionDeletedById" parameterType="Long">
-        delete from trouble_question_deleted where id = #{id}
+    <delete id="deleteTroubleQuestionTrashByTrashId" parameterType="Long">
+        delete from trouble_question_trash where trash_id = #{trashId}
     </delete>
 
-    <delete id="deleteTroubleQuestionDeletedByIds" parameterType="String">
-        delete from trouble_question_deleted where id in 
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{id}
+    <delete id="deleteTroubleQuestionTrashByTrashIds" parameterType="String">
+        delete from trouble_question_trash where trash_id in 
+        <foreach item="trashId" collection="array" open="(" separator="," close=")">
+            #{trashId}
         </foreach>
     </delete>
-
-    <select id="selectExpiredDeletedQuestions" parameterType="int" resultMap="TroubleQuestionDeletedResult">
-        <include refid="selectTroubleQuestionDeletedVo"/>
-        where deleted_time &lt; DATE_SUB(NOW(), INTERVAL #{days} DAY)
-    </select>
 </mapper>
