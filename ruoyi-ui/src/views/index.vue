@@ -2,31 +2,33 @@
   <div class="app-container home">
     <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
-        <h2>若依后台管理框架</h2>
+        <h2>错题征服者 - 智能错题管理系统</h2>
         <p>
-          一直想做一款后台管理系统，看了很多优秀的开源项目但是发现没有合适自己的。于是利用空闲休息时间开始自己写一套后台系统。如此有了若依管理系统，她可以用于所有的Web应用程序，如网站管理后台，网站会员中心，CMS，CRM，OA等等，当然，您也可以对她进行深度定制，以做出更强系统。所有前端后台代码封装过后十分精简易上手，出错概率低。同时支持移动客户端访问。系统会陆续更新一些实用功能。
+          专为中小学生设计的智能错题管理系统，帮助用户高效管理错题、提升学习效率。支持文本输入和拍照识别添加错题，智能分类管理，多维度统计分析，构建知识图谱，让学习更高效，让错题不再困扰。
         </p>
         <p>
           <b>当前版本:</b> <span>v{{ version }}</span>
         </p>
         <p>
-          <el-tag type="danger">&yen;免费开源</el-tag>
+          <el-tag type="success">🎯 智能错题管理</el-tag>
+          <el-tag type="info">📊 学习分析</el-tag>
+          <el-tag type="warning">🚀 知识图谱</el-tag>
         </p>
         <p>
           <el-button
             type="primary"
             size="mini"
-            icon="el-icon-cloudy"
+            icon="el-icon-camera"
             plain
-            @click="goTarget('https://gitee.com/y_project/RuoYi-Vue')"
-            >访问码云</el-button
+            @click="goTarget('#')"
+            >拍照识别</el-button
           >
           <el-button
             size="mini"
-            icon="el-icon-s-home"
+            icon="el-icon-edit"
             plain
-            @click="goTarget('http://ruoyi.vip')"
-            >访问主页</el-button
+            @click="goTarget('#')"
+            >添加错题</el-button
           >
         </p>
       </el-col>
@@ -34,31 +36,29 @@
       <el-col :sm="24" :lg="12" style="padding-left: 50px">
         <el-row>
           <el-col :span="12">
-            <h2>技术选型</h2>
+            <h2>核心功能</h2>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="6">
-            <h4>后端技术</h4>
+            <h4>智能识别</h4>
             <ul>
-              <li>SpringBoot</li>
-              <li>Spring Security</li>
-              <li>JWT</li>
-              <li>MyBatis</li>
-              <li>Druid</li>
-              <li>Fastjson</li>
+              <li>OCR文字识别</li>
+              <li>数学公式识别</li>
+              <li>智能分类</li>
+              <li>自动标签</li>
+              <li>批量导入</li>
               <li>...</li>
             </ul>
           </el-col>
           <el-col :span="6">
-            <h4>前端技术</h4>
+            <h4>学习分析</h4>
             <ul>
-              <li>Vue</li>
-              <li>Vuex</li>
-              <li>Element-ui</li>
-              <li>Axios</li>
-              <li>Sass</li>
-              <li>Quill</li>
+              <li>错题统计</li>
+              <li>学习进度</li>
+              <li>知识图谱</li>
+              <li>薄弱点分析</li>
+              <li>练习推荐</li>
               <li>...</li>
             </ul>
           </el-col>
