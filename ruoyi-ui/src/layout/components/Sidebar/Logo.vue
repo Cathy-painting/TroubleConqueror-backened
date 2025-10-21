@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      title: '后台管理'
+      title: process.env.VUE_APP_TITLE
     }
   }
 }
