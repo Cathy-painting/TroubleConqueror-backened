@@ -230,6 +230,7 @@
 
 <script>
 import { listQuestion } from "@/api/trouble/question";
+import { getTroubleStatistics } from "@/api/trouble/statistics";
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -267,13 +268,24 @@ export default {
     
     /** 加载统计数据 */
     loadStats() {
-      // 模拟统计数据，实际应该调用API
-      this.stats = {
-        totalQuestions: 15,
-        todayQuestions: 3,
-        thisWeekQuestions: 8,
-        tagsCount: 12
-      };
+      getTroubleStatistics().then(response => {
+        if (response.code === 200) {
+          this.stats = {
+            totalQuestions: response.data.totalQuestions || 0,
+            todayQuestions: response.data.todayQuestions || 0,
+            thisWeekQuestions: response.data.thisWeekQuestions || 0,
+            tagsCount: response.data.tagsCount || 0
+          };
+        }
+      }).catch(() => {
+        // 如果API调用失败，使用默认值
+        this.stats = {
+          totalQuestions: 0,
+          todayQuestions: 0,
+          thisWeekQuestions: 0,
+          tagsCount: 0
+        };
+      });
     },
     
     /** 加载最近错题 */

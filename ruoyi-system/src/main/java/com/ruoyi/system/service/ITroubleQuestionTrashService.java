@@ -82,3 +82,5 @@ public interface ITroubleQuestionTrashService
      */
     public int permanentlyDeleteQuestions(Long[] trashIds);
 }
+
+

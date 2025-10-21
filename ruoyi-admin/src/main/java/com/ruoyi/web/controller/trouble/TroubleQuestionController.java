@@ -129,3 +129,5 @@ public class TroubleQuestionController extends BaseController
         return toAjax(troubleQuestionService.deleteTroubleQuestionByQuestionIds(questionIds));
     }
 }
+
+

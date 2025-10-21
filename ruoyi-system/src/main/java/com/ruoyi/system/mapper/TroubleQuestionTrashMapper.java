@@ -66,3 +66,5 @@ public interface TroubleQuestionTrashMapper
      */
     public TroubleQuestionTrash selectTroubleQuestionTrashByQuestionId(Long questionId);
 }
+
+

@@ -59,6 +59,7 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
     @Override
     public int insertTroubleQuestion(TroubleQuestion troubleQuestion)
     {
+        troubleQuestion.setCreateBy(SecurityUtils.getUsername());
         troubleQuestion.setCreateTime(DateUtils.getNowDate());
         return troubleQuestionMapper.insertTroubleQuestion(troubleQuestion);
     }
@@ -72,6 +73,7 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
     @Override
     public int updateTroubleQuestion(TroubleQuestion troubleQuestion)
     {
+        troubleQuestion.setUpdateBy(SecurityUtils.getUsername());
         troubleQuestion.setUpdateTime(DateUtils.getNowDate());
         return troubleQuestionMapper.updateTroubleQuestion(troubleQuestion);
     }
@@ -132,7 +134,7 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
         trash.setTags(question.getTags());
         trash.setDeleteReason("用户删除");
         trash.setDeleteBy(SecurityUtils.getUsername());
-        trash.setDeleteTime(DateUtils.getDate());
+        trash.setDeleteTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, DateUtils.getNowDate()));
         trash.setOriginalCreateTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, question.getCreateTime()));
         trash.setOriginalCreateBy(question.getCreateBy());
         trash.setRemark("软删除记录");

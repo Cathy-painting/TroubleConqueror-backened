@@ -127,3 +127,5 @@ public class TroubleQuestionTrashController extends BaseController
         return toAjax(troubleQuestionTrashService.permanentlyDeleteQuestions(trashIds));
     }
 }
+
+

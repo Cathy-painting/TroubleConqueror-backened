@@ -64,7 +64,7 @@ public class TroubleQuestionTrashServiceImpl implements ITroubleQuestionTrashSer
     @Override
     public int insertTroubleQuestionTrash(TroubleQuestionTrash troubleQuestionTrash)
     {
-        troubleQuestionTrash.setDeleteTime(DateUtils.getDate());
+        troubleQuestionTrash.setDeleteTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, DateUtils.getNowDate()));
         return troubleQuestionTrashMapper.insertTroubleQuestionTrash(troubleQuestionTrash);
     }
 
@@ -200,13 +200,21 @@ public class TroubleQuestionTrashServiceImpl implements ITroubleQuestionTrashSer
         for (String url : urls) {
             if (StringUtils.isNotEmpty(url)) {
                 try {
-                    // 提取文件名
-                    String fileName = url.substring(url.lastIndexOf("/") + 1);
-                    String filePath = uploadPath + "/" + fileName;
+                    // 从URL中提取完整路径
+                    String filePath = extractFilePathFromUrl(url);
                     
-                    File file = new File(filePath);
-                    if (file.exists() && file.isFile()) {
-                        file.delete();
+                    if (StringUtils.isNotEmpty(filePath)) {
+                        File file = new File(filePath);
+                        if (file.exists() && file.isFile()) {
+                            boolean deleted = file.delete();
+                            if (deleted) {
+                                System.out.println("成功删除图片文件: " + filePath);
+                            } else {
+                                System.err.println("删除图片文件失败: " + filePath);
+                            }
+                        } else {
+                            System.out.println("图片文件不存在: " + filePath);
+                        }
                     }
                 } catch (Exception e) {
                     // 记录日志但不抛出异常
@@ -215,4 +223,35 @@ public class TroubleQuestionTrashServiceImpl implements ITroubleQuestionTrashSer
             }
         }
     }
+
+    /**
+     * 从URL中提取文件路径
+     * 
+     * @param url 图片URL
+     * @return 文件路径
+     */
+    private String extractFilePathFromUrl(String url)
+    {
+        try {
+            // 如果URL包含uploadPath，直接提取路径部分
+            if (url.contains("/upload/")) {
+                String pathPart = url.substring(url.indexOf("/upload/"));
+                return uploadPath + pathPart;
+            }
+            
+            // 如果是相对路径，直接拼接
+            if (url.startsWith("/upload/")) {
+                return uploadPath + url;
+            }
+            
+            // 如果是完整URL，提取文件名并构建路径
+            String fileName = url.substring(url.lastIndexOf("/") + 1);
+            return uploadPath + "/upload/" + fileName;
+            
+        } catch (Exception e) {
+            System.err.println("解析图片路径失败: " + url + ", 错误: " + e.getMessage());
+            return null;
+        }
+    }
 }
+
