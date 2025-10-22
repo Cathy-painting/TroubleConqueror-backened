@@ -22,11 +22,15 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * 错题Controller
  * 
  * @author ruoyi
  */
+@Api(tags = "错题管理")
 @RestController
 @RequestMapping("/trouble/question")
 public class TroubleQuestionController extends BaseController
@@ -37,6 +41,7 @@ public class TroubleQuestionController extends BaseController
     /**
      * 查询错题列表
      */
+    @ApiOperation("查询错题列表")
     @PreAuthorize("@ss.hasPermi('trouble:question:list')")
     @GetMapping("/list")
     public TableDataInfo list(TroubleQuestion troubleQuestion)
@@ -80,6 +85,7 @@ public class TroubleQuestionController extends BaseController
     /**
      * 新增错题
      */
+    @ApiOperation("新增错题")
     @PreAuthorize("@ss.hasPermi('trouble:question:add')")
     @Log(title = "错题", businessType = BusinessType.INSERT)
     @PostMapping
