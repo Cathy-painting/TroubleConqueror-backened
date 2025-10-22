@@ -1,6 +1,11 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.TroubleQuestion;
@@ -8,9 +13,6 @@ import com.ruoyi.system.domain.TroubleQuestionTrash;
 import com.ruoyi.system.mapper.TroubleQuestionMapper;
 import com.ruoyi.system.mapper.TroubleQuestionTrashMapper;
 import com.ruoyi.system.service.ITroubleQuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 错题Service业务层处理
@@ -148,5 +150,34 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
         }
 
         return result;
+    }
+
+    /**
+     * 基于OCR识别结果创建错题
+     * 
+     * @param ocrText OCR识别的文本
+     * @param imagePath 图片路径
+     * @param userId 用户ID
+     * @param questionType 题目类型
+     * @param tags 标签
+     * @return 错题对象
+     */
+    @Override
+    public TroubleQuestion createQuestionFromOcr(String ocrText, String imagePath, Long userId, String questionType, String tags)
+    {
+        TroubleQuestion question = new TroubleQuestion();
+        question.setUserId(userId);
+        question.setQuestionContent(ocrText);
+        question.setQuestionImages(imagePath);
+        question.setQuestionType(questionType != null ? questionType : "OCR识别");
+        question.setTags(tags != null ? tags : "OCR");
+        question.setStatus("0");
+        question.setCreateBy(SecurityUtils.getUsername());
+        question.setCreateTime(DateUtils.getNowDate());
+        
+        // 插入数据库
+        int result = troubleQuestionMapper.insertTroubleQuestion(question);
+        
+        return result > 0 ? question : null;
     }
 }
