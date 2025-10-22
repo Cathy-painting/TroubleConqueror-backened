@@ -116,8 +116,8 @@ pagehelper:
 swagger:
   # 是否开启swagger
   enabled: true
-  # 请求前缀
-  pathMapping: /dev-api
+  # 请求前缀（改为空，直接使用实际路径）
+  pathMapping: /
 
 # 防盗链配置
 referer:
