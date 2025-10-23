@@ -4,7 +4,7 @@
 	<a href="https://github.com/Elowen-yu/TroubleConqueror-backened">GitHub</a>
 </p>
 
-```
+
  ______ ______  ______  __  __  ______  __      ______                     
 /\__  _/\  == \/\  __ \/\ \/\ \/\  == \/\ \    /\  ___\                    
 \/_/\ \\ \  __<\ \ \/\ \ \ \_\ \ \  __<\ \ \___\ \  __\                    
@@ -16,7 +16,7 @@
 \ \ \___\ \ \/\ \ \ \-.  \ \ \/\_\ \ \_\ \ \  __\\ \  __<\ \ \/\ \ \  __<  
  \ \_____\ \_____\ \_\\"\_\ \___\_\ \_____\ \_____\ \_\ \_\ \_____\ \_\ \_\
   \/_____/\/_____/\/_/ \/_/\/___/_/\/_____/\/_____/\/_/ /_/\/_____/\/_/ /_/
-```
+
 
 
 ## 项目简介
@@ -86,11 +86,11 @@
 ## 开发团队
 
 <p align="left">
-  <img src="https://img.shields.io/badge/MakiWinster72-系统分析师（System%20Analyst）-brightgreen" alt="Maki">
+  <img src="https://img.shields.io/badge/Elowen--yu-%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%EF%BC%88Product%20Manager%EF%BC%89-9cf" alt="Elowen">
   <br>
-  <img src="https://img.shields.io/badge/Elowen-yu-产品经理（Product%20Manager）-9cf" alt="Elowen">
+  <img src="https://img.shields.io/badge/Cathy--painting-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E4%B8%8E%E6%B5%8B%E8%AF%95%EF%BC%88DBA%20%26%20Tester%EF%BC%89-pink" alt="Cathy">
   <br>
-  <img src="https://img.shields.io/badge/Cathy-painting-数据库管理员与测试（DBA%20%26%20Tester）-pink" alt="Cathy">
+  <img src="https://img.shields.io/badge/MakiWinster72-%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88System%20Analyst%EF%BC%89-brightgreen" alt="Maki">
 </p>
 
 ## 贡献指南
