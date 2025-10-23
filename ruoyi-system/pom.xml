@@ -23,6 +23,19 @@
             <artifactId>ruoyi-common</artifactId>
         </dependency>
 
+        <!-- OCR识别依赖 -->
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>5.8.0</version>
+        </dependency>
+
+        <!-- HTTP客户端，用于调用在线OCR API -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

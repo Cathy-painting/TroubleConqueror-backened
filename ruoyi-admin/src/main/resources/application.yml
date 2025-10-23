@@ -74,7 +74,7 @@ spring:
     # 数据库索引
     database: 0
     # 密码
-    password:
+    password: 1015
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -116,8 +116,8 @@ pagehelper:
 swagger:
   # 是否开启swagger
   enabled: true
-  # 请求前缀
-  pathMapping: /dev-api
+  # 请求前缀（改为空，直接使用实际路径）
+  pathMapping: /
 
 # 防盗链配置
 referer:
@@ -134,3 +134,18 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+# OCR配置
+ocr:
+  # Tesseract OCR配置
+  tesseract:
+    # Tesseract数据路径（需要根据实际安装路径配置）
+    datapath: "D:\\Program Files (x86)\\Tesseract-OCR\\tessdata"
+    # 识别语言（chi_sim：简体中文，eng：英文）
+    language: chi_sim+eng
+  # 百度OCR API配置（可选）
+  baidu:
+    # API Key（需要申请百度OCR服务）
+    apiKey: 
+    # Secret Key
+    secretKey:

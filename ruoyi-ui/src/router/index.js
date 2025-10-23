@@ -129,6 +129,13 @@ export const dynamicRoutes = [
         name: 'TroubleTrash',
         meta: { title: '错题回收站', icon: 'delete', permissions: ['trouble:trash:list'] }
       }
+      // 临时注释OCR路由以排查加载问题
+      // {
+      //   path: 'ocr',
+      //   component: () => import('@/views/trouble/ocr/index'),
+      //   name: 'TroubleOcr',
+      //   meta: { title: 'OCR识别', icon: 'camera', permissions: ['trouble:ocr:recognize'] }
+      // }
     ]
   },
   {
