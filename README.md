@@ -4,21 +4,6 @@
 	<a href="https://github.com/Elowen-yu/TroubleConqueror-backened">GitHub</a>
 </p>
 
-
- ______ ______  ______  __  __  ______  __      ______                     
-/\__  _/\  == \/\  __ \/\ \/\ \/\  == \/\ \    /\  ___\                    
-\/_/\ \\ \  __<\ \ \/\ \ \ \_\ \ \  __<\ \ \___\ \  __\                    
-   \ \_\\ \_\ \_\ \_____\ \_____\ \_____\ \_____\ \_____\                  
-    \/_/ \/_/ /_/\/_____/\/_____/\/_____/\/_____/\/_____/                  
-                                                                           
- ______  ______  __   __  ______  __  __  ______  ______  ______  ______   
-/\  ___\/\  __ \/\ "-.\ \/\  __ \/\ \/\ \/\  ___\/\  == \/\  __ \/\  == \  
-\ \ \___\ \ \/\ \ \ \-.  \ \ \/\_\ \ \_\ \ \  __\\ \  __<\ \ \/\ \ \  __<  
- \ \_____\ \_____\ \_\\"\_\ \___\_\ \_____\ \_____\ \_\ \_\ \_____\ \_\ \_\
-  \/_____/\/_____/\/_/ \/_/\/___/_/\/_____/\/_____/\/_/ /_/\/_____/\/_/ /_/
-
-
-
 ## 项目简介
 
 错题征服者是一套专为中小学生设计的错题管理系统，旨在帮助用户高效管理错题、提升学习效率。
@@ -86,11 +71,21 @@
 ## 开发团队
 
 <p align="left">
-  <img src="https://img.shields.io/badge/Elowen--yu-%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%EF%BC%88Product%20Manager%EF%BC%89-9cf" alt="Elowen">
+
+  <a href="https://github.com/Elowen-yu">
+    <img src="https://img.shields.io/badge/Elowen--yu-%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%EF%BC%88Product%20Manager%EF%BC%89-9cf" alt="Elowen">
+  </a>
   <br>
-  <img src="https://img.shields.io/badge/Cathy--painting-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E4%B8%8E%E6%B5%8B%E8%AF%95%EF%BC%88DBA%20%26%20Tester%EF%BC%89-pink" alt="Cathy">
+
+  <a href="https://github.com/Cathy-painting">
+    <img src="https://img.shields.io/badge/Cathy--painting-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E4%B8%8E%E6%B5%8B%E8%AF%95%EF%BC%88DBA%20%26%20Tester%EF%BC%89-pink" alt="Cathy">
+  </a>
   <br>
-  <img src="https://img.shields.io/badge/MakiWinster72-%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88System%20Analyst%EF%BC%89-brightgreen" alt="Maki">
+
+  <a href="https://github.com/MakiWinster72">
+    <img src="https://img.shields.io/badge/MakiWinster72-%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88System%20Analyst%EF%BC%89-brightgreen" alt="Maki">
+  </a>
+
 </p>
 
 ## 贡献指南
