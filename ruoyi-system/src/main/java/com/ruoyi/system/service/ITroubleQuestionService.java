@@ -58,18 +58,6 @@ public interface ITroubleQuestionService
      * @return 结果
      */
     public int deleteTroubleQuestionByQuestionId(Long questionId);
-
-    /**
-     * 基于OCR识别结果创建错题
-     * 
-     * @param ocrText OCR识别的文本
-     * @param imagePath 图片路径
-     * @param userId 用户ID
-     * @param questionType 题目类型
-     * @param tags 标签
-     * @return 错题对象
-     */
-    public TroubleQuestion createQuestionFromOcr(String ocrText, String imagePath, Long userId, String questionType, String tags);
 }
 
 
