@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错题征服者 - Trouble Conqueror</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 动态背景装饰 */
+        .bg-decoration {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .float-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape1 { width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s; }
+        .shape2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-delay: 3s; }
+        .shape3 { width: 150px; height: 150px; bottom: 10%; left: 15%; animation-delay: 6s; }
+        .shape4 { width: 250px; height: 250px; top: 30%; right: 20%; animation-delay: 9s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+            33% { transform: translateY(-30px) translateX(30px) rotate(120deg); }
+            66% { transform: translateY(20px) translateX(-20px) rotate(240deg); }
+        }
+
+        /* 容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 主内容区 */
+        .hero {
+            text-align: center;
+            margin: 80px 0;
+        }
+
+        .ascii-art {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.2;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+
+        /* 玻璃态卡片 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 40px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 开始按钮 */
+        .cta-section {
+            margin: 80px 0;
+        }
+
+        .start-button {
+            position: relative;
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+            color: white;
+            font-size: 32px;
+            font-weight: 900;
+            padding: 30px 80px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .start-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .start-button:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .start-button:active {
+            transform: scale(1.05);
+        }
+
+        .start-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 功能特性网格 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .feature-desc {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        /* 技术栈 */
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .tech-badge:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* 团队信息 */
+        .team {
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .team-title {
+            font-size: 36px;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .team-members {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 30px 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .team-member:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .member-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .member-role {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .github-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .github-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 36px; }
+            .hero-subtitle { font-size: 18px; }
+            .start-button { font-size: 24px; padding: 20px 50px; }
+            .ascii-art { font-size: 8px; padding: 20px; }
+            .navbar { flex-direction: column; gap: 20px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration">
+        <div class="float-shape shape1"></div>
+        <div class="float-shape shape2"></div>
+        <div class="float-shape shape3"></div>
+        <div class="float-shape shape4"></div>
+    </div>
+
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="logo">
+                <div class="logo-icon">📚</div>
+                <span>错题征服者</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">功能特性</a></li>
+                <li><a href="#tech">技术架构</a></li>
+                <li><a href="#team">开发团队</a></li>
+                <li><a href="https://github.com/Elowen-yu/TroubleConqueror-backened" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+
+        <!-- 主内容区 -->
+        <section class="hero">
+            <pre class="ascii-art">
+ ______   ______     ______     __         ______     
+/\__  _\ /\  == \   /\  == \   /\ \       /\  ___\    
+\/_/\ \/ \ \  __<   \ \  __<   \ \ \____  \ \  __\    
+   \ \_\  \ \_\ \_\  \ \_____\  \ \_____\  \ \_____\  
+    \/_/   \/_/ /_/   \/_____/   \/_____/   \/_____/  
+                                                       
+ ______     ______     __   __     __  __     ______  
+/\  ___\   /\  __ \   /\ "-.\\ \   /\ \/ /    /\  == \ 
+\ \ \____  \ \ \/\ \  \ \ \-.  \  \ \  _"-.  \ \  __< 
+ \ \_____\  \ \_____\  \ \_\\"\_\  \ \_\ \_\  \ \_\ \_\
+  \/_____/   \/_____/   \/_/ \/_/   \/_/\/_/   \/_/ /_/
+            </pre>
+            
+            <h1 class="hero-title">错题征服者</h1>
+            <p class="hero-subtitle">中小学生错题管理系统 · 让学习更高效，让错题不再困扰</p>
+
+            <div class="cta-section">
+                <button class="start-button" onclick="window.location.href='http://localhost:1024'">
+                    <span>开始征服错题！🚀</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 产品介绍 -->
+        <div class="glass-card">
+            <h2 style="color: white; font-size: 32px; margin-bottom: 20px; text-align: center;">✨ 产品简介</h2>
+            <p style="color: rgba(255, 255, 255, 0.95); font-size: 18px; line-height: 1.8; text-align: center;">
+                错题征服者是一套专为中小学生设计的错题管理系统，旨在帮助用户高效管理错题、提升学习效率。
+                通过智能OCR识别、知识图谱构建、个性化练习推荐等功能，让每一道错题都成为进步的阶梯。
+            </p>
+        </div>
+
+        <!-- 功能特性 -->
+        <section id="features">
+            <h2 class="team-title">🎯 核心功能</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <span class="feature-icon">🤖</span>
+                    <h3 class="feature-title">智能错题管理</h3>
+                    <p class="feature-desc">支持文本输入和拍照识别添加错题，智能分类整理，让错题管理变得简单高效</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📸</span>
+                    <h3 class="feature-title">OCR智能识别</h3>
+                    <p class="feature-desc">拍照即可自动识别题目内容，支持数学公式识别，解放双手提升录入效率</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🏷️</span>
+                    <h3 class="feature-title">分类标签管理</h3>
+                    <p class="feature-desc">按学科、年级、难度、知识点进行多维度分类，快速定位薄弱环节</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">统计分析</h3>
+                    <p class="feature-desc">错题统计、学习进度分析、知识点掌握情况一目了然，科学评估学习效果</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🕸️</span>
+                    <h3 class="feature-title">知识图谱</h3>
+                    <p class="feature-desc">构建知识点关联图谱，发现知识薄弱环节，建立完整的知识体系</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💪</span>
+                    <h3 class="feature-title">智能练习</h3>
+                    <p class="feature-desc">智能推荐练习题目，个性化学习路径，针对性突破薄弱知识点</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技术架构 -->
+        <section id="tech">
+            <h2 class="team-title">⚙️ 技术架构</h2>
+            <div class="tech-stack">
+                <span class="tech-badge">Vue.js</span>
+                <span class="tech-badge">Element UI</span>
+                <span class="tech-badge">Spring Boot</span>
+                <span class="tech-badge">Spring Security</span>
+                <span class="tech-badge">Redis</span>
+                <span class="tech-badge">Mysql</span>
+                <span class="tech-badge">React</span>
+                <span class="tech-badge">JWT</span>
+                <span class="tech-badge">若依框架</span>
+            </div>
+        </section>
+
+        <!-- 开发团队 -->
+        <section id="team" class="team">
+            <h2 class="team-title">👥 开发团队</h2>
+            <div class="team-members">
+                <div class="team-member">
+                    <div class="member-name">Elowen-yu</div>
+                    <div class="member-role">产品经理 (Product Manager)</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-name">Cathy-painting</div>
+                    <div class="member-role">数据库管理员与测试 (DBA & Tester)</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-name">MakiWinster72</div>
+                    <div class="member-role">系统分析师 (System Analyst)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>© 2025 错题征服者 Trouble Conqueror. 让学习更高效，让错题不再困扰。</p>
+            <a href="https://github.com/Elowen-yu/TroubleConqueror-backened" target="_blank" class="github-link">
+                访问 GitHub 仓库
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 添加滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 初始化动画元素
+        document.querySelectorAll('.feature-card, .glass-card, .team-member').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

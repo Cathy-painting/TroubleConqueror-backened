@@ -99,12 +99,12 @@ export const dynamicRoutes = [
     name: 'Trouble',
     meta: { title: '错题管理', icon: 'education' },
     children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/trouble/dashboard'),
-        name: 'TroubleDashboard',
-        meta: { title: '错题控制台', icon: 'dashboard' }
-      },
+      // {
+      //   path: 'debug',
+      //   component: () => import('@/views/trouble/debug'),
+      //   name: 'TroubleDashboard',
+      //   meta: { title: '测试台', icon: 'debug' }
+      // },
       {
         path: 'question',
         component: () => import('@/views/trouble/question/index'),
@@ -121,7 +121,7 @@ export const dynamicRoutes = [
         path: 'test',
         component: () => import('@/views/trouble/test'),
         name: 'TroubleTest',
-        meta: { title: '功能测试', icon: 'bug' }
+        meta: { title: '产品首页', icon: 'dashboard' }
       },
       {
         path: 'trash',
@@ -129,6 +129,13 @@ export const dynamicRoutes = [
         name: 'TroubleTrash',
         meta: { title: '错题回收站', icon: 'delete', permissions: ['trouble:trash:list'] }
       }
+      // 临时注释OCR路由以排查加载问题
+      // {
+      //   path: 'ocr',
+      //   component: () => import('@/views/trouble/ocr/index'),
+      //   name: 'TroubleOcr',
+      //   meta: { title: 'OCR识别', icon: 'camera', permissions: ['trouble:ocr:recognize'] }
+      // }
     ]
   },
   {
