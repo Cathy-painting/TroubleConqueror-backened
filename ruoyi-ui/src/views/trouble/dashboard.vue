@@ -2,21 +2,20 @@
   <div class="app-container">
     <el-card class="welcome-card">
       <div slot="header" class="clearfix">
-        <span class="welcome-title">🎯 错题征服者 - 智能错题管理系统</span>
-        <el-button style="float: right; padding: 3px 0" type="text" @click="refreshData">
-          <i class="el-icon-refresh"></i> 刷新
+        <span class="welcome-title">🎯 错题征服者</span>
+        <el-button class="refresh-btn" type="text" @click="refreshData">
+          <i class="el-icon-refresh"></i>
         </el-button>
       </div>
 
       <div class="welcome-content">
         <p class="welcome-desc">
           专为中小学生设计的智能错题管理系统，帮助用户高效管理错题、提升学习效率。
-          支持文本输入和拍照识别添加错题，智能分类管理，多维度统计分析。
         </p>
 
         <!-- 统计卡片 -->
-        <el-row :gutter="20" class="stats-row">
-          <el-col :span="6">
+        <el-row :gutter="10" class="stats-row">
+          <el-col :xs="12" :sm="6" :md="6" :lg="6">
             <el-card class="stat-card">
               <div class="stat-content">
                 <div class="stat-number">{{ stats.totalQuestions }}</div>
@@ -25,7 +24,7 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="12" :sm="6" :md="6" :lg="6">
             <el-card class="stat-card">
               <div class="stat-content">
                 <div class="stat-number">{{ stats.todayQuestions }}</div>
@@ -34,7 +33,7 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="12" :sm="6" :md="6" :lg="6">
             <el-card class="stat-card">
               <div class="stat-content">
                 <div class="stat-number">{{ stats.thisWeekQuestions }}</div>
@@ -43,7 +42,7 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="6">
+          <el-col :xs="12" :sm="6" :md="6" :lg="6">
             <el-card class="stat-card">
               <div class="stat-content">
                 <div class="stat-number">{{ stats.tagsCount }}</div>
@@ -57,8 +56,8 @@
     </el-card>
 
     <!-- 功能按钮区域 -->
-    <el-row :gutter="20" class="function-row">
-      <el-col :span="8">
+    <el-row :gutter="10" class="function-row">
+      <el-col :xs="24" :sm="8" :md="8" :lg="8">
         <el-card class="function-card" shadow="hover" @click.native="goToAddQuestion">
           <div class="function-content">
             <div class="function-icon">
@@ -73,7 +72,7 @@
         </el-card>
       </el-col>
 
-      <el-col :span="8">
+      <el-col :xs="24" :sm="8" :md="8" :lg="8">
         <el-card class="function-card" shadow="hover" @click.native="goToQuestionList">
           <div class="function-content">
             <div class="function-icon">
@@ -88,16 +87,16 @@
         </el-card>
       </el-col>
 
-      <el-col :span="8">
+      <el-col :xs="24" :sm="8" :md="8" :lg="8">
         <el-card class="function-card" shadow="hover" @click.native="goToCameraAdd">
           <div class="function-content">
             <div class="function-icon">
               <i class="el-icon-camera"></i>
             </div>
             <div class="function-title">拍照添加</div>
-            <div class="function-desc">拍照识别题目，智能提取内容</div>
+            <div class="function-desc">拍照记录错题，更快更方便</div>
             <el-button type="warning" size="medium" class="function-btn">
-              <i class="el-icon-camera"></i> 拍照识别
+              <i class="el-icon-camera"></i> 拍照
             </el-button>
           </div>
         </el-card>
@@ -110,25 +109,25 @@
         <span>🚀 快速操作</span>
       </div>
 
-      <el-row :gutter="15">
-        <el-col :span="6">
-          <el-button type="primary" icon="el-icon-edit" size="medium" @click="goToAddQuestion" block>
-            手动添加错题
+      <el-row :gutter="10">
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <el-button type="primary" icon="el-icon-edit" size="small" @click="goToAddQuestion" block class="quick-btn">
+            <span class="btn-text">手动添加</span>
           </el-button>
         </el-col>
-        <el-col :span="6">
-          <el-button type="success" icon="el-icon-view" size="medium" @click="goToQuestionList" block>
-            查看错题列表
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <el-button type="success" icon="el-icon-view" size="small" @click="goToQuestionList" block class="quick-btn">
+            <span class="btn-text">查看列表</span>
           </el-button>
         </el-col>
-        <el-col :span="6">
-          <el-button type="warning" icon="el-icon-camera" size="medium" @click="goToCameraAdd" block>
-            拍照识别题目
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <el-button type="warning" icon="el-icon-camera" size="small" @click="goToCameraAdd" block class="quick-btn">
+            <span class="btn-text">拍照添加</span>
           </el-button>
         </el-col>
-        <el-col :span="6">
-          <el-button type="info" icon="el-icon-download" size="medium" @click="exportQuestions" block>
-            导出错题数据
+        <el-col :xs="12" :sm="6" :md="6" :lg="6">
+          <el-button type="info" icon="el-icon-download" size="small" @click="exportQuestions" block class="quick-btn">
+            <span class="btn-text">导出数据</span>
           </el-button>
         </el-col>
       </el-row>
@@ -138,7 +137,7 @@
     <el-card class="recent-questions">
       <div slot="header" class="clearfix">
         <span>📚 最近添加的错题</span>
-        <el-button style="float: right; padding: 3px 0" type="text" @click="goToQuestionList">
+        <el-button class="view-all-btn" type="text" @click="goToQuestionList">
           查看全部 <i class="el-icon-arrow-right"></i>
         </el-button>
       </div>
@@ -148,8 +147,9 @@
         <p>还没有添加错题，点击上方按钮开始添加吧！</p>
       </div>
 
-      <div v-else>
-        <el-table :data="recentQuestions" style="width: 100%">
+      <div v-else class="questions-wrapper">
+        <!-- 桌面端表格 -->
+        <el-table :data="recentQuestions" class="desktop-table">
           <el-table-column prop="questionContent" label="题目内容" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <div class="question-preview">
@@ -183,16 +183,35 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <!-- 移动端卡片 -->
+        <div class="mobile-cards">
+          <div v-for="item in recentQuestions" :key="item.questionId" class="question-card">
+            <div class="question-card-content">
+              <div class="question-text">{{ item.questionContent.length > 80 ? item.questionContent.substring(0, 80) + '...' : item.questionContent }}</div>
+              <div class="question-meta">
+                <el-tag :type="getTypeTagType(item.questionType)" size="mini">{{ item.questionType }}</el-tag>
+                <el-tag v-for="tag in getTagsArray(item.tags).slice(0, 2)" :key="tag" size="mini" style="margin-left: 5px;">
+                  {{ tag }}
+                </el-tag>
+              </div>
+              <div class="question-time">{{ parseTime(item.createTime, '{y}-{m}-{d} {h}:{i}') }}</div>
+            </div>
+            <div class="question-card-actions">
+              <el-button size="mini" type="text" @click="viewQuestion(item)">查看</el-button>
+              <el-button size="mini" type="text" @click="editQuestion(item)">编辑</el-button>
+            </div>
+          </div>
+        </div>
       </div>
     </el-card>
 
-    <!-- 拍照识别对话框 -->
-    <el-dialog title="📷 拍照识别题目" :visible.sync="cameraDialogVisible" width="600px" :close-on-click-modal="false">
+    <!-- 拍照对话框 -->
+    <el-dialog title="📷 拍照添加题目" :visible.sync="cameraDialogVisible" :width="dialogWidth" :close-on-click-modal="false">
       <div class="camera-section">
         <div class="camera-tip">
           <i class="el-icon-camera"></i>
           <p>点击下方按钮调用手机相机拍照</p>
-          <p class="tip-text">支持识别数学公式、文字内容等</p>
         </div>
 
         <el-upload
@@ -205,7 +224,7 @@
           accept="image/*"
           capture="camera"
         >
-          <el-button type="primary" size="large" icon="el-icon-camera">
+          <el-button type="primary" size="large" icon="el-icon-camera" block>
             点击拍照识别
           </el-button>
         </el-upload>
@@ -218,9 +237,9 @@
             v-model="cameraResult"
             placeholder="识别结果将显示在这里..."
           ></el-input>
-          <div style="margin-top: 10px;">
-            <el-button type="primary" @click="useCameraResult">使用识别结果</el-button>
-            <el-button @click="cameraResult = ''">重新识别</el-button>
+          <div class="camera-actions">
+            <el-button type="primary" @click="useCameraResult" size="small">使用识别结果</el-button>
+            <el-button @click="cameraResult = ''" size="small">重新识别</el-button>
           </div>
         </div>
       </div>
@@ -237,36 +256,34 @@ export default {
   name: "TroubleDashboard",
   data() {
     return {
-      // 统计数据
       stats: {
         totalQuestions: 0,
         todayQuestions: 0,
         thisWeekQuestions: 0,
         tagsCount: 0
       },
-      // 最近错题
       recentQuestions: [],
-      // 拍照对话框
       cameraDialogVisible: false,
       cameraResult: '',
-      // 上传配置
       uploadUrl: process.env.VUE_APP_BASE_API + "/common/upload",
       uploadHeaders: {
         Authorization: "Bearer " + getToken()
       }
     };
   },
+  computed: {
+    dialogWidth() {
+      return window.innerWidth < 768 ? '95%' : '600px';
+    }
+  },
   created() {
     this.loadData();
   },
   methods: {
-    /** 加载数据 */
     loadData() {
       this.loadStats();
       this.loadRecentQuestions();
     },
-
-    /** 加载统计数据 */
     loadStats() {
       getTroubleStatistics().then(response => {
         if (response.code === 200) {
@@ -278,7 +295,6 @@ export default {
           };
         }
       }).catch(() => {
-        // 如果API调用失败，使用默认值
         this.stats = {
           totalQuestions: 0,
           todayQuestions: 0,
@@ -287,8 +303,6 @@ export default {
         };
       });
     },
-
-    /** 加载最近错题 */
     loadRecentQuestions() {
       listQuestion({ pageNum: 1, pageSize: 5 }).then(response => {
         this.recentQuestions = response.rows || [];
@@ -296,59 +310,41 @@ export default {
         this.recentQuestions = [];
       });
     },
-
-    /** 刷新数据 */
     refreshData() {
       this.loadData();
       this.$message.success('数据已刷新');
     },
-
-    /** 跳转到添加错题页面 */
     goToAddQuestion() {
       this.$router.push('/trouble/question/add');
     },
-
-    /** 跳转到错题列表 */
     goToQuestionList() {
       this.$router.push('/trouble/question');
     },
-
-    /** 打开拍照识别对话框 */
     goToCameraAdd() {
       this.cameraDialogVisible = true;
       this.cameraResult = '';
     },
-
-    /** 查看错题详情 */
     viewQuestion(row) {
       this.$router.push({
         path: '/trouble/question',
         query: { id: row.questionId }
       });
     },
-
-    /** 编辑错题 */
     editQuestion(row) {
       this.$router.push({
         path: '/trouble/question',
         query: { edit: row.questionId }
       });
     },
-
-    /** 导出错题 */
     exportQuestions() {
       this.$router.push('/trouble/question');
       this.$nextTick(() => {
-        // 触发导出功能
         this.$message.info('请在错题列表页面点击导出按钮');
       });
     },
-
-    /** 拍照上传前检查 */
     beforeCameraUpload(file) {
       const isImage = file.type.indexOf('image/') === 0;
       const isLt10M = file.size / 1024 / 1024 < 10;
-
       if (!isImage) {
         this.$message.error('只能上传图片文件!');
         return false;
@@ -359,8 +355,6 @@ export default {
       }
       return true;
     },
-
-    /** 获取类型标签样式 */
     getTypeTagType(type) {
       const typeMap = {
         '选择题': 'success',
@@ -370,8 +364,6 @@ export default {
       };
       return typeMap[type] || 'info';
     },
-
-    /** 获取标签数组 */
     getTagsArray(tags) {
       if (!tags) return [];
       return tags.split(',').filter(tag => tag.trim());
@@ -382,38 +374,44 @@ export default {
 
 <style scoped>
 .app-container {
-  padding: 20px;
+  padding: 10px;
 }
 
 .welcome-card {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .welcome-title {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   color: #409EFF;
 }
 
+.refresh-btn {
+  float: right;
+  padding: 3px 0;
+}
+
 .welcome-content {
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .welcome-desc {
-  font-size: 16px;
+  font-size: 14px;
   color: #666;
   line-height: 1.6;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .stats-row {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .stat-card {
   text-align: center;
   border: 1px solid #e4e7ed;
   transition: all 0.3s;
+  margin-bottom: 10px;
 }
 
 .stat-card:hover {
@@ -423,38 +421,39 @@ export default {
 
 .stat-content {
   position: relative;
-  padding: 20px;
+  padding: 15px 10px;
 }
 
 .stat-number {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: bold;
   color: #409EFF;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .stat-icon {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 24px;
+  top: 15px;
+  right: 15px;
+  font-size: 20px;
   color: #c0c4cc;
 }
 
 .function-row {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .function-card {
   cursor: pointer;
   transition: all 0.3s;
   border: 1px solid #e4e7ed;
+  margin-bottom: 10px;
 }
 
 .function-card:hover {
@@ -464,26 +463,26 @@ export default {
 
 .function-content {
   text-align: center;
-  padding: 30px 20px;
+  padding: 20px 15px;
 }
 
 .function-icon {
-  font-size: 48px;
+  font-size: 36px;
   color: #409EFF;
-  margin-bottom: 15px;
-}
-
-.function-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
   margin-bottom: 10px;
 }
 
+.function-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
 .function-desc {
-  font-size: 14px;
+  font-size: 13px;
   color: #666;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   line-height: 1.5;
 }
 
@@ -492,16 +491,25 @@ export default {
 }
 
 .quick-actions {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+}
+
+.quick-btn {
+  margin-bottom: 10px;
 }
 
 .recent-questions {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+}
+
+.view-all-btn {
+  float: right;
+  padding: 3px 0;
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px;
+  padding: 30px;
   color: #999;
 }
 
@@ -511,31 +519,66 @@ export default {
   display: block;
 }
 
-.question-preview {
-  max-width: 300px;
-  word-break: break-all;
+.questions-wrapper {
+  width: 100%;
+}
+
+.desktop-table {
+  display: none;
+}
+
+.mobile-cards {
+  display: block;
+}
+
+.question-card {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #e4e7ed;
+}
+
+.question-card-content {
+  margin-bottom: 10px;
+}
+
+.question-text {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.question-meta {
+  margin-bottom: 8px;
+}
+
+.question-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.question-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .camera-section {
   text-align: center;
-  padding: 20px;
+  padding: 15px;
 }
 
 .camera-tip {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .camera-tip i {
   font-size: 48px;
   color: #409EFF;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   display: block;
-}
-
-.tip-text {
-  color: #999;
-  font-size: 12px;
-  margin-top: 5px;
 }
 
 .camera-uploader {
@@ -550,6 +593,14 @@ export default {
 .camera-result h4 {
   margin-bottom: 10px;
   color: #333;
+  font-size: 14px;
+}
+
+.camera-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
 .clearfix:before,
@@ -557,7 +608,113 @@ export default {
   display: table;
   content: "";
 }
+
 .clearfix:after {
   clear: both;
+}
+
+/* 平板设备 */
+@media (min-width: 768px) {
+  .app-container {
+    padding: 15px;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+  }
+
+  .function-icon {
+    font-size: 42px;
+  }
+
+  .function-title {
+    font-size: 17px;
+  }
+
+  .desktop-table {
+    display: table;
+  }
+
+  .mobile-cards {
+    display: none;
+  }
+}
+
+/* 桌面设备 */
+@media (min-width: 1024px) {
+  .app-container {
+    padding: 20px;
+  }
+
+  .welcome-title {
+    font-size: 24px;
+  }
+
+  .welcome-desc {
+    font-size: 16px;
+  }
+
+  .stat-content {
+    padding: 20px;
+  }
+
+  .stat-number {
+    font-size: 32px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+  }
+
+  .stat-icon {
+    font-size: 24px;
+  }
+
+  .function-content {
+    padding: 30px 20px;
+  }
+
+  .function-icon {
+    font-size: 48px;
+  }
+
+  .function-title {
+    font-size: 18px;
+  }
+
+  .function-desc {
+    font-size: 14px;
+  }
+
+  .btn-text {
+    display: inline;
+  }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 767px) {
+  .btn-text {
+    display: none;
+  }
+
+  .quick-btn {
+    padding: 8px 10px;
+  }
+
+  .camera-actions {
+    flex-direction: column;
+  }
+
+  .camera-actions .el-button {
+    width: 100%;
+  }
 }
 </style>

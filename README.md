@@ -18,7 +18,8 @@
 
 ### 技术架构
 * 前端采用Vue、Element UI
-* 后端采用Spring Boot、Spring Security、Redis & Jwt
+* 后端采用Spring Boot、Spring Security、Redis & Jwt、React
+* 数据库采用Mysql关系型数据库
 * 权限认证使用Jwt，支持多终端认证系统
 * 支持加载动态权限菜单，多方式轻松权限控制
 * 基于若依框架开发，保证系统稳定性和可扩展性
@@ -37,13 +38,12 @@
 ## TODO
 
 ### 增量1：完善首页与“添加错题”功能
-- [ ] 设计首页布局与导航栏（Home Page UI）
+- [x] 设计产品首页（Product GUI）
+- [X] 设计应用首页（App GUI）
 - [x] 初始化后端管理页面
 - [x] 增加“添加错题”功能
 - [x] 连接后端 API，实现前端的错题创建功能
 - [x] 添加错题成功提示与跳转逻辑
-- [ ] OCR
-- [ ] Latex
 
 ### 增量2：错题管理功能
 - [ ] 实现错题列表展示（分页、搜索、过滤）
