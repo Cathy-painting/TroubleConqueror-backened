@@ -5,71 +5,17 @@
         <span>添加错题</span>
         <el-button style="float: right; padding: 3px 0" type="text" @click="goBack">返回列表</el-button>
       </div>
-      
+
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row :gutter="20">
           <el-col :span="24">
             <el-form-item label="题目内容" prop="questionContent">
-              <div class="question-content-section">
-                <el-input 
-                  v-model="form.questionContent" 
-                  type="textarea" 
-                  :rows="6" 
-                  placeholder="请输入题目内容，或点击下方OCR识别按钮上传图片识别"
-                  show-word-limit
-                  maxlength="2000"
-                />
-                <div class="ocr-actions" style="margin-top: 10px;">
-                  <el-button 
-                    size="small" 
-                    type="primary" 
-                    icon="el-icon-camera" 
-                    @click="openOcrDialog"
-                  >
-                    📷 OCR图片识别
-                  </el-button>
-                  <span style="margin-left: 10px; color: #909399; font-size: 12px;">
-                    上传图片自动识别题目内容
-                  </span>
-                </div>
-              </div>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="题目类型" prop="questionType">
-              <el-input v-model="form.questionType" placeholder="如：数学、英语、语文等" maxlength="50"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="难度等级">
-              <el-select v-model="form.difficulty" placeholder="请选择难度" style="width: 100%">
-                <el-option label="简单" value="简单"></el-option>
-                <el-option label="中等" value="中等"></el-option>
-                <el-option label="困难" value="困难"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="标签">
-              <el-input v-model="form.tags" placeholder="多个标签用逗号分隔，如：函数,应用题" maxlength="200"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="答案内容">
-              <el-input 
-                v-model="form.answerContent" 
-                type="textarea" 
-                :rows="4" 
-                placeholder="请输入答案内容"
+              <el-input
+                v-model="form.questionContent"
+                type="textarea"
+                :rows="6"
+                placeholder="请输入题目内容，支持拍照识别"
+                show-word-limit
                 maxlength="2000"
               />
             </el-form-item>
@@ -77,102 +23,89 @@
         </el-row>
 
         <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="备注信息" maxlength="500"/>
+          <el-col :span="12">
+            <el-form-item label="题目图片">
+              <image-upload v-model="form.questionImages" :limit="1"/>
+              <div class="upload-tip">支持拍照上传，最多1张图片</div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="答案图片">
+              <image-upload v-model="form.answerImages" :limit="1"/>
+              <div class="upload-tip">支持拍照上传，最多1张图片</div>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-form-item>
-          <el-button type="primary" @click="submitForm" :loading="submitLoading">提交</el-button>
-          <el-button @click="resetForm">重置</el-button>
-          <el-button @click="goBack">取消</el-button>
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="答案内容">
+              <el-input
+                v-model="form.answerContent"
+                type="textarea"
+                :rows="4"
+                placeholder="请输入答案内容或解析"
+                show-word-limit
+                maxlength="2000"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="题目类型" prop="questionType">
+              <el-select v-model="form.questionType" placeholder="请选择题目类型" style="width: 100%">
+                <el-option label="未区分" value="未区分" />
+                <el-option label="选择题" value="选择题" />
+                <el-option label="填空题" value="填空题" />
+                <el-option label="解答题" value="解答题" />
+                <el-option label="其他" value="其他" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="标签">
+              <el-input
+                v-model="form.tags"
+                placeholder="请输入标签，多个用逗号分隔，如：数学,几何,难题"
+                @input="handleTagsInput"
+              />
+              <div class="tag-tip">建议标签：数学、语文、英语、物理、化学、生物、历史、地理、政治等</div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="备注">
+              <el-input
+                v-model="form.remark"
+                type="textarea"
+                :rows="2"
+                placeholder="请输入备注信息（可选）"
+                maxlength="500"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+
+        <el-row>
+          <el-col :span="24" style="text-align: center;">
+            <el-button type="primary" @click="submitForm" :loading="submitLoading">保存错题</el-button>
+            <el-button @click="resetForm">重置</el-button>
+            <el-button @click="goBack">取消</el-button>
+          </el-col>
+        </el-row>
       </el-form>
     </el-card>
-
-    <!-- OCR识别对话框 -->
-    <el-dialog
-      title="OCR图片识别"
-      :visible.sync="ocrDialogVisible"
-      width="600px"
-      :close-on-click-modal="false"
-    >
-      <div class="ocr-dialog-content">
-        <div class="upload-section">
-          <el-upload
-            class="upload-demo"
-            drag
-            action="#"
-            :auto-upload="false"
-            :on-change="handleFileChange"
-            :show-file-list="false"
-            accept="image/*"
-          >
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将图片拖到此处，或<em>点击上传</em>
-            </div>
-            <div class="el-upload__tip" slot="tip">
-              支持jpg、png、bmp格式，文件大小不超过10MB
-              <br>
-              <span style="color: #E6A23C;">提示：文件名包含"数学"、"英语"、"语文"、"物理"等关键词可获得对应学科的示例题目</span>
-            </div>
-          </el-upload>
-        </div>
-
-        <div v-if="selectedFile" class="file-info">
-          <el-alert
-            :title="`已选择文件: ${selectedFile.name}`"
-            type="success"
-            :closable="false"
-            show-icon
-          />
-        </div>
-
-        <div v-if="ocrLoading" class="ocr-loading">
-          <el-progress :percentage="ocrProgress" :status="ocrProgress === 100 ? 'success' : ''"></el-progress>
-          <p style="text-align: center; margin-top: 10px;">正在识别中，请稍候...</p>
-        </div>
-
-        <div v-if="ocrResult" class="ocr-result">
-          <el-divider>识别结果</el-divider>
-          <el-input
-            v-model="ocrResult"
-            type="textarea"
-            :rows="10"
-            placeholder="识别结果将显示在这里"
-          />
-          <div style="margin-top: 10px; text-align: right;">
-            <el-button size="small" type="primary" @click="useOcrResult">
-              使用此内容
-            </el-button>
-            <el-button size="small" @click="resetOcr">
-              重新识别
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="closeOcrDialog">取消</el-button>
-        <el-button 
-          type="primary" 
-          @click="startOcrRecognition" 
-          :loading="ocrLoading"
-          :disabled="!selectedFile || ocrLoading"
-        >
-          开始识别
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { addQuestion } from "@/api/trouble/question";
-import request from '@/utils/request';
 
 export default {
   name: "QuestionAdd",
@@ -181,131 +114,32 @@ export default {
       // 表单参数
       form: {
         questionContent: '',
-        questionType: '',
-        difficulty: '',
-        tags: '',
+        questionImages: '',
         answerContent: '',
+        answerImages: '',
+        questionType: '未区分',
+        tags: '',
         remark: ''
       },
       // 表单校验
       rules: {
         questionContent: [
           { required: true, message: "题目内容不能为空", trigger: "blur" }
-        ],
-        questionType: [
-          { required: true, message: "题目类型不能为空", trigger: "blur" }
         ]
       },
       // 提交状态
-      submitLoading: false,
-      
-      // OCR相关
-      ocrDialogVisible: false,
-      selectedFile: null,
-      ocrLoading: false,
-      ocrProgress: 0,
-      ocrResult: ''
+      submitLoading: false
     };
   },
   methods: {
-    /** 打开OCR对话框 */
-    openOcrDialog() {
-      this.ocrDialogVisible = true;
-      this.resetOcr();
-    },
-
-    /** 关闭OCR对话框 */
-    closeOcrDialog() {
-      this.ocrDialogVisible = false;
-      this.resetOcr();
-    },
-
-    /** 重置OCR状态 */
-    resetOcr() {
-      this.selectedFile = null;
-      this.ocrLoading = false;
-      this.ocrProgress = 0;
-      this.ocrResult = '';
-    },
-
-    /** 文件选择处理 */
-    handleFileChange(file, fileList) {
-      this.selectedFile = file.raw;
-      this.ocrResult = '';
-    },
-
-    /** 开始OCR识别 */
-    async startOcrRecognition() {
-      if (!this.selectedFile) {
-        this.$message.warning('请先选择图片文件');
-        return;
-      }
-
-      // 验证文件大小
-      if (this.selectedFile.size > 10 * 1024 * 1024) {
-        this.$message.error('文件大小不能超过10MB');
-        return;
-      }
-
-      this.ocrLoading = true;
-      this.ocrProgress = 0;
-
-      // 模拟进度条
-      const progressInterval = setInterval(() => {
-        if (this.ocrProgress < 90) {
-          this.ocrProgress += 10;
-        }
-      }, 200);
-
-      try {
-        // 创建FormData
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-
-        // 调用OCR API
-        const response = await request({
-          url: '/trouble/ocr/recognize',
-          method: 'post',
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-
-        clearInterval(progressInterval);
-        this.ocrProgress = 100;
-
-        if (response.code === 200) {
-          this.ocrResult = response.data.recognizedText || '';
-          this.$message.success('OCR识别成功！');
-        } else {
-          this.$message.error(response.msg || 'OCR识别失败');
-        }
-      } catch (error) {
-        clearInterval(progressInterval);
-        console.error('OCR识别错误:', error);
-        this.$message.error('OCR识别失败: ' + (error.message || '未知错误'));
-      } finally {
-        this.ocrLoading = false;
-      }
-    },
-
-    /** 使用OCR识别结果 */
-    useOcrResult() {
-      if (this.ocrResult) {
-        this.form.questionContent = this.ocrResult;
-        this.$message.success('已将识别内容填入题目内容');
-        this.closeOcrDialog();
-      }
-    },
-
     /** 提交表单 */
     submitForm() {
-      this.$refs.form.validate(valid => {
+      this.$refs["form"].validate(valid => {
         if (valid) {
           this.submitLoading = true;
           addQuestion(this.form).then(response => {
-            this.$message.success("添加成功");
+            this.$modal.msgSuccess("错题添加成功");
+            this.submitLoading = false;
             this.goBack();
           }).catch(() => {
             this.submitLoading = false;
@@ -313,67 +147,105 @@ export default {
         }
       });
     },
-
     /** 重置表单 */
     resetForm() {
       this.form = {
         questionContent: '',
-        questionType: '',
-        difficulty: '',
-        tags: '',
+        questionImages: '',
         answerContent: '',
+        answerImages: '',
+        questionType: '未区分',
+        tags: '',
         remark: ''
       };
-      this.$refs.form.resetFields();
+      this.$refs["form"].resetFields();
     },
-
     /** 返回列表 */
     goBack() {
       this.$router.push('/trouble/question');
-    }
+    },
+    /** 处理标签输入 */
+    handleTagsInput(value) {
+
+    },
   }
 };
 </script>
 
 <style scoped>
-.question-content-section {
-  width: 100%;
+.box-card {
+  margin: 20px;
 }
 
-.ocr-actions {
-  display: flex;
-  align-items: center;
-}
-
-.upload-tip {
+.upload-tip, .tag-tip {
   font-size: 12px;
-  color: #909399;
+  color: #999;
   margin-top: 5px;
 }
 
-.ocr-dialog-content {
-  min-height: 200px;
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
 }
 
-.upload-section {
-  margin-bottom: 20px;
+@media (max-width: 768px) {
+  .box-card {
+    margin: 10px;
+  }
+
+  .el-form-item {
+    margin-bottom: 15px;
+  }
+
+  .el-input,
+  .el-textarea,
+  .el-select {
+    width: 100%;
+  }
+
+  .el-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .el-row {
+    margin: 0;
+  }
+
+  .el-col {
+    padding: 0 5px;
+  }
 }
 
-.file-info {
-  margin: 15px 0;
+@media (min-width: 769px) and (max-width: 1024px) {
+  .box-card {
+    margin: 15px;
+  }
+
+  .el-form-item {
+    margin-bottom: 12px;
+  }
 }
 
-.ocr-loading {
-  margin: 20px 0;
+.el-form-item__label {
+  font-weight: 500;
 }
 
-.ocr-result {
-  margin-top: 20px;
+.el-textarea__inner {
+  resize: vertical;
 }
 
-.el-upload__tip {
-  font-size: 12px;
-  color: #606266;
-  margin-top: 7px;
+.el-button + .el-button {
+  margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+  .el-button + .el-button {
+    margin-left: 0;
+  }
 }
 </style>

@@ -40,8 +40,8 @@
 - [ ] 设计首页布局与导航栏（Home Page UI）
 - [x] 初始化后端管理页面
 - [x] 增加“添加错题”功能
-- [ ] 连接后端 API，实现错题创建功能
-- [ ] 添加错题成功提示与跳转逻辑
+- [x] 连接后端 API，实现前端的错题创建功能
+- [x] 添加错题成功提示与跳转逻辑
 - [ ] OCR
 - [ ] Latex
 
@@ -65,10 +65,28 @@
 - [ ] 题目选择功能（支持批量勾选错题）
 - [ ] 组卷逻辑实现（生成练习卷）
 - [ ] 支持练习模式（限时 / 复习）
+  - [ ] 记录练习结果与错题回流机制
 - [ ] 实现导出为 PDF（Export as PDF）
-- [ ] 添加打印样式（Print-friendly Layout）
-- [ ] 记录练习结果与错题回流机制
 
+## 开发团队
+
+<p align="left">
+
+  <a href="https://github.com/Elowen-yu">
+    <img src="https://img.shields.io/badge/Elowen--yu-%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%EF%BC%88Product%20Manager%EF%BC%89-9cf" alt="Elowen">
+  </a>
+  <br>
+
+  <a href="https://github.com/Cathy-painting">
+    <img src="https://img.shields.io/badge/Cathy--painting-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E4%B8%8E%E6%B5%8B%E8%AF%95%EF%BC%88DBA%20%26%20Tester%EF%BC%89-pink" alt="Cathy">
+  </a>
+  <br>
+
+  <a href="https://github.com/MakiWinster72">
+    <img src="https://img.shields.io/badge/MakiWinster72-%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90%E5%B8%88%EF%BC%88System%20Analyst%EF%BC%89-brightgreen" alt="Maki">
+  </a>
+
+</p>
 
 ## 贡献指南
 
@@ -83,3 +101,4 @@
 ## 许可证
 
 本项目基于 MIT 许可证开源 - 查看 [LICENSE](LICENSE) 文件了解详情
+此外，项目底层框架基于 若依（RuoYi） 框架进行二次开发与扩展，遵循其开源协议与使用规范。

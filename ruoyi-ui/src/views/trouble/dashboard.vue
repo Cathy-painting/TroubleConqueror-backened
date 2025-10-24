@@ -7,13 +7,13 @@
           <i class="el-icon-refresh"></i> 刷新
         </el-button>
       </div>
-      
+
       <div class="welcome-content">
         <p class="welcome-desc">
           专为中小学生设计的智能错题管理系统，帮助用户高效管理错题、提升学习效率。
           支持文本输入和拍照识别添加错题，智能分类管理，多维度统计分析。
         </p>
-        
+
         <!-- 统计卡片 -->
         <el-row :gutter="20" class="stats-row">
           <el-col :span="6">
@@ -72,7 +72,7 @@
           </div>
         </el-card>
       </el-col>
-      
+
       <el-col :span="8">
         <el-card class="function-card" shadow="hover" @click.native="goToQuestionList">
           <div class="function-content">
@@ -87,7 +87,7 @@
           </div>
         </el-card>
       </el-col>
-      
+
       <el-col :span="8">
         <el-card class="function-card" shadow="hover" @click.native="goToCameraAdd">
           <div class="function-content">
@@ -109,7 +109,7 @@
       <div slot="header" class="clearfix">
         <span>🚀 快速操作</span>
       </div>
-      
+
       <el-row :gutter="15">
         <el-col :span="6">
           <el-button type="primary" icon="el-icon-edit" size="medium" @click="goToAddQuestion" block>
@@ -142,12 +142,12 @@
           查看全部 <i class="el-icon-arrow-right"></i>
         </el-button>
       </div>
-      
+
       <div v-if="recentQuestions.length === 0" class="empty-state">
         <i class="el-icon-document"></i>
         <p>还没有添加错题，点击上方按钮开始添加吧！</p>
       </div>
-      
+
       <div v-else>
         <el-table :data="recentQuestions" style="width: 100%">
           <el-table-column prop="questionContent" label="题目内容" :show-overflow-tooltip="true">
@@ -194,7 +194,7 @@
           <p>点击下方按钮调用手机相机拍照</p>
           <p class="tip-text">支持识别数学公式、文字内容等</p>
         </div>
-        
+
         <el-upload
           class="camera-uploader"
           :action="uploadUrl"
@@ -209,7 +209,7 @@
             点击拍照识别
           </el-button>
         </el-upload>
-        
+
         <div v-if="cameraResult" class="camera-result">
           <h4>识别结果：</h4>
           <el-input
@@ -265,7 +265,7 @@ export default {
       this.loadStats();
       this.loadRecentQuestions();
     },
-    
+
     /** 加载统计数据 */
     loadStats() {
       getTroubleStatistics().then(response => {
@@ -287,7 +287,7 @@ export default {
         };
       });
     },
-    
+
     /** 加载最近错题 */
     loadRecentQuestions() {
       listQuestion({ pageNum: 1, pageSize: 5 }).then(response => {
@@ -296,29 +296,29 @@ export default {
         this.recentQuestions = [];
       });
     },
-    
+
     /** 刷新数据 */
     refreshData() {
       this.loadData();
       this.$message.success('数据已刷新');
     },
-    
+
     /** 跳转到添加错题页面 */
     goToAddQuestion() {
       this.$router.push('/trouble/question/add');
     },
-    
+
     /** 跳转到错题列表 */
     goToQuestionList() {
       this.$router.push('/trouble/question');
     },
-    
+
     /** 打开拍照识别对话框 */
     goToCameraAdd() {
       this.cameraDialogVisible = true;
       this.cameraResult = '';
     },
-    
+
     /** 查看错题详情 */
     viewQuestion(row) {
       this.$router.push({
@@ -326,7 +326,7 @@ export default {
         query: { id: row.questionId }
       });
     },
-    
+
     /** 编辑错题 */
     editQuestion(row) {
       this.$router.push({
@@ -334,7 +334,7 @@ export default {
         query: { edit: row.questionId }
       });
     },
-    
+
     /** 导出错题 */
     exportQuestions() {
       this.$router.push('/trouble/question');
@@ -343,12 +343,12 @@ export default {
         this.$message.info('请在错题列表页面点击导出按钮');
       });
     },
-    
+
     /** 拍照上传前检查 */
     beforeCameraUpload(file) {
       const isImage = file.type.indexOf('image/') === 0;
       const isLt10M = file.size / 1024 / 1024 < 10;
-      
+
       if (!isImage) {
         this.$message.error('只能上传图片文件!');
         return false;
@@ -359,27 +359,7 @@ export default {
       }
       return true;
     },
-    
-    /** 拍照识别成功 */
-    handleCameraSuccess(response, file) {
-      if (response.code === 200) {
-        // 模拟OCR识别结果
-        this.cameraResult = `识别到的题目内容：\n${response.data || '这是一道数学题，请计算...'}`;
-        this.$message.success('图片上传成功，正在识别...');
-      } else {
-        this.$message.error(response.msg || '图片上传失败');
-      }
-    },
-    
-    /** 使用识别结果 */
-    useCameraResult() {
-      this.cameraDialogVisible = false;
-      this.$router.push({
-        path: '/trouble/question/add',
-        query: { content: this.cameraResult }
-      });
-    },
-    
+
     /** 获取类型标签样式 */
     getTypeTagType(type) {
       const typeMap = {
@@ -390,7 +370,7 @@ export default {
       };
       return typeMap[type] || 'info';
     },
-    
+
     /** 获取标签数组 */
     getTagsArray(tags) {
       if (!tags) return [];

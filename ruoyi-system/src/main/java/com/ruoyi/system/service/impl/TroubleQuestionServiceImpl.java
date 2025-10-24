@@ -151,33 +151,4 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
 
         return result;
     }
-
-    /**
-     * 基于OCR识别结果创建错题
-     * 
-     * @param ocrText OCR识别的文本
-     * @param imagePath 图片路径
-     * @param userId 用户ID
-     * @param questionType 题目类型
-     * @param tags 标签
-     * @return 错题对象
-     */
-    @Override
-    public TroubleQuestion createQuestionFromOcr(String ocrText, String imagePath, Long userId, String questionType, String tags)
-    {
-        TroubleQuestion question = new TroubleQuestion();
-        question.setUserId(userId);
-        question.setQuestionContent(ocrText);
-        question.setQuestionImages(imagePath);
-        question.setQuestionType(questionType != null ? questionType : "OCR识别");
-        question.setTags(tags != null ? tags : "OCR");
-        question.setStatus("0");
-        question.setCreateBy(SecurityUtils.getUsername());
-        question.setCreateTime(DateUtils.getNowDate());
-        
-        // 插入数据库
-        int result = troubleQuestionMapper.insertTroubleQuestion(question);
-        
-        return result > 0 ? question : null;
-    }
 }
