@@ -188,7 +188,6 @@ export default {
         }
       });
     },
-
     /** 重置表单 */
     resetForm() {
       this.form = {
@@ -205,7 +204,6 @@ export default {
         if (this.$refs.form) this.$refs.form.resetFields();
       });
     },
-
     /** 返回列表 */
     goBack() {
       this.$router.push("/trouble/question");
