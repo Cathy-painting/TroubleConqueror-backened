@@ -1,11 +1,21 @@
 <template>
-  <div class="app-container">
+  <div class="dashboard-wrapper">
+    <!-- 顶部操作栏 -->
+    <div class="dashboard-header">
+      <div class="header-title">🎯 错题征服者</div>
+      <div class="header-actions">
+        <el-button type="text" @click="refreshData" class="header-btn">
+          <i class="el-icon-refresh"></i> 刷新
+        </el-button>
+        <el-button type="text" @click="handleLogout" class="header-btn logout-btn">
+          <i class="el-icon-switch-button"></i> 退出登录
+        </el-button>
+      </div>
+    </div>
+    <div class="app-container">
     <el-card class="welcome-card">
       <div slot="header" class="clearfix">
-        <span class="welcome-title">🎯 错题征服者</span>
-        <el-button class="refresh-btn" type="text" @click="refreshData">
-          <i class="el-icon-refresh"></i>
-        </el-button>
+        <span class="welcome-title">欢迎使用错题管理系统</span>
       </div>
 
       <div class="welcome-content">
@@ -56,8 +66,8 @@
     </el-card>
 
     <!-- 功能按钮区域 -->
-    <el-row :gutter="10" class="function-row">
-      <el-col :xs="24" :sm="8" :md="8" :lg="8">
+    <el-row :gutter="20" class="function-row">
+      <el-col :xs="24" :sm="12" :md="12" :lg="12">
         <el-card class="function-card" shadow="hover" @click.native="goToAddQuestion">
           <div class="function-content">
             <div class="function-icon">
@@ -72,7 +82,7 @@
         </el-card>
       </el-col>
 
-      <el-col :xs="24" :sm="8" :md="8" :lg="8">
+      <el-col :xs="24" :sm="12" :md="12" :lg="12">
         <el-card class="function-card" shadow="hover" @click.native="goToQuestionList">
           <div class="function-content">
             <div class="function-icon">
@@ -86,52 +96,7 @@
           </div>
         </el-card>
       </el-col>
-
-      <el-col :xs="24" :sm="8" :md="8" :lg="8">
-        <el-card class="function-card" shadow="hover" @click.native="goToCameraAdd">
-          <div class="function-content">
-            <div class="function-icon">
-              <i class="el-icon-camera"></i>
-            </div>
-            <div class="function-title">拍照添加</div>
-            <div class="function-desc">拍照记录错题，更快更方便</div>
-            <el-button type="warning" size="medium" class="function-btn">
-              <i class="el-icon-camera"></i> 拍照
-            </el-button>
-          </div>
-        </el-card>
-      </el-col>
     </el-row>
-
-    <!-- 快速操作区域 -->
-    <el-card class="quick-actions">
-      <div slot="header" class="clearfix">
-        <span>🚀 快速操作</span>
-      </div>
-
-      <el-row :gutter="10">
-        <el-col :xs="12" :sm="6" :md="6" :lg="6">
-          <el-button type="primary" icon="el-icon-edit" size="small" @click="goToAddQuestion" block class="quick-btn">
-            <span class="btn-text">手动添加</span>
-          </el-button>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="6" :lg="6">
-          <el-button type="success" icon="el-icon-view" size="small" @click="goToQuestionList" block class="quick-btn">
-            <span class="btn-text">查看列表</span>
-          </el-button>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="6" :lg="6">
-          <el-button type="warning" icon="el-icon-camera" size="small" @click="goToCameraAdd" block class="quick-btn">
-            <span class="btn-text">拍照添加</span>
-          </el-button>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="6" :lg="6">
-          <el-button type="info" icon="el-icon-download" size="small" @click="exportQuestions" block class="quick-btn">
-            <span class="btn-text">导出数据</span>
-          </el-button>
-        </el-col>
-      </el-row>
-    </el-card>
 
     <!-- 最近错题展示 -->
     <el-card class="recent-questions">
@@ -205,45 +170,7 @@
         </div>
       </div>
     </el-card>
-
-    <!-- 拍照对话框 -->
-    <el-dialog title="📷 拍照添加题目" :visible.sync="cameraDialogVisible" :width="dialogWidth" :close-on-click-modal="false">
-      <div class="camera-section">
-        <div class="camera-tip">
-          <i class="el-icon-camera"></i>
-          <p>点击下方按钮调用手机相机拍照</p>
-        </div>
-
-        <el-upload
-          class="camera-uploader"
-          :action="uploadUrl"
-          :headers="uploadHeaders"
-          :show-file-list="false"
-          :on-success="handleCameraSuccess"
-          :before-upload="beforeCameraUpload"
-          accept="image/*"
-          capture="camera"
-        >
-          <el-button type="primary" size="large" icon="el-icon-camera" block>
-            点击拍照识别
-          </el-button>
-        </el-upload>
-
-        <div v-if="cameraResult" class="camera-result">
-          <h4>识别结果：</h4>
-          <el-input
-            type="textarea"
-            :rows="4"
-            v-model="cameraResult"
-            placeholder="识别结果将显示在这里..."
-          ></el-input>
-          <div class="camera-actions">
-            <el-button type="primary" @click="useCameraResult" size="small">使用识别结果</el-button>
-            <el-button @click="cameraResult = ''" size="small">重新识别</el-button>
-          </div>
-        </div>
-      </div>
-    </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -262,19 +189,8 @@ export default {
         thisWeekQuestions: 0,
         tagsCount: 0
       },
-      recentQuestions: [],
-      cameraDialogVisible: false,
-      cameraResult: '',
-      uploadUrl: process.env.VUE_APP_BASE_API + "/common/upload",
-      uploadHeaders: {
-        Authorization: "Bearer " + getToken()
-      }
+      recentQuestions: []
     };
-  },
-  computed: {
-    dialogWidth() {
-      return window.innerWidth < 768 ? '95%' : '600px';
-    }
   },
   created() {
     this.loadData();
@@ -320,10 +236,6 @@ export default {
     goToQuestionList() {
       this.$router.push('/trouble/question');
     },
-    goToCameraAdd() {
-      this.cameraDialogVisible = true;
-      this.cameraResult = '';
-    },
     viewQuestion(row) {
       this.$router.push({
         path: '/trouble/question',
@@ -335,25 +247,6 @@ export default {
         path: '/trouble/question',
         query: { edit: row.questionId }
       });
-    },
-    exportQuestions() {
-      this.$router.push('/trouble/question');
-      this.$nextTick(() => {
-        this.$message.info('请在错题列表页面点击导出按钮');
-      });
-    },
-    beforeCameraUpload(file) {
-      const isImage = file.type.indexOf('image/') === 0;
-      const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isImage) {
-        this.$message.error('只能上传图片文件!');
-        return false;
-      }
-      if (!isLt10M) {
-        this.$message.error('上传图片大小不能超过 10MB!');
-        return false;
-      }
-      return true;
     },
     getTypeTagType(type) {
       const typeMap = {
@@ -367,14 +260,79 @@ export default {
     getTagsArray(tags) {
       if (!tags) return [];
       return tags.split(',').filter(tag => tag.trim());
+    },
+    handleLogout() {
+      this.$confirm('确定要退出登录吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.dispatch('LogOut').then(() => {
+          this.$router.push('/login');
+        });
+      }).catch(() => {});
     }
   }
 };
 </script>
 
 <style scoped>
+.dashboard-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.dashboard-header {
+  background-color: #fff;
+  height: 60px;
+  line-height: 60px;
+  padding: 0 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #409EFF;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-btn {
+  color: #606266;
+  padding: 8px 12px;
+}
+
+.header-btn:hover {
+  color: #409EFF;
+}
+
+.logout-btn {
+  color: #f56c6c;
+}
+
+.logout-btn:hover {
+  color: #f78989;
+}
+
 .app-container {
-  padding: 10px;
+  padding: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .welcome-card {
@@ -446,7 +404,7 @@ export default {
 }
 
 .function-row {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .function-card {
@@ -454,6 +412,7 @@ export default {
   transition: all 0.3s;
   border: 1px solid #e4e7ed;
   margin-bottom: 10px;
+  height: 100%;
 }
 
 .function-card:hover {
@@ -463,39 +422,33 @@ export default {
 
 .function-content {
   text-align: center;
-  padding: 20px 15px;
+  padding: 30px 20px;
 }
 
 .function-icon {
-  font-size: 36px;
+  font-size: 48px;
   color: #409EFF;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .function-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .function-desc {
-  font-size: 13px;
+  font-size: 14px;
   color: #666;
-  margin-bottom: 15px;
-  line-height: 1.5;
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
 .function-btn {
   width: 100%;
-}
-
-.quick-actions {
-  margin-bottom: 15px;
-}
-
-.quick-btn {
-  margin-bottom: 10px;
+  height: 40px;
+  font-size: 15px;
 }
 
 .recent-questions {
@@ -563,44 +516,6 @@ export default {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-}
-
-.camera-section {
-  text-align: center;
-  padding: 15px;
-}
-
-.camera-tip {
-  margin-bottom: 20px;
-}
-
-.camera-tip i {
-  font-size: 48px;
-  color: #409EFF;
-  margin-bottom: 10px;
-  display: block;
-}
-
-.camera-uploader {
-  margin-bottom: 20px;
-}
-
-.camera-result {
-  margin-top: 20px;
-  text-align: left;
-}
-
-.camera-result h4 {
-  margin-bottom: 10px;
-  color: #333;
-  font-size: 14px;
-}
-
-.camera-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
 }
 
 .clearfix:before,
@@ -701,20 +616,32 @@ export default {
 
 /* 小屏幕优化 */
 @media (max-width: 767px) {
-  .btn-text {
-    display: none;
+  .dashboard-header {
+    padding: 0 10px;
+    height: 50px;
+    line-height: 50px;
+  }
+
+  .header-title {
+    font-size: 16px;
+  }
+
+  .header-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .header-btn i {
+    margin-right: 4px;
   }
 
   .quick-btn {
-    padding: 8px 10px;
+    height: 45px;
+    font-size: 14px;
   }
 
-  .camera-actions {
-    flex-direction: column;
-  }
-
-  .camera-actions .el-button {
-    width: 100%;
+  .app-container {
+    padding: 10px;
   }
 }
 </style>

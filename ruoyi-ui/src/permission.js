@@ -19,7 +19,7 @@ router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
-    /* has token*/
+    /* has token */
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done()
@@ -28,26 +28,41 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) {
         isRelogin.show = true
-        // 判断当前用户是否已拉取完user_info信息
+        // 判断当前用户是否已拉取完 user_info 信息
         store.dispatch('GetInfo').then(() => {
           isRelogin.show = false
           store.dispatch('GenerateRoutes').then(accessRoutes => {
-            // 根据roles权限生成可访问的路由表
+            // 根据 roles 权限生成可访问的路由表
             router.addRoutes(accessRoutes) // 动态添加可访问路由表
-            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+
+            // 根据用户角色决定跳转页面
+            const roles = store.getters.roles
+            let redirectPath = '/index' // 默认跳转到首页
+
+            // 如果不是 admin 用户，跳转到 trouble/dashboard
+            if (!roles.includes('admin')) {
+              redirectPath = '/trouble/dashboard'
+            }
+
+            // 如果存在原始重定向地址，优先使用
+            if (to.query.redirect) {
+              redirectPath = decodeURIComponent(to.query.redirect)
+            }
+
+            next({ path: redirectPath, replace: true })
           })
         }).catch(err => {
-            store.dispatch('LogOut').then(() => {
-              Message.error(err)
-              next({ path: '/' })
-            })
+          store.dispatch('LogOut').then(() => {
+            Message.error(err)
+            next({ path: '/' })
           })
+        })
       } else {
         next()
       }
     }
   } else {
-    // 没有token
+    // 没有 token
     if (isWhiteList(to.path)) {
       // 在免登录白名单，直接进入
       next()

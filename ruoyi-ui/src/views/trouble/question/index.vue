@@ -47,6 +47,16 @@
     <el-row :gutter="10" class="mb8 action-buttons">
       <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3">
         <el-button
+          type="info"
+          plain
+          icon="el-icon-house"
+          size="mini"
+          @click="goToDashboard"
+          class="full-width-btn"
+        >返回主页</el-button>
+      </el-col>
+      <el-col :xs="12" :sm="6" :md="4" :lg="3" :xl="3">
+        <el-button
           type="primary"
           plain
           icon="el-icon-plus"
@@ -431,6 +441,9 @@ export default {
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
+    goToDashboard() {
+      this.$router.push("/trouble/dashboard");
+    },
     handleAdd() {
       this.reset();
       this.open = true;

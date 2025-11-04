@@ -4,13 +4,22 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix header-row">
           <span class="card-title">添加错题</span>
-          <el-button
-            style="float: right; padding: 3px 0"
-            type="text"
-            @click="goBack"
-          >
-            返回列表
-          </el-button>
+          <div class="header-buttons">
+            <el-button
+              style="margin-right: 10px; padding: 3px 0"
+              type="text"
+              @click="goToDashboard"
+            >
+              <i class="el-icon-house"></i> 返回主页
+            </el-button>
+            <el-button
+              style="padding: 3px 0"
+              type="text"
+              @click="goBack"
+            >
+              返回列表
+            </el-button>
+          </div>
         </div>
 
         <el-form
@@ -116,12 +125,24 @@
 
             <el-col :xs="24" :sm="12" :md="12">
               <el-form-item label="标签">
-                <el-input
-                  v-model="form.tags"
-                  placeholder="请输入标签，多个用逗号分隔"
-                  @input="handleTagsInput"
-                />
-                <div class="tag-tip">建议标签：数学、语文、英语、物理等</div>
+                <el-select
+                  v-model="selectedTags"
+                  multiple
+                  filterable
+                  allow-create
+                  default-first-option
+                  placeholder="请选择或输入标签"
+                  style="width: 100%"
+                  @change="handleTagsChange"
+                >
+                  <el-option
+                    v-for="tag in defaultTags"
+                    :key="tag"
+                    :label="tag"
+                    :value="tag"
+                  />
+                </el-select>
+                <div class="tag-tip">可以选择默认标签或自定义标签</div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -191,6 +212,8 @@ export default {
       },
       submitLoading: false,
       isMobile: false,
+      selectedTags: [],
+      defaultTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"],
     };
   },
   computed: {
@@ -288,6 +311,7 @@ export default {
         tags: "",
         remark: "",
       };
+      this.selectedTags = [];
       this.$nextTick(() => {
         if (this.$refs.form) this.$refs.form.resetFields();
       });
@@ -295,20 +319,19 @@ export default {
     goBack() {
       this.$router.push("/trouble/question");
     },
-    handleTagsInput(value) {
-      if (typeof value !== "string") return;
-      let raw = value.replace(/，/g, ",");
-      const arr = raw
-        .split(",")
-        .map((t) => t.trim())
-        .filter((t) => t.length > 0);
-      const unique = Array.from(new Set(arr));
-      const maxTags = 8;
-      if (unique.length > maxTags) {
-        unique.length = maxTags;
-        this.$message.info(`标签数量已限制为 ${maxTags} 个`);
+    goToDashboard() {
+      this.$router.push("/trouble/dashboard");
+    },
+    handleTagsChange(value) {
+      if (Array.isArray(value)) {
+        const maxTags = 8;
+        if (value.length > maxTags) {
+          value = value.slice(0, maxTags);
+          this.selectedTags = value;
+          this.$message.info(`标签数量已限制为 ${maxTags} 个`);
+        }
+        this.form.tags = value.join(",");
       }
-      this.form.tags = unique.join(",");
     },
   },
 };
@@ -337,6 +360,10 @@ export default {
   font-size: 18px;
   font-weight: 600;
   color: #333;
+}
+.header-buttons {
+  display: flex;
+  align-items: center;
 }
 
 .image-upload-full {
