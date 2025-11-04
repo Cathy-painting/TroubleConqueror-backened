@@ -214,50 +214,54 @@ export default {
     checkIsMobile() {
       this.isMobile = window.matchMedia("(max-width: 767px)").matches;
     },
-async handleOCR(target) {
-  // target = 'question' 或 'answer'
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*';
-  fileInput.onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    async handleOCR(target) {
+      // target = 'question' 或 'answer'
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file); // ⚠️ 字段名必须和后端一致
+        const formData = new FormData();
+        formData.append('file', file);
 
-    try {
-      // 上传到 OCR 后端
-      const res = await fetch('http://127.0.0.1:9000/ocr/upload', {
-        method: 'POST',
-        body: formData,
-      });
+        try {
+          // 动态获取当前页面 host
+          const host = window.location.hostname; // 手机访问时就是电脑局域网 IP
+          const port = 9000; // OCR 服务端口
 
-      if (!res.ok) {
-        throw new Error(`HTTP错误 ${res.status}`);
-      }
+          // 上传到 OCR 后端
+          const res = await fetch(`http://${host}:${port}/ocr/upload`, {
+            method: 'POST',
+            body: formData,
+          });
 
-      const data = await res.json();
-      if (!data.text) {
-        throw new Error('OCR返回内容为空');
-      }
+          if (!res.ok) {
+            throw new Error(`HTTP错误 ${res.status}`);
+          }
 
-      // 填入输入框
-      if (target === 'question') {
-        this.form.questionContent = data.text;
-      } else if (target === 'answer') {
-        this.form.answerContent = data.text;
-      }
+          const data = await res.json();
+          if (!data.text) {
+            throw new Error('OCR返回内容为空');
+          }
 
-      this.$message.success('OCR识别成功');
-    } catch (err) {
-      this.$message.error('OCR识别失败');
-      console.error(err);
-    }
-  };
+          // 填入输入框
+          if (target === 'question') {
+            this.form.questionContent = data.text;
+          } else if (target === 'answer') {
+            this.form.answerContent = data.text;
+          }
 
-  fileInput.click();
-},
+          this.$message.success('OCR识别成功');
+        } catch (err) {
+          this.$message.error('OCR识别失败');
+          console.error(err);
+        }
+      };
+
+      fileInput.click();
+    },
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {

@@ -1,21 +1,36 @@
 """
-OCR 服务模块（百度通用文字识别 API 版）
+OCR 服务模块
 
 功能：
-- 接收前端 POST 请求：{"image_path": "/absolute/path/to/image.jpg"}
-- 调用百度 OCR API 识别文字
-- 返回识别结果 JSON：{"text": "识别结果文本"}
+- 接收前端的 POST 请求，内容为 JSON：{"image_path": "/absolute/path/to/image.jpg"}
+- 在临时目录中调用本地 tesseract：tesseract <image_path> <temp_dir>/ocr -l chi_sim+eng --oem 3
+- 读取生成的 ocr.txt 内容，返回给前端，并清理临时文件和目录
 
 运行：
 uvicorn ocr_service:app --host 0.0.0.0 --port 9000
-"""
 
+示例请求：
+POST /ocr
+Content-Type: application/json
+{
+  "image_path": "/path/to/image.png"
+}
+
+返回 JSON：{ "text": "识别结果文本" }
+
+注意：
+- 请确保服务器能访问传来的图片路径。
+- 本模块通过 subprocess 调用系统上的 tesseract。请确保 tesseract 已安装且在 PATH 中。
+
+"""
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import base64
-import requests
+import subprocess
+import tempfile
+import shutil
 from pathlib import Path
+import os
 import logging
 from typing import Optional
 
@@ -36,69 +51,67 @@ app.add_middleware(
 
 class OCRRequest(BaseModel):
     image_path: str
-    language_type: Optional[str] = "CHN_ENG"
-    detect_direction: Optional[bool] = False
-    detect_language: Optional[bool] = False
-    paragraph: Optional[bool] = False
-    probability: Optional[bool] = False
-
-
-# ==== 百度 OCR 配置 ====
-BAIDU_OCR_URL = "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic"
-# 替换为你自己的 access_token
-ACCESS_TOKEN = "替换为你自己的Access_Token"
+    # 可选：识别语言、OEM、PSM 等
+    lang: Optional[str] = "chi_sim+eng"
+    oem: Optional[int] = 3
+    psm: Optional[int] = None
+    timeout: Optional[int] = 30
 
 
 @app.post("/ocr")
 async def do_ocr(req: OCRRequest):
     image_path = req.image_path
-    p = Path(image_path)
+    lang = req.lang
+    oem = req.oem
+    psm = req.psm
+    timeout = req.timeout
 
+    p = Path(image_path)
     if not p.exists():
         raise HTTPException(status_code=400, detail=f"图片文件不存在: {image_path}")
     if not p.is_file():
         raise HTTPException(status_code=400, detail=f"不是文件: {image_path}")
 
+    tempdir = tempfile.mkdtemp(prefix="ocr_tmp_")
+    output_base = os.path.join(tempdir, "ocr")
     try:
-        # 1. 读取并Base64编码
-        with open(image_path, "rb") as f:
-            img_data = f.read()
-        img_base64 = base64.b64encode(img_data).decode()
+        cmd = ["tesseract", image_path, output_base,
+               "-l", lang, "--oem", str(oem)]
+        if psm is not None:
+            cmd += ["--psm", str(psm)]
 
-        # 2. 构造请求
-        url = f"{BAIDU_OCR_URL}?access_token={ACCESS_TOKEN}"
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        data = {
-            "image": img_base64,
-            "language_type": req.language_type,
-            "detect_direction": str(req.detect_direction).lower(),
-            "detect_language": str(req.detect_language).lower(),
-            "paragraph": str(req.paragraph).lower(),
-            "probability": str(req.probability).lower()
-        }
+        logger.info("Run tesseract: %s", " ".join(cmd))
+        try:
+            proc = subprocess.run(cmd, capture_output=True,
+                                  text=True, timeout=timeout)
+        except FileNotFoundError:
+            raise HTTPException(
+                status_code=500, detail="tesseract 未找到，请确认已安装并在 PATH 中")
+        except subprocess.TimeoutExpired:
+            raise HTTPException(status_code=504, detail="tesseract 运行超时")
 
-        # 3. 发送请求
-        logger.info("调用百度OCR接口...")
-        resp = requests.post(url, headers=headers, data=data, timeout=30)
+        if proc.returncode != 0:
+            stderr = proc.stderr.strip() if proc.stderr else ""
+            raise HTTPException(
+                status_code=500, detail=f"tesseract 失败: {stderr}")
 
-        # 4. 解析响应
-        if resp.status_code != 200:
-            raise HTTPException(status_code=resp.status_code,
-                                detail=f"百度API请求失败：{resp.text}")
+        txt_path = output_base + ".txt"
+        if not os.path.exists(txt_path):
+            raise HTTPException(status_code=500, detail="OCR 输出文件未生成")
 
-        result = resp.json()
+        with open(txt_path, "r", encoding="utf-8") as f:
+            text = f.read()
 
-        # 5. 检查识别结果
-        if "words_result" not in result:
-            raise HTTPException(status_code=500, detail=f"OCR失败：{result}")
-
-        text = "\n".join([item["words"] for item in result["words_result"]])
+        # 返回识别文本
         return {"text": text}
 
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=500, detail=f"请求百度API失败: {e}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # 清理临时目录（包括 ocr.txt）
+        try:
+            shutil.rmtree(tempdir)
+            logger.info("Removed tempdir %s", tempdir)
+        except Exception as e:
+            logger.warning("清理临时目录失败: %s", e)
 
 
 if __name__ == "__main__":
