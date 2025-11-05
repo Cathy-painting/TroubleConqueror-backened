@@ -19,6 +19,13 @@ router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
+    
+    // 控制侧边栏显示/隐藏
+    const roles = store.getters.roles || []
+    const isAdmin = roles.includes('admin')
+    const hideSidebar = to.meta.noSidebar === true || (!isAdmin && (to.path === '/trouble/dashboard' || to.path === '/trouble/question/view'))
+    store.dispatch('app/toggleSideBarHide', hideSidebar)
+    
     /* has token */
     if (to.path === '/login') {
       next({ path: '/' })

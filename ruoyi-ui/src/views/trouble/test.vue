@@ -295,7 +295,7 @@ export default {
     },
 
     goToQuestionList() {
-      this.$router.push('/trouble/question');
+      this.$router.push('/trouble/question/view');
     },
 
     goToCameraAdd() {
@@ -304,7 +304,7 @@ export default {
     },
 
     viewQuestion(row) {
-      this.$router.push({ path: '/trouble/question', query: { id: row.questionId } });
+      this.$router.push({ path: '/trouble/question/view', query: { id: row.questionId } });
     },
 
     editQuestion(row) {

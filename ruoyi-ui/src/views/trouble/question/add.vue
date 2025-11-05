@@ -6,18 +6,11 @@
           <span class="card-title">添加错题</span>
           <div class="header-buttons">
             <el-button
-              style="margin-right: 10px; padding: 3px 0"
+              style="padding: 3px 0"
               type="text"
               @click="goToDashboard"
             >
               <i class="el-icon-house"></i> 返回主页
-            </el-button>
-            <el-button
-              style="padding: 3px 0"
-              type="text"
-              @click="goBack"
-            >
-              返回列表
             </el-button>
           </div>
         </div>
