@@ -3,7 +3,7 @@
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
     <sidebar v-if="!sidebar.hide" class="sidebar-container"/>
     <div :class="{hasTagsView:needTagsView,sidebarHide:sidebar.hide}" class="main-container">
-      <div :class="{'fixed-header':fixedHeader}">
+      <div v-if="showTopBar" :class="{'fixed-header':fixedHeader}">
         <navbar @setLayout="setLayout"/>
         <tags-view v-if="needTagsView"/>
       </div>
@@ -36,7 +36,8 @@ export default {
       sidebar: state => state.app.sidebar,
       device: state => state.app.device,
       needTagsView: state => state.settings.tagsView,
-      fixedHeader: state => state.settings.fixedHeader
+      fixedHeader: state => state.settings.fixedHeader,
+      roles: state => state.user.roles
     }),
     classObj() {
       return {
@@ -48,6 +49,17 @@ export default {
     },
     variables() {
       return variables
+    },
+    // 判断是否显示顶部导航栏和标签页
+    showTopBar() {
+      const roles = this.roles || []
+      const isAdmin = roles.includes('admin')
+      const currentPath = this.$route.path
+      // 非管理员访问dashboard或view页面时隐藏顶部栏
+      if (!isAdmin && (currentPath === '/trouble/dashboard' || currentPath === '/trouble/question/view')) {
+        return false
+      }
+      return true
     }
   },
   methods: {

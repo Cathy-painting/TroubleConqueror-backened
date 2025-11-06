@@ -97,12 +97,51 @@ function filterChildren(childrenMap, lastRouter = false) {
 export function filterDynamicRoutes(routes) {
   const res = []
   routes.forEach(route => {
-    if (route.permissions) {
-      if (auth.hasPermiOr(route.permissions)) {
+    // 如果路由有子路由，需要递归处理子路由
+    if (route.children && route.children.length > 0) {
+      const filteredChildren = []
+      route.children.forEach(child => {
+        if (child.permissions) {
+          if (auth.hasPermiOr(child.permissions)) {
+            filteredChildren.push(child)
+          }
+        } else if (child.roles) {
+          if (auth.hasRoleOr(child.roles)) {
+            filteredChildren.push(child)
+          }
+        } else {
+          // 没有权限要求的路由，默认允许访问
+          filteredChildren.push(child)
+        }
+      })
+      // 如果父路由有权限要求，检查父路由权限
+      if (route.permissions) {
+        if (auth.hasPermiOr(route.permissions)) {
+          route.children = filteredChildren
+          res.push(route)
+        }
+      } else if (route.roles) {
+        if (auth.hasRoleOr(route.roles)) {
+          route.children = filteredChildren
+          res.push(route)
+        }
+      } else {
+        // 父路由没有权限要求，直接添加
+        route.children = filteredChildren
         res.push(route)
       }
-    } else if (route.roles) {
-      if (auth.hasRoleOr(route.roles)) {
+    } else {
+      // 没有子路由的情况
+      if (route.permissions) {
+        if (auth.hasPermiOr(route.permissions)) {
+          res.push(route)
+        }
+      } else if (route.roles) {
+        if (auth.hasRoleOr(route.roles)) {
+          res.push(route)
+        }
+      } else {
+        // 没有权限要求的路由，默认允许访问
         res.push(route)
       }
     }

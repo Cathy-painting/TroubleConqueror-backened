@@ -125,6 +125,12 @@ export const dynamicRoutes = [
     name: 'Trouble',
     meta: { title: '错题管理', icon: 'education' },
     children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/trouble/dashboard'),
+        name: 'TroubleDashboard',
+        meta: { title: '错题主页', icon: 'dashboard', noSidebar: true }
+      },
       // {
       //   path: 'debug',
       //   component: () => import('@/views/trouble/debug'),
@@ -136,6 +142,12 @@ export const dynamicRoutes = [
         component: () => import('@/views/trouble/question/index'),
         name: 'TroubleQuestion',
         meta: { title: '错题列表', icon: 'list', permissions: ['trouble:question:list'] }
+      },
+      {
+        path: 'question/view',
+        component: () => import('@/views/trouble/question/view'),
+        name: 'TroubleQuestionView',
+        meta: { title: '查看错题', icon: 'eye', permissions: ['trouble:question:list'], activeMenu: '/trouble/question', noSidebar: true }
       },
       {
         path: 'question/add',

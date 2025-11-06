@@ -50,5 +50,5 @@ ruoyi-admin/src/main/resources/application-druid.yml
 ruoyi-admin/src/main/resources/application.yml
 ruoyi-admin/src/main/resources/logback.xml
 __pycache__/
-
+uploadPath/upload/*
 venv/
