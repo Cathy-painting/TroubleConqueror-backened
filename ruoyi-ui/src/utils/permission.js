@@ -18,7 +18,9 @@ export function checkPermi(value) {
     return hasPermission
 
   } else {
-    console.error(`need roles! Like checkPermi="['system:user:add','system:user:edit']"`)
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`need roles! Like checkPermi="['system:user:add','system:user:edit']"`)
+    }
     return false
   }
 }
@@ -41,7 +43,9 @@ export function checkRole(value) {
     return hasRole
 
   } else {
-    console.error(`need roles! Like checkRole="['admin','editor']"`)
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`need roles! Like checkRole="['admin','editor']"`)
+    }
     return false
   }
 }

@@ -87,6 +87,32 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/trouble/weekly-chart',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/trouble/weekly-chart'),
+        name: 'TroubleWeeklyChart',
+        meta: { title: '本周新增统计', icon: 'chart' }
+      }
+    ]
+  },
+  {
+    path: '/trouble/favorite',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/trouble/favorite/index'),
+        name: 'TroubleFavoritePublic',
+        meta: { title: '收藏错题', icon: 'star' }
+      }
+    ]
   }
 ]
 

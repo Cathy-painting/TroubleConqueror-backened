@@ -396,15 +396,51 @@ export default {
 </script>
 
 <style scoped>
-/* 基础布局 */
+/* 基础布局 - 蓝色渐变背景 */
 .app-container {
-  padding: 16px;
-  max-width: 1200px;
+  padding: 20px;
+  max-width: 1400px;
   margin: 0 auto;
   box-sizing: border-box;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f1f8 50%, #dbe7f2 100%);
+  animation: fadeIn 0.6s ease-out;
 }
 
-/* header 自适应 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 欢迎卡片美化 */
+::v-deep .welcome-card {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(42, 82, 152, 0.12);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+::v-deep .welcome-card .el-card__header {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-bottom: none;
+  padding: 20px 24px;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .header-row {
   display: flex;
   align-items: center;
@@ -413,75 +449,422 @@ export default {
   flex-wrap: wrap;
 }
 
+.header-row .el-button {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.header-row .el-button:hover {
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
 /* 欢迎描述 */
+.welcome-content {
+  padding: 24px;
+}
+
 .welcome-desc {
+  font-size: 15px;
+  color: #5a6c7d;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.stats-row {
+  margin-top: 20px;
+}
+
+/* 统计卡片风格 - 蓝色系渐变 */
+::v-deep .stat-card {
+  text-align: left;
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+  box-shadow: 0 2px 12px rgba(42, 82, 152, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+::v-deep .stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+::v-deep .stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(42, 82, 152, 0.18);
+}
+
+::v-deep .stat-card .el-card__body {
+  padding: 0;
+}
+
+.stat-content {
+  position: relative;
+  padding-right: 50px;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.stat-label {
   font-size: 14px;
-  color: #666;
+  color: #6b7c8d;
+  font-weight: 500;
+}
+
+.stat-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  font-size: 36px;
+  color: rgba(42, 82, 152, 0.15);
+}
+
+/* 功能卡片 - 蓝色系主题 */
+.function-row {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+::v-deep .function-card {
+  cursor: pointer;
+  border: none;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(42, 82, 152, 0.1);
+  height: 100%;
+}
+
+::v-deep .function-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(42, 82, 152, 0.2);
+}
+
+::v-deep .function-card .el-card__body {
+  padding: 0;
+}
+
+.function-content {
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.function-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: transform 0.3s;
+}
+
+::v-deep .function-card:hover .function-icon {
+  transform: scale(1.1);
+}
+
+.function-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.function-desc {
+  font-size: 14px;
+  color: #7a8a9a;
+  margin-bottom: 20px;
   line-height: 1.6;
+}
+
+.function-btn {
+  width: 100%;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+::v-deep .function-btn.el-button--primary {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+}
+
+::v-deep .function-btn.el-button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(42, 82, 152, 0.3);
+}
+
+::v-deep .function-btn.el-button--success {
+  background: linear-gradient(135deg, #0a74da 0%, #4a9ff5 100%);
+  border: none;
+}
+
+::v-deep .function-btn.el-button--success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 159, 245, 0.3);
+}
+
+::v-deep .function-btn.el-button--warning {
+  background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+  border: none;
+}
+
+::v-deep .function-btn.el-button--warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(58, 123, 213, 0.3);
+}
+
+/* 快速操作 */
+::v-deep .quick-actions {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(42, 82, 152, 0.12);
+  background: #ffffff;
+}
+
+::v-deep .quick-actions .el-card__header {
+  background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+  border-bottom: 2px solid #e8f1f8;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.quick-row .el-button {
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+::v-deep .quick-row .el-button--primary {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+}
+
+::v-deep .quick-row .el-button--success {
+  background: linear-gradient(135deg, #0a74da 0%, #4a9ff5 100%);
+  border: none;
+}
+
+::v-deep .quick-row .el-button--warning {
+  background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+  border: none;
+}
+
+::v-deep .quick-row .el-button--info {
+  background: linear-gradient(135deg, #5a6c7d 0%, #7a8a9a 100%);
+  border: none;
+}
+
+/* 最近错题卡片 */
+::v-deep .recent-questions {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(42, 82, 152, 0.12);
+  background: #ffffff;
+}
+
+::v-deep .recent-questions .el-card__header {
+  background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+  border-bottom: 2px solid #e8f1f8;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* 最近错题 - 桌面表格 */
+.desktop-table-wrapper {
+  overflow-x: auto;
+}
+
+::v-deep .desktop-table-wrapper .el-table {
+  border-radius: 8px;
+}
+
+::v-deep .desktop-table-wrapper .el-table th {
+  background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+::v-deep .desktop-table-wrapper .el-table--striped .el-table__body tr.el-table__row--striped td {
+  background: #f8fbff;
+}
+
+.question-preview {
+  color: #5a6c7d;
+  line-height: 1.6;
+}
+
+/* 移动端卡片列表 */
+.mobile-list {
+  padding: 8px 0;
+}
+
+::v-deep .mobile-question-card {
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 12px rgba(42, 82, 152, 0.08);
+  transition: all 0.3s;
+}
+
+::v-deep .mobile-question-card:hover {
+  box-shadow: 0 4px 16px rgba(42, 82, 152, 0.15);
+}
+
+.mobile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.mobile-card-title {
+  font-weight: 600;
+  word-break: break-word;
+  color: #2c3e50;
+}
+
+.mobile-card-meta {
+  color: #7a8a9a;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.mobile-card-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mobile-card-actions {
+  text-align: right;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 48px 12px;
+  color: #7a8a9a;
+}
+
+.empty-state i {
+  font-size: 64px;
+  margin-bottom: 16px;
+  display: block;
+  color: rgba(42, 82, 152, 0.3);
+}
+
+.empty-state p {
+  font-size: 15px;
+  margin: 0;
+}
+
+/* 相机区 */
+.camera-section {
+  text-align: center;
+  padding: 24px;
+}
+
+.camera-tip {
   margin-bottom: 20px;
 }
 
-/* 统计卡片风格 */
-.stat-card {
+.camera-tip i {
+  font-size: 48px;
+  color: #2a5298;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.camera-tip p {
+  margin: 8px 0;
+  color: #5a6c7d;
+}
+
+.tip-text {
+  font-size: 13px;
+  color: #7a8a9a;
+}
+
+.camera-result {
+  margin-top: 20px;
   text-align: left;
-  border: 1px solid #e4e7ed;
-  transition: all 0.18s;
-  padding: 12px;
 }
-.stat-content {
-  position: relative;
-  padding-right: 36px;
+
+.camera-result h4 {
+  margin-bottom: 12px;
+  color: #2c3e50;
 }
-.stat-number { font-size: 22px; font-weight: 700; color: #409EFF; margin-bottom: 6px; }
-.stat-label { font-size: 13px; color: #666; }
-.stat-icon { position: absolute; top: 12px; right: 8px; font-size: 20px; color: #c0c4cc; }
-
-/* 功能卡片 */
-.function-card { cursor: pointer; border: 1px solid #e4e7ed; }
-.function-content { text-align: center; padding: 18px; }
-.function-icon { font-size: 40px; color: #409EFF; margin-bottom: 10px; }
-.function-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-.function-desc { font-size: 13px; color: #666; margin-bottom: 12px; }
-.function-btn { width: 100%; }
-
-/* 快速操作 */
-.quick-actions { margin-top: 18px; margin-bottom: 18px; }
-.quick-row .el-button { margin-bottom: 8px; }
-
-/* 最近错题 - 桌面表格 */
-.desktop-table-wrapper { overflow-x: auto; }
-
-/* 移动端卡片列表 */
-.mobile-list { padding: 8px 0; }
-.mobile-question-card { margin-bottom: 12px; }
-.mobile-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; gap:8px; }
-.mobile-card-title { font-weight:600; word-break:break-word; }
-.mobile-card-meta { color:#999; font-size:12px; white-space:nowrap; }
-.mobile-card-body { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px; }
-.mobile-card-actions { text-align:right; }
-
-/* 空状态 */
-.empty-state { text-align:center; padding: 28px 12px; color:#999; }
-.empty-state i { font-size:36px; margin-bottom:8px; display:block; }
-
-/* 相机区 */
-.camera-section { text-align:center; padding: 12px; }
-.camera-tip i { font-size:36px; color:#409EFF; margin-bottom:8px; display:block; }
-.camera-result { margin-top:12px; text-align:left; }
 
 /* 响应式微调 */
 @media (max-width: 767px) {
-  .app-container { padding: 12px; }
-  .welcome-title { font-size: 18px; }
-  .stat-number { font-size: 20px; }
-  .function-icon { font-size: 36px; }
-  .function-content { padding: 14px; }
-  .desktop-table-wrapper { display: none; } /* 隐藏桌面表格 */
-  .mobile-list { display: block; }
-  .el-dialog__wrapper { align-items: flex-end; } /* 对话框靠下更像移动端体验 */
+  .app-container {
+    padding: 12px;
+  }
+
+  .welcome-title {
+    font-size: 18px;
+  }
+
+  .welcome-content {
+    padding: 16px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
+
+  .function-icon {
+    font-size: 40px;
+  }
+
+  .function-content {
+    padding: 24px 16px;
+  }
+
+  .desktop-table-wrapper {
+    display: none;
+  }
+
+  .mobile-list {
+    display: block;
+  }
 }
 
 @media (min-width: 768px) {
-  .mobile-list { display: none; } /* 隐藏移动卡片列表 */
+  .mobile-list {
+    display: none;
+  }
 }
 </style>

@@ -70,6 +70,16 @@ public class SysUser extends BaseEntity
     /** 密码最后更新时间 */
     private Date pwdUpdateDate;
 
+    /** 部门ID */
+    @Excel(name = "部门编号", type = Type.IMPORT)
+    private Long deptId;
+
+    /** 部门对象 */
+    @Excels({
+        @Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
+        @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
+    })
+    private SysDept dept;
 
     /** 角色对象 */
     private List<SysRole> roles;
@@ -241,6 +251,26 @@ public class SysUser extends BaseEntity
         this.pwdUpdateDate = pwdUpdateDate;
     }
 
+    public Long getDeptId()
+    {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId)
+    {
+        this.deptId = deptId;
+    }
+
+    public SysDept getDept()
+    {
+        return dept;
+    }
+
+    public void setDept(SysDept dept)
+    {
+        this.dept = dept;
+    }
+
     public List<SysRole> getRoles()
     {
         return roles;
@@ -297,6 +327,8 @@ public class SysUser extends BaseEntity
             .append("loginIp", getLoginIp())
             .append("loginDate", getLoginDate())
             .append("pwdUpdateDate", getPwdUpdateDate())
+            .append("deptId", getDeptId())
+            .append("dept", getDept())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

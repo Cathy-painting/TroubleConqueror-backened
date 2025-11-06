@@ -181,9 +181,16 @@
           label="操作"
           align="center"
           class-name="small-padding fixed-width"
-          width="150"
+          width="200"
         >
           <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-star-on"
+              @click="handleFavorite(scope.row)"
+              style="color: #f39c12;"
+            >{{ scope.row.isFavorite ? '取消收藏' : '收藏' }}</el-button>
             <el-button
               size="mini"
               type="text"
@@ -311,7 +318,7 @@
 </template>
 
 <script>
-import { listQuestion, getQuestion, delQuestion, addQuestion, updateQuestion } from "@/api/trouble/question";
+import { listQuestion, getQuestion, delQuestion, addQuestion, updateQuestion, favoriteQuestion, unfavoriteQuestion } from "@/api/trouble/question";
 
 export default {
   name: "Question",
@@ -442,7 +449,8 @@ export default {
     },
     /** 新增按钮操作 */
     goToDashboard() {
-      this.$router.push("/trouble/dashboard");
+      // 返回系统首页
+      this.$router.push("/");
     },
     handleAdd() {
       this.reset();
@@ -489,6 +497,29 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
+    /** 收藏/取消收藏 */
+    handleFavorite(row) {
+      const isFavorite = row.isFavorite;
+      const questionId = row.questionId;
+      
+      if (isFavorite) {
+        // 取消收藏
+        this.$modal.confirm('确认要取消收藏该错题吗？').then(() => {
+          return unfavoriteQuestion(questionId);
+        }).then(() => {
+          this.getList();
+          this.$modal.msgSuccess("已取消收藏");
+        }).catch(() => {});
+      } else {
+        // 收藏
+        favoriteQuestion(questionId).then(() => {
+          this.getList();
+          this.$modal.msgSuccess("收藏成功");
+        }).catch(() => {
+          this.$modal.msgError("收藏失败");
+        });
+      }
+    },
     /** 导出按钮操作 */
     handleExport() {
       this.download('trouble/question/export', {
@@ -500,35 +531,363 @@ export default {
 </script>
 
 <style scoped>
-/* 响应式样式 */
+/* 蓝色系美化 - 查看错题界面 */
+::v-deep .app-container {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+  min-height: calc(100vh - 50px);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰元素 */
+::v-deep .app-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(33, 150, 243, 0.1) 0%, transparent 70%);
+  animation: rotate 30s linear infinite;
+  z-index: 0;
+}
+
+::v-deep .app-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 搜索表单美化 */
 .search-form {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  /* 移除blur以提升性能 */
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(42, 82, 152, 0.1);
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::v-deep .search-form .el-form-item__label {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+::v-deep .search-form .el-input__inner,
+::v-deep .search-form .el-textarea__inner {
+  border-radius: 8px;
+  border: 1px solid #d4e8f7;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+::v-deep .search-form .el-input__inner:focus,
+::v-deep .search-form .el-textarea__inner:focus {
+  border-color: #2a5298;
+  box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.1);
+}
+
+::v-deep .search-form .el-button {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+}
+
+/* 操作按钮区美化 */
+.action-buttons {
   margin-bottom: 20px;
 }
 
-.action-buttons {
-  margin-bottom: 20px;
+.mb8 {
+  margin-bottom: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  /* 移除blur以提升性能 */
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(42, 82, 152, 0.1);
+}
+
+::v-deep .el-button {
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 24px;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+
+::v-deep .el-button i {
+  font-size: 16px;
+  margin-right: 6px;
+}
+
+/* 操作按钮区的按钮白色字体 */
+::v-deep .mb8 .el-button {
+  color: #ffffff;
+}
+
+::v-deep .mb8 .el-button:hover {
+  color: #ffffff;
+}
+
+::v-deep .el-button--primary {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(42, 82, 152, 0.25);
+}
+
+::v-deep .el-button--primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(42, 82, 152, 0.4);
+}
+
+::v-deep .el-button--success {
+  background: linear-gradient(135deg, #0a74da 0%, #4a9ff5 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(74, 159, 245, 0.25);
+}
+
+::v-deep .el-button--success:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(74, 159, 245, 0.4);
+}
+
+::v-deep .el-button--info {
+  background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(58, 189, 255, 0.25);
+}
+
+::v-deep .el-button--info:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(58, 189, 255, 0.4);
+}
+
+::v-deep .el-button--warning {
+  background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.25);
+}
+
+::v-deep .el-button--warning:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(243, 156, 18, 0.4);
+}
+
+::v-deep .el-button--danger {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.25);
+}
+
+::v-deep .el-button--danger:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(231, 76, 60, 0.4);
+}
+
+::v-deep .el-button--mini {
+  font-size: 14px;
+  padding: 9px 18px;
 }
 
 .full-width-btn {
   width: 100%;
 }
 
+/* 表格容器美化 */
 .table-container {
   overflow-x: auto;
+  background: rgba(255, 255, 255, 0.95);
+  /* 移除blur以提升性能 */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(42, 82, 152, 0.12);
 }
 
 .responsive-table {
   min-width: 600px;
 }
 
+/* 表格美化 */
+::v-deep .el-table {
+  background: transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+::v-deep .el-table th {
+  background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+  color: #2c3e50;
+  font-weight: 600;
+  border-bottom: 2px solid #e8f1f8;
+}
+
+::v-deep .el-table td {
+  border-bottom: 1px solid #e8f1f8;
+}
+
+::v-deep .el-table--striped .el-table__body tr.el-table__row--striped td {
+  background: #f8fbff;
+}
+
+::v-deep .el-table tbody tr:hover > td {
+  background: #f0f7ff !important;
+}
+
+/* 表格内容优化 */
+.question-content {
+  max-width: 200px;
+  word-break: break-word;
+  color: #5a6c7d;
+  line-height: 1.6;
+}
+
+/* 标签美化 */
+::v-deep .el-tag {
+  border-radius: 6px;
+  border: none;
+  background: linear-gradient(135deg, #e8f4f8 0%, #d4e8f7 100%);
+  color: #2a5298;
+  font-weight: 500;
+}
+
+/* 表格内按钮美化 */
+::v-deep .el-table .el-button--text {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
+::v-deep .el-table .el-button--text:hover {
+  background-color: rgba(42, 82, 152, 0.1);
+  border-radius: 6px;
+}
+
+/* 分页美化 */
+::v-deep .el-pagination {
+  text-align: center;
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  /* 移除blur以提升性能 */
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(42, 82, 152, 0.1);
+}
+
+::v-deep .el-pagination .el-pager li {
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+::v-deep .el-pagination .el-pager li.active {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: #ffffff;
+}
+
+::v-deep .el-pagination .el-pager li:hover {
+  background: #f0f7ff;
+  color: #2a5298;
+}
+
+/* 对话框美化 */
+::v-deep .el-dialog {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  /* 移除blur以提升性能 */
+  box-shadow: 0 12px 48px rgba(42, 82, 152, 0.2);
+}
+
+::v-deep .el-dialog__header {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+}
+
+::v-deep .el-dialog__title {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+::v-deep .el-dialog__headerbtn .el-dialog__close {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20px;
+}
+
+::v-deep .el-dialog__headerbtn .el-dialog__close:hover {
+  color: #ffffff;
+}
+
+::v-deep .el-dialog__body {
+  padding: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+}
+
+/* 表单美化 */
+::v-deep .el-form-item__label {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+::v-deep .el-input__inner,
+::v-deep .el-textarea__inner {
+  border-radius: 8px;
+  border: 1px solid #d4e8f7;
+  transition: all 0.3s;
+}
+
+::v-deep .el-input__inner:focus,
+::v-deep .el-textarea__inner:focus {
+  border-color: #2a5298;
+  box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.1);
+}
+
 /* 移动端优化 */
 @media (max-width: 768px) {
+  ::v-deep .app-container {
+    padding: 12px;
+  }
+
+  .search-form {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
   .search-form .el-form-item {
     margin-bottom: 15px;
   }
 
+  .mb8 {
+    padding: 12px;
+  }
+
   .action-buttons .el-col {
     margin-bottom: 10px;
+  }
+
+  .table-container {
+    padding: 12px;
   }
 
   .responsive-table {
@@ -547,6 +906,11 @@ export default {
   .dialog-form .el-textarea,
   .dialog-form .el-select {
     width: 100%;
+  }
+
+  .action-buttons .el-button {
+    font-size: 12px;
+    padding: 8px 15px;
   }
 }
 
@@ -587,32 +951,14 @@ export default {
 @media (max-width: 768px) {
   .responsive-dialog .el-dialog {
     margin: 0;
-    width: 100% !important;
-    height: 100%;
+    width: 95% !important;
+    border-radius: 12px;
   }
 
   .responsive-dialog .el-dialog__body {
     padding: 15px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
-  }
-}
-
-/* 表格内容优化 */
-.question-content {
-  max-width: 200px;
-  word-break: break-word;
-}
-
-/* 按钮组优化 */
-.action-buttons .el-button {
-  margin-bottom: 5px;
-}
-
-@media (max-width: 768px) {
-  .action-buttons .el-button {
-    font-size: 12px;
-    padding: 5px 10px;
   }
 }
 </style>

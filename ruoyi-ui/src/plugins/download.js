@@ -61,7 +61,9 @@ export default {
       }
       downloadLoadingInstance.close()
     }).catch((r) => {
-      console.error(r)
+      if (process.env.NODE_ENV === 'development') {
+        console.error(r)
+      }
       Message.error('下载文件出现错误，请联系管理员！')
       downloadLoadingInstance.close()
     })

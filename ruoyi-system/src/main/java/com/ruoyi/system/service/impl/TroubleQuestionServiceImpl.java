@@ -53,6 +53,18 @@ public class TroubleQuestionServiceImpl implements ITroubleQuestionService
     }
 
     /**
+     * 查询收藏的错题列表
+     * 
+     * @param troubleQuestion 错题
+     * @return 错题
+     */
+    @Override
+    public List<TroubleQuestion> selectFavoriteQuestionList(TroubleQuestion troubleQuestion)
+    {
+        return troubleQuestionMapper.selectFavoriteQuestionList(troubleQuestion);
+    }
+
+    /**
      * 新增错题
      * 
      * @param troubleQuestion 错题

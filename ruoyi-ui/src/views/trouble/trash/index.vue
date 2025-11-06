@@ -40,6 +40,15 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
+          type="info"
+          plain
+          icon="el-icon-house"
+          size="mini"
+          @click="goToDashboard"
+        >返回主页</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
           type="success"
           plain
           icon="el-icon-refresh-left"
@@ -199,6 +208,10 @@ export default {
     this.getList();
   },
   methods: {
+    /** 返回主页 */
+    goToDashboard() {
+      this.$router.push("/trouble/test");
+    },
     /** 查询回收站列表 */
     getList() {
       this.loading = true;

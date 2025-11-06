@@ -21,6 +21,7 @@ import com.ruoyi.system.service.ITroubleQuestionService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.service.ITroubleQuestionFavoriteService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,9 @@ public class TroubleQuestionController extends BaseController
     @Autowired
     private ITroubleQuestionService troubleQuestionService;
 
+    @Autowired
+    private ITroubleQuestionFavoriteService troubleQuestionFavoriteService;
+
     /**
      * 查询错题列表
      */
@@ -47,9 +51,17 @@ public class TroubleQuestionController extends BaseController
     public TableDataInfo list(TroubleQuestion troubleQuestion)
     {
         // 只查询当前用户的错题
-        troubleQuestion.setUserId(SecurityUtils.getUserId());
+        Long userId = SecurityUtils.getUserId();
+        troubleQuestion.setUserId(userId);
         startPage();
         List<TroubleQuestion> list = troubleQuestionService.selectTroubleQuestionList(troubleQuestion);
+        
+        // 标记每个错题是否已收藏
+        for (TroubleQuestion question : list) {
+            boolean isFavorited = troubleQuestionFavoriteService.isFavorited(question.getQuestionId(), userId);
+            question.setIsFavorite(isFavorited ? 1 : 0);
+        }
+        
         return getDataTable(list);
     }
 
@@ -63,7 +75,7 @@ public class TroubleQuestionController extends BaseController
     {
         troubleQuestion.setUserId(SecurityUtils.getUserId());
         List<TroubleQuestion> list = troubleQuestionService.selectTroubleQuestionList(troubleQuestion);
-        ExcelUtil<TroubleQuestion> util = new ExcelUtil<TroubleQuestion>(TroubleQuestion.class);
+        ExcelUtil<TroubleQuestion> util = new ExcelUtil<>(TroubleQuestion.class);
         util.exportExcel(response, list, "错题数据");
     }
 
@@ -133,6 +145,70 @@ public class TroubleQuestionController extends BaseController
             }
         }
         return toAjax(troubleQuestionService.deleteTroubleQuestionByQuestionIds(questionIds));
+    }
+
+    /**
+     * 收藏错题
+     */
+    @ApiOperation("收藏错题")
+    @Log(title = "收藏错题", businessType = BusinessType.INSERT)
+    @PostMapping("/favorite/{questionId}")
+    public AjaxResult favoriteQuestion(@PathVariable("questionId") Long questionId)
+    {
+        // 验证错题是否存在且属于当前用户
+        TroubleQuestion question = troubleQuestionService.selectTroubleQuestionByQuestionId(questionId);
+        if (question == null) {
+            return error("错题不存在");
+        }
+        Long userId = SecurityUtils.getUserId();
+        if (!question.getUserId().equals(userId)) {
+            return error("无权限收藏该错题");
+        }
+
+        // 收藏错题
+        int result = troubleQuestionFavoriteService.favoriteQuestion(questionId, userId);
+        if (result > 0) {
+            return success("收藏成功");
+        } else {
+            return error("该错题已收藏");
+        }
+    }
+
+    /**
+     * 取消收藏错题
+     */
+    @ApiOperation("取消收藏错题")
+    @Log(title = "取消收藏错题", businessType = BusinessType.DELETE)
+    @PostMapping("/unfavorite/{questionId}")
+    public AjaxResult unfavoriteQuestion(@PathVariable("questionId") Long questionId)
+    {
+        Long userId = SecurityUtils.getUserId();
+        int result = troubleQuestionFavoriteService.unfavoriteQuestion(questionId, userId);
+        if (result > 0) {
+            return success("取消收藏成功");
+        } else {
+            return error("取消收藏失败");
+        }
+    }
+
+    /**
+     * 查询收藏的错题列表
+     */
+    @ApiOperation("查询收藏的错题列表")
+    @GetMapping("/favorite/list")
+    public TableDataInfo listFavoriteQuestions(TroubleQuestion troubleQuestion)
+    {
+        Long userId = SecurityUtils.getUserId();
+        troubleQuestion.setUserId(userId);
+        startPage();
+        List<TroubleQuestion> list = troubleQuestionService.selectFavoriteQuestionList(troubleQuestion);
+        
+        // 标记所有收藏的错题的收藏状态为已收藏
+        for (TroubleQuestion question : list) {
+            question.setIsFavorite(1);
+        }
+        
+        return getDataTable(list);
     }
 }
 
