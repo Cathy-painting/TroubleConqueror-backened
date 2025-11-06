@@ -17,7 +17,7 @@
 
     <el-card class="welcome-card">
       <div slot="header" class="clearfix header-row">
-        <span class="welcome-title">Dashboard/span>
+        <span class="welcome-title">Dashboard</span>
         <el-button style="float: right; padding: 3px 0" type="text" @click="refreshData" class="refresh-btn">
           <i class="el-icon-refresh"></i> 刷新
         </el-button>
