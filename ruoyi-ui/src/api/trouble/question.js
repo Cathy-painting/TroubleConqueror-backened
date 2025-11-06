@@ -52,5 +52,27 @@ export function exportQuestion(query) {
   })
 }
 
+// 收藏错题
+export function favoriteQuestion(questionId) {
+  return request({
+    url: '/trouble/question/favorite/' + questionId,
+    method: 'post'
+  })
+}
 
+// 取消收藏错题
+export function unfavoriteQuestion(questionId) {
+  return request({
+    url: '/trouble/question/unfavorite/' + questionId,
+    method: 'post'
+  })
+}
 
+// 查询收藏的错题列表
+export function listFavoriteQuestion(query) {
+  return request({
+    url: '/trouble/question/favorite/list',
+    method: 'get',
+    params: query
+  })
+}

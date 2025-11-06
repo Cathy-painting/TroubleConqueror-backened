@@ -8,7 +8,9 @@ export const options = {
        * 字典请求，方法签名为function(dictMeta: DictMeta): Promise
        */
       request: (dictMeta) => {
-        console.log(`load dict ${dictMeta.type}`)
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`load dict ${dictMeta.type}`)
+        }
         return Promise.resolve([])
       },
       /**
@@ -38,7 +40,9 @@ export const options = {
 function responseConverter(response, dictMeta) {
   const dicts = response.content instanceof Array ? response.content : response
   if (dicts === undefined) {
-    console.warn(`no dict data of "${dictMeta.type}" found in the response`)
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`no dict data of "${dictMeta.type}" found in the response`)
+    }
     return []
   }
   return dicts.map(d => dictConverter(d, dictMeta))

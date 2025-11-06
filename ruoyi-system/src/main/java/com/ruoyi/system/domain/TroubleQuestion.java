@@ -50,6 +50,9 @@ public class TroubleQuestion extends BaseEntity
     @Excel(name = "状态", readConverterExp = "0=正常,1=删除")
     private String status;
 
+    /** 是否收藏（0未收藏 1已收藏）- 非数据库字段 */
+    private Integer isFavorite;
+
     public Long getQuestionId()
     {
         return questionId;
@@ -138,6 +141,16 @@ public class TroubleQuestion extends BaseEntity
     public void setStatus(String status)
     {
         this.status = status;
+    }
+
+    public Integer getIsFavorite()
+    {
+        return isFavorite;
+    }
+
+    public void setIsFavorite(Integer isFavorite)
+    {
+        this.isFavorite = isFavorite;
     }
 
     @Override

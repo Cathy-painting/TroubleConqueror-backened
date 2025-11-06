@@ -163,6 +163,18 @@
             </el-col>
           </el-row>
 
+          <!-- 收藏选项 -->
+          <el-row :gutter="20">
+            <el-col :xs="24" :sm="24" :md="24">
+              <el-form-item label="收藏">
+                <el-checkbox v-model="shouldFavorite" class="favorite-checkbox">
+                  <i class="el-icon-star-on"></i> 同时收藏此错题
+                </el-checkbox>
+                <div class="favorite-tip">勾选后，此错题将自动添加到我的收藏</div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
           <!-- 操作按钮 -->
           <el-row class="action-row" :gutter="12">
             <el-col :xs="24" :sm="24" :md="24" class="action-col">
@@ -191,11 +203,12 @@
 </template>
 
 <script>
-import { addQuestion } from "@/api/trouble/question";
+import { addQuestion, favoriteQuestion } from "@/api/trouble/question";
 export default {
   name: "QuestionAdd",
   data() {
     return {
+      shouldFavorite: false, // 是否收藏错题
       form: {
         questionContent: "",
         questionImages: "",
@@ -214,6 +227,7 @@ export default {
       isMobile: false,
       selectedTags: [],
       defaultTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"],
+      formChanged: false, // 表单是否有修改
     };
   },
   computed: {
@@ -229,9 +243,30 @@ export default {
   created() {
     this.checkIsMobile();
     window.addEventListener("resize", this.checkIsMobile);
+    
+    // 监听表单变化
+    this.$watch('form', () => {
+      this.formChanged = true;
+    }, { deep: true });
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.checkIsMobile);
+  },
+  beforeRouteLeave(to, from, next) {
+    // 如果表单有修改且未提交，提示用户
+    if (this.formChanged) {
+      this.$confirm('表单内容尚未保存，确定要离开吗？', '提示', {
+        confirmButtonText: '确定离开',
+        cancelButtonText: '留下',
+        type: 'warning'
+      }).then(() => {
+        next();
+      }).catch(() => {
+        next(false);
+      });
+    } else {
+      next();
+    }
   },
   methods: {
     checkIsMobile() {
@@ -279,7 +314,9 @@ export default {
           this.$message.success('OCR识别成功');
         } catch (err) {
           this.$message.error('OCR识别失败');
-          console.error(err);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('OCR识别错误:', err);
+          }
         }
       };
 
@@ -290,15 +327,48 @@ export default {
         if (valid) {
           this.submitLoading = true;
           addQuestion(this.form)
-            .then(() => {
-              this.$modal.msgSuccess("错题添加成功");
-              this.submitLoading = false;
-              this.goBack();
+            .then((response) => {
+              // 如果勾选了收藏，则调用收藏接口
+              if (this.shouldFavorite && response.data) {
+                const questionId = response.data.questionId || response.data;
+                favoriteQuestion(questionId).then(() => {
+                  this.submitLoading = false;
+                  this.$modal.msgSuccess("错题添加并收藏成功");
+                  this.handleSuccessCallback();
+                }).catch(() => {
+                  this.submitLoading = false;
+                  this.$modal.msgSuccess("错题添加成功，但收藏失败");
+                  this.handleSuccessCallback();
+                });
+              } else {
+                this.submitLoading = false;
+                this.$modal.msgSuccess("错题添加成功");
+                this.handleSuccessCallback();
+              }
             })
             .catch(() => {
               this.submitLoading = false;
             });
         }
+      });
+    },
+    
+    // 处理成功回调
+    handleSuccessCallback() {
+      // 清除表单修改标记（已成功保存）
+      this.formChanged = false;
+      
+      // 成功后询问用户是否继续添加
+      this.$confirm('是否继续添加错题？', '提示', {
+        confirmButtonText: '继续添加',
+        cancelButtonText: '返回列表',
+        type: 'success'
+      }).then(() => {
+        // 继续添加：重置表单
+        this.resetForm();
+      }).catch(() => {
+        // 返回列表
+        this.goBack();
       });
     },
     resetForm() {
@@ -312,15 +382,19 @@ export default {
         remark: "",
       };
       this.selectedTags = [];
+      this.shouldFavorite = false; // 重置收藏选项
+      this.formChanged = false; // 重置表单修改标记
       this.$nextTick(() => {
         if (this.$refs.form) this.$refs.form.resetFields();
       });
     },
     goBack() {
-      this.$router.push("/trouble/question");
+      // 返回系统首页
+      this.$router.push("/");
     },
     goToDashboard() {
-      this.$router.push("/trouble/dashboard");
+      // 返回系统首页
+      this.$router.push("/");
     },
     handleTagsChange(value) {
       if (Array.isArray(value)) {
@@ -338,15 +412,76 @@ export default {
 </script>
 
 <style scoped>
-.box-card {
-  margin: 20px;
-  box-sizing: border-box;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+/* 蓝色系美化 - 添加错题页面 */
+::v-deep .app-container {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+  min-height: calc(100vh - 50px);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
 }
+
+/* 背景装饰元素 */
+::v-deep .app-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(33, 150, 243, 0.1) 0%, transparent 70%);
+  animation: rotate 30s linear infinite;
+  z-index: 0;
+}
+
+::v-deep .app-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.box-card {
+  margin: 20px auto;
+  max-width: 1200px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 8px 32px rgba(42, 82, 152, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .box-card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 48px rgba(42, 82, 152, 0.2);
+  transform: translateY(-2px);
+}
+
+/* 头部样式 */
+::v-deep .box-card .el-card__header {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-bottom: none;
+  padding: 20px 24px;
 }
 
 .header-row {
@@ -356,52 +491,210 @@ export default {
   gap: 12px;
   flex-wrap: wrap;
 }
+
 .card-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .header-buttons {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
+.header-buttons .el-button {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.header-buttons .el-button:hover {
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* 表单布局 */
+::v-deep .box-card .el-card__body {
+  padding: 32px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.form-layout {
+  max-width: 100%;
+}
+
+.form-layout .el-form-item {
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+::v-deep .el-form-item__label {
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* 输入框美化 */
+::v-deep .el-input__inner,
+::v-deep .el-textarea__inner {
+  border-radius: 8px;
+  border: 1px solid #d4e8f7;
+  transition: all 0.3s;
+  background: #ffffff;
+}
+
+::v-deep .el-input__inner:focus,
+::v-deep .el-textarea__inner:focus {
+  border-color: #2a5298;
+  box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.1);
+}
+
+::v-deep .el-input__inner:hover,
+::v-deep .el-textarea__inner:hover {
+  border-color: #4a9ff5;
+}
+
+/* 选择框美化 */
+::v-deep .el-select {
+  width: 100%;
+}
+
+::v-deep .el-select .el-input__inner {
+  background: #ffffff;
+}
+
+/* 标签选择美化 */
+::v-deep .el-tag {
+  border-radius: 6px;
+  border: none;
+  background: linear-gradient(135deg, #e8f4f8 0%, #d4e8f7 100%);
+  color: #2a5298;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+::v-deep .el-tag:hover {
+  background: linear-gradient(135deg, #d4e8f7 0%, #c5dff5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(42, 82, 152, 0.15);
+}
+
+::v-deep .el-tag .el-tag__close {
+  color: #2a5298;
+}
+
+::v-deep .el-tag .el-tag__close:hover {
+  background-color: #2a5298;
+  color: #ffffff;
+}
+
+/* 上传组件美化 */
 .image-upload-full {
   display: block;
   width: 100%;
 }
+
+::v-deep .el-upload {
+  border-radius: 8px;
+  border: 2px dashed #d4e8f7;
+  transition: all 0.3s;
+}
+
+::v-deep .el-upload:hover {
+  border-color: #2a5298;
+  background: #f8fbff;
+}
+
 .upload-tip,
-.tag-tip {
-  font-size: 12px;
-  color: #888;
-  margin-top: 6px;
+.tag-tip,
+.favorite-tip {
+  font-size: 13px;
+  color: #7a8a9a;
+  margin-top: 8px;
   transition: color 0.3s;
+  line-height: 1.6;
 }
+
 .upload-tip:hover,
-.tag-tip:hover {
-  color: #409eff;
+.tag-tip:hover,
+.favorite-tip:hover {
+  color: #2a5298;
 }
 
-.form-layout .el-form-item {
-  margin-bottom: 16px;
-  transition: all 0.3s ease;
+/* 收藏复选框美化 */
+.favorite-checkbox {
+  font-size: 15px;
+  font-weight: 500;
+  color: #2c3e50;
 }
 
-.el-input__inner:focus,
-.el-textarea__inner:focus {
-  box-shadow: 0 0 6px rgba(64, 158, 255, 0.3);
-  transition: box-shadow 0.2s;
+.favorite-checkbox i {
+  color: #f39c12;
+  margin-right: 4px;
+  font-size: 16px;
 }
 
+::v-deep .favorite-checkbox .el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: #2a5298;
+  border-color: #2a5298;
+}
+
+::v-deep .favorite-checkbox .el-checkbox__input.is-checked + .el-checkbox__label {
+  color: #2a5298;
+}
+
+::v-deep .favorite-checkbox:hover .el-checkbox__inner {
+  border-color: #2a5298;
+}
+
+/* 按钮美化 */
 .action-row {
-  margin-top: 10px;
+  margin-top: 32px;
   text-align: center;
+  padding-top: 24px;
+  border-top: 2px solid #e8f1f8;
 }
+
 .action-col {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  gap: 12px;
+}
+
+::v-deep .el-button {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 12px 32px;
+  transition: all 0.3s;
+  min-width: 120px;
+}
+
+::v-deep .el-button--primary {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+}
+
+::v-deep .el-button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(42, 82, 152, 0.3);
+}
+
+::v-deep .el-button--default {
+  background: #ffffff;
+  border: 1px solid #d4e8f7;
+  color: #5a6c7d;
+}
+
+::v-deep .el-button--default:hover {
+  background: #f8fbff;
+  border-color: #2a5298;
+  color: #2a5298;
+  transform: translateY(-2px);
 }
 
 /* 动画与响应式 */
@@ -409,6 +702,7 @@ export default {
 .fade-slide-leave-active {
   transition: all 0.4s ease;
 }
+
 .fade-slide-enter,
 .fade-slide-leave-to {
   opacity: 0;
@@ -418,36 +712,56 @@ export default {
 .button-press-enter-active {
   transition: transform 0.15s;
 }
+
 .button-press-enter {
   transform: scale(0.98);
 }
 
 /* 小屏优化 */
 @media (max-width: 767px) {
-  .box-card {
-    margin: 10px;
-    border-radius: 10px;
+  ::v-deep .app-container {
+    padding: 12px;
   }
+
+  .box-card {
+    margin: 10px auto;
+    border-radius: 12px;
+  }
+
+  ::v-deep .box-card .el-card__body {
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+
   .el-form-item__label {
     font-size: 13px;
   }
-  .el-button {
+
+  ::v-deep .el-button {
     width: 100%;
     margin-bottom: 8px;
+    min-width: auto;
   }
+
+  .action-col {
+    flex-direction: column;
+    width: 100%;
+  }
+
   .upload-tip,
   .tag-tip {
     margin-top: 8px;
+    font-size: 12px;
   }
 }
 
 /* 桌面端 */
 @media (min-width: 768px) {
-  .el-button {
-    min-width: 120px;
-  }
-  .el-button + .el-button {
-    margin-left: 10px;
+  ::v-deep .el-button + .el-button {
+    margin-left: 0;
   }
 }
 </style>

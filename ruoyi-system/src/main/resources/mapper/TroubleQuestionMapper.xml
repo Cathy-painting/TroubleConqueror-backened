@@ -44,6 +44,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTroubleQuestionVo"/>
         where question_id = #{questionId}
     </select>
+
+    <select id="selectFavoriteQuestionList" parameterType="TroubleQuestion" resultMap="TroubleQuestionResult">
+        select tq.question_id, tq.user_id, tq.question_content, tq.question_images, 
+               tq.answer_content, tq.answer_images, tq.question_type, tq.tags, tq.status, 
+               tq.create_by, tq.create_time, tq.update_by, tq.update_time, tq.remark,
+               tqf.create_time as favorite_time
+        from trouble_question tq
+        inner join trouble_question_favorite tqf on tq.question_id = tqf.question_id
+        <where>
+            <if test="userId != null"> and tq.user_id = #{userId}</if>
+            <if test="questionContent != null and questionContent != ''"> and tq.question_content like concat('%', #{questionContent}, '%')</if>
+            <if test="questionType != null and questionType != ''"> and tq.question_type = #{questionType}</if>
+            <if test="tags != null and tags != ''"> and tq.tags like concat('%', #{tags}, '%')</if>
+        </where>
+        order by tqf.create_time desc
+    </select>
         
     <insert id="insertTroubleQuestion" parameterType="TroubleQuestion" useGeneratedKeys="true" keyProperty="questionId">
         insert into trouble_question

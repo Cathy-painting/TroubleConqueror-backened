@@ -27,6 +27,14 @@ public interface TroubleQuestionMapper
     public List<TroubleQuestion> selectTroubleQuestionList(TroubleQuestion troubleQuestion);
 
     /**
+     * 查询收藏的错题列表
+     * 
+     * @param troubleQuestion 错题
+     * @return 错题集合
+     */
+    public List<TroubleQuestion> selectFavoriteQuestionList(TroubleQuestion troubleQuestion);
+
+    /**
      * 新增错题
      * 
      * @param troubleQuestion 错题
