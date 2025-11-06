@@ -411,7 +411,7 @@
             <p class="hero-subtitle">中小学生错题管理系统 · 让学习更高效，让错题不再困扰</p>
 
             <div class="cta-section">
-                <button class="start-button" onclick="window.location.href='http://localhost:1024'">
+                <button class="start-button" onclick="navigateToApp()">
                     <span>开始征服错题！🚀</span>
                 </button>
             </div>
@@ -508,6 +508,13 @@
     </div>
 
     <script>
+        // 自动获取当前域名/IP并导航到应用
+        function navigateToApp() {
+            const hostname = window.location.hostname;
+            const targetUrl = `http://${hostname}:8081`;
+            window.location.href = targetUrl;
+        }
+
         // 平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {

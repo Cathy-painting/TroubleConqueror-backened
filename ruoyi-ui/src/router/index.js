@@ -70,7 +70,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/index'),
         name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'dashboard', affix: true, noSidebar: false }
       }
     ]
   },
@@ -153,7 +153,7 @@ export const dynamicRoutes = [
         path: 'question/add',
         component: () => import('@/views/trouble/question/add'),
         name: 'TroubleQuestionAdd',
-        meta: { title: '添加错题', icon: 'edit', permissions: ['trouble:question:add'], activeMenu: '/trouble/question' }
+        meta: { title: '添加错题', icon: 'edit', permissions: ['trouble:question:add'], activeMenu: '/trouble/question', noSidebar: true }
       },
       {
         path: 'test',

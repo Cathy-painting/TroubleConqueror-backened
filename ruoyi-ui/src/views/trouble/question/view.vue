@@ -85,6 +85,10 @@
           :key="question.questionId"
           :question="question"
           @click="handleQuestionClick"
+          @view="handleView"
+          @edit="handleEdit"
+          @favorite="handleFavorite"
+          @delete="handleDelete"
         />
       </div>
 
@@ -95,6 +99,10 @@
           :key="question.questionId"
           :question="question"
           @click="handleQuestionClick"
+          @view="handleView"
+          @edit="handleEdit"
+          @favorite="handleFavorite"
+          @delete="handleDelete"
         />
       </div>
 
@@ -105,6 +113,10 @@
           :key="question.questionId"
           :question="question"
           @click="handleQuestionClick"
+          @view="handleView"
+          @edit="handleEdit"
+          @favorite="handleFavorite"
+          @delete="handleDelete"
         />
       </div>
 
@@ -132,15 +144,23 @@
       @close="selectedQuestion = null"
       @refresh="handleQuestionRefresh"
     />
+
+    <!-- 编辑对话框 -->
+    <question-edit-dialog
+      ref="editDialog"
+      :question-id="selectedQuestion ? selectedQuestion.questionId : null"
+      @success="handleEditSuccess"
+    />
   </div>
 </template>
 
 <script>
-import { listQuestion } from "@/api/trouble/question";
+import { listQuestion, delQuestion, favoriteQuestion, unfavoriteQuestion, getQuestion } from "@/api/trouble/question";
 import QuestionCard from "./components/QuestionCard.vue";
 import QuestionListItem from "./components/QuestionListItem.vue";
 import QuestionCompactItem from "./components/QuestionCompactItem.vue";
 import QuestionDetail from "./components/QuestionDetail.vue";
+import QuestionEditDialog from "./components/QuestionEditDialog.vue";
 import { mapGetters } from "vuex";
 
 export default {
@@ -149,7 +169,8 @@ export default {
     QuestionCard,
     QuestionListItem,
     QuestionCompactItem,
-    QuestionDetail
+    QuestionDetail,
+    QuestionEditDialog
   },
   computed: {
     ...mapGetters(['roles'])
@@ -211,7 +232,10 @@ export default {
       }
       
       return listQuestion(this.queryParams).then(response => {
-        this.questionList = response.rows || [];
+        const questions = response.rows || [];
+        // 检查每个错题是否已收藏（这里需要根据实际API返回的数据来判断）
+        // 如果API返回了isFavorite字段，则直接使用；否则需要额外查询
+        this.questionList = questions;
         this.total = response.total || 0;
         this.loading = false;
         return response;
@@ -283,9 +307,60 @@ export default {
         });
       }
     },
+
+    handleEditSuccess() {
+      this.getList();
+      if (this.selectedQuestion) {
+        const questionId = this.selectedQuestion.questionId;
+        this.getList().then(() => {
+          const updatedQuestion = this.questionList.find(q => q.questionId == questionId);
+          if (updatedQuestion) {
+            this.selectedQuestion = updatedQuestion;
+          }
+        });
+      }
+    },
     /** 返回主页 */
     goToDashboard() {
-      this.$router.push("/trouble/dashboard");
+      this.$router.push("/index");
+    },
+    /** 查看详情 */
+    handleView(question) {
+      this.selectedQuestion = question;
+    },
+    /** 编辑 */
+    handleEdit(question) {
+      this.selectedQuestion = question;
+      this.$nextTick(() => {
+        if (this.$refs.editDialog) {
+          this.$refs.editDialog.open();
+        }
+      });
+    },
+    /** 收藏/取消收藏 */
+    handleFavorite(question) {
+      const isFavorite = question.isFavorite;
+      const action = isFavorite ? unfavoriteQuestion : favoriteQuestion;
+      const actionText = isFavorite ? '取消收藏' : '收藏';
+      
+      action(question.questionId).then(() => {
+        this.$message.success(`${actionText}成功`);
+        // 更新本地状态
+        question.isFavorite = !isFavorite;
+        // 刷新列表
+        this.getList();
+      }).catch(() => {
+        this.$message.error(`${actionText}失败`);
+      });
+    },
+    /** 删除 */
+    handleDelete(question) {
+      this.$modal.confirm('确认要删除该错题吗？').then(() => {
+        return delQuestion(question.questionId);
+      }).then(() => {
+        this.$message.success('删除成功');
+        this.getList();
+      }).catch(() => {});
     }
   }
 };
@@ -295,6 +370,8 @@ export default {
 .question-view-page {
   min-height: 100vh;
   background: #f5f5f5;
+  position: relative;
+  padding: 0;
 }
 
 .view-header {
@@ -303,6 +380,8 @@ export default {
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .header-inner {
@@ -357,6 +436,8 @@ export default {
 .filter-bar {
   background: #ffffff;
   border-bottom: 1px solid #e0e0e0;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .filter-inner {
@@ -380,10 +461,14 @@ export default {
   align-items: center;
   gap: 12px;
   margin-left: auto;
+  flex-wrap: nowrap;
 }
 
 .view-mode-radios {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 
 .view-mode-radios >>> .el-radio-button__inner {
@@ -451,7 +536,8 @@ export default {
 .view-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 /* 列表视图 */
@@ -461,6 +547,8 @@ export default {
   border-radius: 0;
   margin-bottom: 24px;
   overflow: hidden;
+  box-shadow: none;
+  border-top: none;
 }
 
 /* 卡片视图 */
@@ -471,6 +559,12 @@ export default {
   margin-bottom: 24px;
 }
 
+.questions-grid .flat-card {
+  background: #ffffff;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+
 /* 紧凑视图 */
 .questions-compact {
   background: #ffffff;
@@ -478,6 +572,7 @@ export default {
   border-radius: 0;
   margin-bottom: 24px;
   overflow: hidden;
+  box-shadow: none;
 }
 
 .empty-state {
@@ -502,6 +597,11 @@ export default {
   margin-top: 24px;
   display: flex;
   justify-content: center;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
 }
 
 @media (max-width: 768px) {

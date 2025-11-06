@@ -44,7 +44,34 @@
               {{ tag }}
             </span>
           </div>
-          <span class="item-view">查看详情 <i class="el-icon-arrow-right"></i></span>
+          <div class="item-actions" @click.stop>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-view"
+              @click="handleView"
+            >查看</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleEdit"
+            >编辑</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-star-on"
+              @click="handleFavorite"
+              :style="{ color: question.isFavorite ? '#f56c6c' : '#909399' }"
+            >收藏</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete"
+              style="color: #f56c6c;"
+            >删除</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -79,7 +106,34 @@
               {{ tag }}
             </span>
           </div>
-          <span class="item-view">查看详情 <i class="el-icon-arrow-right"></i></span>
+          <div class="item-actions" @click.stop>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-view"
+              @click="handleView"
+            >查看</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleEdit"
+            >编辑</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-star-on"
+              @click="handleFavorite"
+              :style="{ color: question.isFavorite ? '#f56c6c' : '#909399' }"
+            >收藏</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete"
+              style="color: #f56c6c;"
+            >删除</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -95,6 +149,7 @@ export default {
       required: true
     }
   },
+  emits: ['view', 'edit', 'favorite', 'delete', 'click'],
   computed: {
     hasImages() {
       return this.question.questionImages && this.question.questionImages.trim() !== '';
@@ -117,6 +172,18 @@ export default {
   methods: {
     handleClick() {
       this.$emit('click', this.question);
+    },
+    handleView() {
+      this.$emit('view', this.question);
+    },
+    handleEdit() {
+      this.$emit('edit', this.question);
+    },
+    handleFavorite() {
+      this.$emit('favorite', this.question);
+    },
+    handleDelete() {
+      this.$emit('delete', this.question);
     },
     getImageUrl(imagePath) {
       if (!imagePath) return '';
@@ -302,22 +369,21 @@ export default {
   line-height: 1.4;
 }
 
-.item-view {
-  color: #2196f3;
-  font-size: 12px;
-  font-weight: 500;
+.item-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
-.item-view i {
-  transition: transform 0.2s;
+.item-actions .el-button {
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
-.question-list-item:hover .item-view i {
-  transform: translateX(2px);
+.item-actions .el-button:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {

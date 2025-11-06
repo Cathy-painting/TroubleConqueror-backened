@@ -23,7 +23,9 @@ router.beforeEach((to, from, next) => {
     // 控制侧边栏显示/隐藏
     const roles = store.getters.roles || []
     const isAdmin = roles.includes('admin')
-    const hideSidebar = to.meta.noSidebar === true || (!isAdmin && (to.path === '/trouble/dashboard' || to.path === '/trouble/question/view'))
+    // 非管理员用户隐藏侧边栏，管理员用户根据路由meta决定
+    // 非管理员用户访问index、view、favorite等页面时隐藏侧边栏
+    const hideSidebar = to.meta.noSidebar === true || (!isAdmin && (to.path === '/index' || to.path === '/trouble/question/view' || to.path === '/trouble/favorite' || to.path === '/trouble/question/add'))
     store.dispatch('app/toggleSideBarHide', hideSidebar)
     
     /* has token */
@@ -46,9 +48,9 @@ router.beforeEach((to, from, next) => {
             const roles = store.getters.roles
             let redirectPath = '/index' // 默认跳转到首页
 
-            // 如果不是 admin 用户，跳转到 trouble/dashboard
+            // 如果不是 admin 用户，跳转到 index（首页）
             if (!roles.includes('admin')) {
-              redirectPath = '/trouble/dashboard'
+              redirectPath = '/index'
             }
 
             // 如果存在原始重定向地址，优先使用

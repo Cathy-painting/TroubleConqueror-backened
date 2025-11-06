@@ -298,6 +298,7 @@ export default {
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .header-tag {
@@ -310,6 +311,7 @@ export default {
 .header-time {
   font-size: 14px;
   opacity: 0.9;
+  white-space: nowrap;
 }
 
 .header-title {
@@ -317,6 +319,8 @@ export default {
   font-weight: bold;
   margin: 0;
   color: white;
+  flex: 1;
+  min-width: 0;
 }
 
 .header-actions {
@@ -326,6 +330,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .close-btn {
@@ -438,32 +443,71 @@ export default {
 @media (max-width: 767px) {
   .question-detail-overlay {
     padding: 0;
+    align-items: flex-start;
+    padding-top: 0;
   }
 
   .question-detail-dialog {
     max-height: 100vh;
     border-radius: 0;
+    max-width: 100%;
+    height: 100vh;
   }
 
   .detail-header {
-    padding: 20px;
+    padding: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-info {
+    width: 100%;
+    margin-bottom: 8px;
   }
 
   .header-title {
-    font-size: 20px;
+    font-size: 18px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .header-actions {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .header-actions .el-button {
+    flex: 1;
+    max-width: 120px;
   }
 
   .detail-content {
-    padding: 20px;
+    padding: 16px;
+  }
+
+  .section-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .section-title {
+    font-size: 16px;
   }
 
   .section-content {
-    padding: 16px;
+    padding: 12px;
     font-size: 14px;
   }
 
   .detail-image {
-    height: 300px;
+    height: 250px;
+  }
+
+  .image-viewer {
+    margin: 0 -16px;
   }
 }
 </style>

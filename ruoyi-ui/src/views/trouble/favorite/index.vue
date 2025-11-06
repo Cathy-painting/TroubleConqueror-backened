@@ -15,7 +15,7 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px" class="search-form">
       <el-row :gutter="10">
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
-          <el-form-item label="题目内容" prop="questionContent">
+          <el-form-item label="题目内容" prop="questionContent" class="search-form-item">
             <el-input
               v-model="queryParams.questionContent"
               placeholder="请输入题目内容"
@@ -25,7 +25,7 @@
           </el-form-item>
         </el-col>
         <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
-          <el-form-item label="题目类型" prop="questionType">
+          <el-form-item label="题目类型" prop="questionType" class="search-form-item">
             <el-select v-model="queryParams.questionType" placeholder="请选择题目类型" clearable style="width: 100%">
               <el-option label="未区分" value="未区分" />
               <el-option label="选择题" value="选择题" />
@@ -75,16 +75,37 @@
           @click="handleBatchUnfavorite"
         >批量取消收藏</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <!-- 表格 -->
+    <!-- 题目列表 - 参考view.vue设计 -->
+    <div class="questions-container">
+      <div v-loading="loading" class="questions-list">
+        <question-list-item
+          v-for="question in favoriteList"
+          :key="question.questionId"
+          :question="question"
+          @view="handleView"
+          @edit="handleEdit"
+          @favorite="handleUnfavoriteFromList"
+          @delete="handleUnfavoriteFromList"
+        />
+      </div>
+
+      <!-- 空状态 -->
+      <div v-if="!loading && favoriteList.length === 0" class="empty-state">
+        <i class="el-icon-document-delete"></i>
+        <p>没有找到相关题目</p>
+      </div>
+    </div>
+
+    <!-- 原表格（隐藏） -->
     <el-table 
       v-loading="loading" 
       :data="favoriteList" 
       @selection-change="handleSelectionChange"
       class="favorite-table"
       stripe
+      style="display: none;"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="题目内容" prop="questionContent" :show-overflow-tooltip="true" min-width="200">
@@ -143,6 +164,13 @@
       @pagination="getList"
     />
 
+    <!-- 编辑对话框 -->
+    <question-edit-dialog
+      ref="editDialog"
+      :question-id="currentQuestion ? currentQuestion.questionId : null"
+      @success="handleEditSuccess"
+    />
+
     <!-- 查看详情对话框 -->
     <el-dialog title="错题详情" :visible.sync="viewDialogVisible" width="70%" append-to-body class="view-dialog">
       <div v-if="currentQuestion" class="question-detail">
@@ -196,9 +224,15 @@
 
 <script>
 import { listFavoriteQuestion, unfavoriteQuestion, getQuestion } from "@/api/trouble/question";
+import QuestionListItem from "@/views/trouble/question/components/QuestionListItem.vue";
+import QuestionEditDialog from "@/views/trouble/question/components/QuestionEditDialog.vue";
 
 export default {
   name: "FavoriteQuestion",
+  components: {
+    QuestionListItem,
+    QuestionEditDialog
+  },
   data() {
     return {
       // 遮罩层
@@ -268,20 +302,32 @@ export default {
     },
     /** 编辑 */
     handleEdit(row) {
-      this.$router.push({
-        path: '/trouble/question',
-        query: { edit: row.questionId }
+      this.currentQuestion = { ...row };
+      this.$nextTick(() => {
+        if (this.$refs.editDialog) {
+          this.$refs.editDialog.open();
+        }
       });
+    },
+
+    handleEditSuccess() {
+      this.getList();
+      this.currentQuestion = null;
     },
     /** 取消收藏 */
     handleUnfavorite(row) {
-      const questionId = row.questionId;
+      const questionId = row.questionId || row;
       this.$modal.confirm('确认要取消收藏该错题吗？').then(() => {
         return unfavoriteQuestion(questionId);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("已取消收藏");
       }).catch(() => {});
+    },
+
+    /** 从列表组件取消收藏 */
+    handleUnfavoriteFromList(question) {
+      this.handleUnfavorite(question);
     },
     /** 批量取消收藏 */
     handleBatchUnfavorite() {
@@ -437,6 +483,16 @@ export default {
   color: #2c3e50;
   font-weight: 600;
   font-size: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.search-form-item {
+  min-width: 0;
+}
+
+.search-form-item ::v-deep .el-form-item__label {
+  white-space: nowrap;
 }
 
 ::v-deep .search-form .el-input__inner,
@@ -482,13 +538,17 @@ export default {
   margin-right: 6px;
 }
 
-/* 操作按钮区的按钮白色字体 */
+/* 操作按钮区的按钮 */
 ::v-deep .mb8 .el-button {
-  color: #ffffff;
+  color: #333;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
 }
 
 ::v-deep .mb8 .el-button:hover {
-  color: #ffffff;
+  color: #667eea;
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
 }
 
 ::v-deep .el-button--primary {
@@ -658,6 +718,40 @@ export default {
 .preview-image:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 20px rgba(42, 82, 152, 0.2);
+}
+
+/* 题目列表容器 */
+.questions-container {
+  margin-top: 20px;
+}
+
+.questions-list {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(42, 82, 152, 0.1);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #9e9e9e;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+}
+
+.empty-state i {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
 }
 
 /* 响应式设计 */

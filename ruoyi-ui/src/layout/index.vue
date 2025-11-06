@@ -55,8 +55,8 @@ export default {
       const roles = this.roles || []
       const isAdmin = roles.includes('admin')
       const currentPath = this.$route.path
-      // 非管理员访问dashboard或view页面时隐藏顶部栏
-      if (!isAdmin && (currentPath === '/trouble/dashboard' || currentPath === '/trouble/question/view')) {
+      // 非管理员访问index、dashboard或view页面时隐藏顶部栏
+      if (!isAdmin && (currentPath === '/index' || currentPath === '/trouble/dashboard' || currentPath === '/trouble/question/view' || currentPath === '/trouble/favorite')) {
         return false
       }
       return true

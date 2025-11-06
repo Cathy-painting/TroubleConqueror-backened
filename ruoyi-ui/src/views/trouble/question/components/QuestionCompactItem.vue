@@ -42,7 +42,38 @@
             {{ tag }}
           </span>
         </div>
-        <i class="el-icon-arrow-right compact-arrow"></i>
+        <div class="compact-actions" @click.stop>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleView"
+            title="查看"
+          ></el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleEdit"
+            title="编辑"
+          ></el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-star-on"
+            @click="handleFavorite"
+            :style="{ color: question.isFavorite ? '#f56c6c' : '#909399' }"
+            title="收藏"
+          ></el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete"
+            style="color: #f56c6c;"
+            title="删除"
+          ></el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -57,6 +88,7 @@ export default {
       required: true
     }
   },
+  emits: ['view', 'edit', 'favorite', 'delete', 'click'],
   computed: {
     hasImages() {
       return this.question.questionImages && this.question.questionImages.trim() !== '';
@@ -73,6 +105,18 @@ export default {
   methods: {
     handleClick() {
       this.$emit('click', this.question);
+    },
+    handleView() {
+      this.$emit('view', this.question);
+    },
+    handleEdit() {
+      this.$emit('edit', this.question);
+    },
+    handleFavorite() {
+      this.$emit('favorite', this.question);
+    },
+    handleDelete() {
+      this.$emit('delete', this.question);
     },
     getImageUrl(imagePath) {
       if (!imagePath) return '';
@@ -235,15 +279,20 @@ export default {
   line-height: 1.4;
 }
 
-.compact-arrow {
-  color: #9e9e9e;
-  font-size: 14px;
-  transition: transform 0.2s, color 0.2s;
+.compact-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.question-compact-item:hover .compact-arrow {
-  color: #2196f3;
-  transform: translateX(2px);
+.compact-actions .el-button {
+  padding: 4px;
+  font-size: 14px;
+}
+
+.compact-actions .el-button:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {

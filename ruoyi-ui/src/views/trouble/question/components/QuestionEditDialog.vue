@@ -2,12 +2,12 @@
   <el-dialog
     title="编辑错题"
     :visible.sync="visible"
-    width="800px"
+    :width="isMobile ? '100%' : '800px'"
     :close-on-click-modal="false"
-    :modal="false"
+    :modal="true"
     :append-to-body="true"
     :lock-scroll="false"
-    custom-class="question-edit-dialog"
+    :custom-class="isMobile ? 'question-edit-dialog mobile-dialog' : 'question-edit-dialog'"
     @close="handleCancel"
     @opened="handleDialogOpened"
     @closed="handleDialogClosed"
@@ -16,7 +16,8 @@
       ref="form"
       :model="form"
       :rules="rules"
-      label-width="100px"
+      :label-width="isMobile ? '80px' : '100px'"
+      class="edit-form"
     >
       <el-form-item label="题目内容" prop="questionContent">
         <el-input
@@ -138,6 +139,7 @@ export default {
     return {
       visible: false,
       submitLoading: false,
+      isMobile: false,
       form: {
         questionId: null,
         questionContent: "",
@@ -157,6 +159,13 @@ export default {
       defaultTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"]
     };
   },
+  created() {
+    this.checkIsMobile();
+    window.addEventListener("resize", this.checkIsMobile);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.checkIsMobile);
+  },
   watch: {
     questionId(newVal) {
       if (newVal) {
@@ -170,6 +179,9 @@ export default {
     }
   },
   methods: {
+    checkIsMobile() {
+      this.isMobile = window.matchMedia("(max-width: 767px)").matches;
+    },
     open() {
       this.visible = true;
     },
@@ -316,5 +328,103 @@ export default {
 /* 确保详情弹窗的遮罩在编辑对话框之上 */
 .question-detail-overlay {
   z-index: 2000 !important;
+}
+
+/* 编辑表单样式 */
+.edit-form {
+  padding: 0;
+}
+
+.edit-form .el-form-item {
+  margin-bottom: 20px;
+}
+
+/* 移动端响应式设计 */
+@media (max-width: 767px) {
+  .question-edit-dialog.mobile-dialog {
+    width: 100% !important;
+    margin: 0 !important;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-dialog {
+    width: 100% !important;
+    margin: 0 !important;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+  }
+
+  .question-edit-dialog.mobile-dialog .v-modal {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    opacity: 1 !important;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-dialog__header {
+    padding: 16px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-dialog__title {
+    font-size: 18px;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-dialog__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px;
+    background: #ffffff;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .question-edit-dialog.mobile-dialog .edit-form {
+    padding: 0;
+  }
+
+  .question-edit-dialog.mobile-dialog .edit-form .el-form-item {
+    margin-bottom: 18px;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-form-item__label {
+    font-size: 14px;
+    padding-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-input__inner,
+  .question-edit-dialog.mobile-dialog .el-textarea__inner {
+    font-size: 14px;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-select {
+    width: 100%;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-dialog__footer {
+    padding: 16px;
+    flex-shrink: 0;
+    border-top: 1px solid #e0e0e0;
+    background: #ffffff;
+  }
+
+  .question-edit-dialog.mobile-dialog .el-button {
+    width: 100%;
+    margin: 0;
+  }
+
+  .question-edit-dialog.mobile-dialog .dialog-footer {
+    display: flex;
+    gap: 12px;
+  }
+
+  .question-edit-dialog.mobile-dialog .dialog-footer .el-button {
+    flex: 1;
+  }
 }
 </style>

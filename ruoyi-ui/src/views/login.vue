@@ -186,14 +186,17 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .login {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
   position: relative;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+  padding: 20px;
+  box-sizing: border-box;
   
   // 动态背景装饰
   .bg-decoration {
@@ -414,8 +417,7 @@ export default {
 .el-login-footer {
   height: 40px;
   line-height: 40px;
-  position: fixed;
-  bottom: 0;
+  position: relative;
   width: 100%;
   text-align: center;
   color: rgba(255, 255, 255, 0.8);
@@ -424,20 +426,43 @@ export default {
   letter-spacing: 1px;
   z-index: 20;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  margin-top: auto;
+  padding: 20px 0;
 }
 
 // 响应式设计
 @media screen and (max-width: 768px) {
+  .login {
+    padding: 15px;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  .login-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+
   .login-form {
-    width: 90%;
+    width: 100%;
     max-width: 400px;
     padding: 30px 25px 20px 25px;
+    margin: 0 auto;
     
     .form-header {
       .title {
         font-size: 24px;
       }
     }
+  }
+
+  .el-login-footer {
+    margin-top: 20px;
+    padding: 15px 0;
+    font-size: 12px;
   }
 }
 </style>

@@ -182,10 +182,10 @@
                 </el-button>
               </transition>
               <el-button @click="resetForm" :style="buttonStyle">
-                重置 (Reset)
+                重置
               </el-button>
               <el-button @click="goBack" :style="buttonStyle">
-                取消 (Cancel)
+                取消
               </el-button>
             </el-col>
           </el-row>
@@ -236,7 +236,7 @@ export default {
   created() {
     this.checkIsMobile();
     window.addEventListener("resize", this.checkIsMobile);
-    
+
     // 监听表单变化
     this.$watch('form', () => {
       this.formChanged = true;
@@ -345,12 +345,12 @@ export default {
         }
       });
     },
-    
+
     // 处理成功回调
     handleSuccessCallback() {
       // 清除表单修改标记（已成功保存）
       this.formChanged = false;
-      
+
       // 成功后询问用户是否继续添加
       this.$confirm('是否继续添加错题？', '提示', {
         confirmButtonText: '继续添加',
