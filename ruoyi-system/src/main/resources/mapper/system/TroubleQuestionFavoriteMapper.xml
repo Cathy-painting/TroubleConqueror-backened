@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TroubleQuestionFavoriteMapper">
+    
+    <resultMap type="TroubleQuestionFavorite" id="TroubleQuestionFavoriteResult">
+        <result property="favoriteId"    column="favorite_id"    />
+        <result property="questionId"    column="question_id"    />
+        <result property="userId"        column="user_id"        />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectTroubleQuestionFavoriteVo">
+        select favorite_id, question_id, user_id, create_time from trouble_question_favorite
+    </sql>
+
+    <select id="selectTroubleQuestionFavoriteList" parameterType="TroubleQuestionFavorite" resultMap="TroubleQuestionFavoriteResult">
+        <include refid="selectTroubleQuestionFavoriteVo"/>
+        <where>  
+            <if test="questionId != null "> and question_id = #{questionId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectTroubleQuestionFavoriteByFavoriteId" parameterType="Long" resultMap="TroubleQuestionFavoriteResult">
+        <include refid="selectTroubleQuestionFavoriteVo"/>
+        where favorite_id = #{favoriteId}
+    </select>
+
+    <select id="selectFavoriteByQuestionIdAndUserId" resultMap="TroubleQuestionFavoriteResult">
+        <include refid="selectTroubleQuestionFavoriteVo"/>
+        where question_id = #{questionId} and user_id = #{userId}
+    </select>
+        
+    <insert id="insertTroubleQuestionFavorite" parameterType="TroubleQuestionFavorite" useGeneratedKeys="true" keyProperty="favoriteId">
+        insert into trouble_question_favorite
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">question_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">#{questionId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <delete id="deleteTroubleQuestionFavoriteByFavoriteId" parameterType="Long">
+        delete from trouble_question_favorite where favorite_id = #{favoriteId}
+    </delete>
+
+    <delete id="deleteFavoriteByQuestionIdAndUserId">
+        delete from trouble_question_favorite where question_id = #{questionId} and user_id = #{userId}
+    </delete>
+
+    <delete id="deleteTroubleQuestionFavoriteByFavoriteIds" parameterType="String">
+        delete from trouble_question_favorite where favorite_id in 
+        <foreach item="favoriteId" collection="array" open="(" separator="," close=")">
+            #{favoriteId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFavoriteByQuestionId" parameterType="Long">
+        delete from trouble_question_favorite where question_id = #{questionId}
+    </delete>
+</mapper>
+
