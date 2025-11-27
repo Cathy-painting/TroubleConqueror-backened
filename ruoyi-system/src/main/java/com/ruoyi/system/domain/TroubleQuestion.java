@@ -50,6 +50,10 @@ public class TroubleQuestion extends BaseEntity
     @Excel(name = "重要性", readConverterExp = "1=低,2=中,3=高")
     private Integer importance;
 
+    /** 熟练度等级（0=陌生，1=一般，2=较好，3=熟练） */
+    @Excel(name = "熟练度", readConverterExp = "0=陌生,1=一般,2=较好,3=熟练")
+    private Integer proficiency;
+
     /** 状态（0正常 1删除） */
     @Excel(name = "状态", readConverterExp = "0=正常,1=删除")
     private String status;
@@ -147,6 +151,16 @@ public class TroubleQuestion extends BaseEntity
         this.importance = importance;
     }
 
+    public Integer getProficiency()
+    {
+        return proficiency;
+    }
+
+    public void setProficiency(Integer proficiency)
+    {
+        this.proficiency = proficiency;
+    }
+
     public String getStatus()
     {
         return status;
@@ -179,6 +193,7 @@ public class TroubleQuestion extends BaseEntity
             .append("questionType", getQuestionType())
             .append("tags", getTags())
             .append("importance", getImportance())
+            .append("proficiency", getProficiency())
             .append("status", getStatus())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

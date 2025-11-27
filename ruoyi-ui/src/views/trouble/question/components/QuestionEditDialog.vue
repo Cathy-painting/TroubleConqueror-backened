@@ -93,6 +93,15 @@
         </el-radio-group>
       </el-form-item>
 
+      <el-form-item label="熟练度" prop="proficiency">
+        <el-radio-group v-model="form.proficiency">
+          <el-radio :label="3">熟练</el-radio>
+          <el-radio :label="2">较好</el-radio>
+          <el-radio :label="1">一般</el-radio>
+          <el-radio :label="0">陌生</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
       <el-form-item label="标签">
         <el-select
           v-model="selectedTags"
@@ -157,6 +166,7 @@ export default {
         questionType: "未区分",
         tags: "",
         importance: 2,
+        proficiency: 0,
         remark: ""
       },
       rules: {
@@ -232,6 +242,7 @@ export default {
           questionType: response.data.questionType || "未区分",
           tags: response.data.tags || "",
           importance: response.data.importance || 2,
+          proficiency: response.data.proficiency !== undefined && response.data.proficiency !== null ? response.data.proficiency : 0,
           remark: response.data.remark || ""
         };
         this.selectedTags = this.form.tags ? this.form.tags.split(',').filter(t => t.trim()) : [];

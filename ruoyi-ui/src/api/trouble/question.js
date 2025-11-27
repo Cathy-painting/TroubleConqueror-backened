@@ -85,3 +85,12 @@ export function updateImportance(questionId, importance) {
     params: { importance }
   })
 }
+
+// 更新错题熟练度
+export function updateProficiency(questionId, proficiency) {
+  return request({
+    url: '/trouble/question/proficiency/' + questionId,
+    method: 'put',
+    params: { proficiency }
+  })
+}

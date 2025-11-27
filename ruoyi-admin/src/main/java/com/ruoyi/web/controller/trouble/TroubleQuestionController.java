@@ -248,6 +248,43 @@ public class TroubleQuestionController extends BaseController
             return error("更新重要性失败");
         }
     }
+
+    /**
+     * 更新错题熟练度
+     */
+    @ApiOperation("更新错题熟练度")
+    @PreAuthorize("@ss.hasPermi('trouble:question:edit')")
+    @Log(title = "更新错题熟练度", businessType = BusinessType.UPDATE)
+    @PutMapping("/proficiency/{questionId}")
+    public AjaxResult updateProficiency(@PathVariable("questionId") Long questionId, @RequestParam("proficiency") Integer proficiency)
+    {
+        // 验证熟练度参数
+        if (proficiency == null || (proficiency < 0 || proficiency > 3)) {
+            return error("熟练度等级必须为0（陌生）、1（一般）、2（较好）或3（熟练）");
+        }
+        
+        // 验证错题是否存在且属于当前用户
+        TroubleQuestion existingQuestion = troubleQuestionService.selectTroubleQuestionByQuestionId(questionId);
+        if (existingQuestion == null) {
+            return error("错题不存在");
+        }
+        if (!existingQuestion.getUserId().equals(SecurityUtils.getUserId())) {
+            return error("无权限修改该错题");
+        }
+        
+        // 更新熟练度
+        TroubleQuestion updateQuestion = new TroubleQuestion();
+        updateQuestion.setQuestionId(questionId);
+        updateQuestion.setProficiency(proficiency);
+        updateQuestion.setUserId(SecurityUtils.getUserId());
+        
+        int result = troubleQuestionService.updateTroubleQuestion(updateQuestion);
+        if (result > 0) {
+            return success("更新熟练度成功");
+        } else {
+            return error("更新熟练度失败");
+        }
+    }
 }
 
 

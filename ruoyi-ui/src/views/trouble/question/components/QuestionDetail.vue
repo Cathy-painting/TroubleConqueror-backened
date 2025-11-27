@@ -127,6 +127,32 @@
             </el-tag>
           </div>
         </div>
+
+        <!-- 重要性和熟练度 -->
+        <div class="detail-section">
+          <div class="section-header">
+            <div class="section-indicator red"></div>
+            <h3 class="section-title">标签信息</h3>
+          </div>
+          <div class="tags-container">
+            <el-tag
+              :type="getImportanceTagType(question.importance)"
+              size="medium"
+              class="detail-tag"
+            >
+              <i class="el-icon-star-on"></i>
+              重要性：{{ getImportanceText(question.importance) }}
+            </el-tag>
+            <el-tag
+              :type="getProficiencyTagType(question.proficiency)"
+              size="medium"
+              class="detail-tag"
+            >
+              <i class="el-icon-medal"></i>
+              熟练度：{{ getProficiencyText(question.proficiency) }}
+            </el-tag>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -218,6 +244,42 @@ export default {
         '未区分': 'info'
       };
       return typeMap[type] || 'info';
+    },
+    getImportanceText(importance) {
+      if (importance === null || importance === undefined) {
+        return '未设置';
+      }
+      const importanceMap = {
+        1: '低',
+        2: '中',
+        3: '高'
+      };
+      return importanceMap[importance] || '未设置';
+    },
+    getImportanceTagType(importance) {
+      if (importance === 3) return 'danger';
+      if (importance === 2) return 'warning';
+      if (importance === 1) return 'info';
+      return 'info';
+    },
+    getProficiencyText(proficiency) {
+      if (proficiency === null || proficiency === undefined) {
+        return '未设置';
+      }
+      const proficiencyMap = {
+        0: '陌生',
+        1: '一般',
+        2: '较好',
+        3: '熟练'
+      };
+      return proficiencyMap[proficiency] || '未设置';
+    },
+    getProficiencyTagType(proficiency) {
+      if (proficiency === 3) return 'success';
+      if (proficiency === 2) return 'primary';
+      if (proficiency === 1) return 'warning';
+      if (proficiency === 0) return 'danger';
+      return 'info';
     },
     parseTime(time, pattern) {
       if (!time) return '';
@@ -384,6 +446,10 @@ export default {
 
 .section-indicator.orange {
   background: #e6a23c;
+}
+
+.section-indicator.red {
+  background: #f56c6c;
 }
 
 .section-title {

@@ -77,6 +77,67 @@
       </div>
     </el-card>
 
+    <!-- 熟练度统计 -->
+    <el-card class="proficiency-card">
+      <div slot="header" class="clearfix">
+        <span class="card-title">📊 本周错题熟练度统计</span>
+      </div>
+      <el-row :gutter="16">
+        <el-col :xs="24" :sm="12" :md="6">
+          <div class="proficiency-item proficiency-proficient" @click="handleProficiencyClick(3)">
+            <div class="proficiency-icon">
+              <i class="el-icon-success"></i>
+            </div>
+            <div class="proficiency-content">
+              <div class="proficiency-label">熟练</div>
+              <div class="proficiency-value">{{ proficiencyStats.proficient }}</div>
+              <div class="proficiency-desc">已熟练掌握的错题</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="6">
+          <div class="proficiency-item proficiency-good" @click="handleProficiencyClick(2)">
+            <div class="proficiency-icon">
+              <i class="el-icon-check"></i>
+            </div>
+            <div class="proficiency-content">
+              <div class="proficiency-label">较好</div>
+              <div class="proficiency-value">{{ proficiencyStats.good }}</div>
+              <div class="proficiency-desc">掌握程度较好的错题</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="6">
+          <div class="proficiency-item proficiency-normal" @click="handleProficiencyClick(1)">
+            <div class="proficiency-icon">
+              <i class="el-icon-warning"></i>
+            </div>
+            <div class="proficiency-content">
+              <div class="proficiency-label">一般</div>
+              <div class="proficiency-value">{{ proficiencyStats.normal }}</div>
+              <div class="proficiency-desc">掌握程度一般的错题</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="6">
+          <div class="proficiency-item proficiency-unfamiliar" @click="handleProficiencyClick(0)">
+            <div class="proficiency-icon">
+              <i class="el-icon-question"></i>
+            </div>
+            <div class="proficiency-content">
+              <div class="proficiency-label">陌生</div>
+              <div class="proficiency-value">{{ proficiencyStats.unfamiliar }}</div>
+              <div class="proficiency-desc">需要重点复习的错题</div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="proficiency-tip">
+        <i class="el-icon-info"></i>
+        <span>提示：熟练度标签可以帮助您判断是否应该删除错题。熟练度越高，说明掌握程度越好，可以考虑删除。</span>
+      </div>
+    </el-card>
+
     <!-- 详细数据表格 -->
     <el-card class="table-card">
       <div slot="header" class="clearfix">
@@ -141,6 +202,12 @@ export default {
         max: 0,
         trend: 0
       },
+      proficiencyStats: {
+        proficient: 0,  // 熟练
+        good: 0,        // 较好
+        normal: 0,      // 一般
+        unfamiliar: 0   // 陌生
+      },
       chart: null,
       chartHeight: '400px'
     };
@@ -192,6 +259,29 @@ export default {
       // 获取当前用户的所有错题
       const response = await listQuestion({ pageNum: 1, pageSize: 1000 });
       const questions = response.rows || [];
+
+      // 统计本周的错题（用于熟练度统计）
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - (dayOfWeek - 1));
+      weekStart.setHours(0, 0, 0, 0);
+      
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 7);
+      weekEnd.setHours(23, 59, 59, 999);
+
+      // 筛选本周的错题
+      const thisWeekQuestions = questions.filter(q => {
+        const createDate = new Date(q.createTime);
+        return createDate >= weekStart && createDate < weekEnd;
+      });
+
+      // 统计熟练度
+      this.proficiencyStats = {
+        proficient: thisWeekQuestions.filter(q => q.proficiency === 3).length,
+        good: thisWeekQuestions.filter(q => q.proficiency === 2).length,
+        normal: thisWeekQuestions.filter(q => q.proficiency === 1).length,
+        unfamiliar: thisWeekQuestions.filter(q => q.proficiency === 0 || q.proficiency === null || q.proficiency === undefined).length
+      };
 
       // 统计每天的数量
       this.weeklyData = dates.map((date, index) => {
@@ -409,6 +499,30 @@ export default {
     /** 返回首页 */
     goBack() {
       this.$router.push('/');
+    },
+
+    /** 处理熟练度点击 */
+    handleProficiencyClick(proficiency) {
+      // 获取本周的开始和结束时间
+      const today = new Date();
+      const dayOfWeek = today.getDay() || 7;
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - (dayOfWeek - 1));
+      weekStart.setHours(0, 0, 0, 0);
+      
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 7);
+      weekEnd.setHours(23, 59, 59, 999);
+
+      // 跳转到错题列表页面，并筛选对应熟练度的题目，同时传递时间范围参数
+      this.$router.push({
+        path: '/trouble/question/view',
+        query: {
+          proficiency: proficiency,
+          weekStart: weekStart.toISOString(),
+          weekEnd: weekEnd.toISOString()
+        }
+      });
     }
   }
 };
@@ -701,6 +815,137 @@ export default {
 .trend-stable-text {
   color: #909399;
   font-weight: 600;
+}
+
+/* 熟练度统计卡片 */
+.proficiency-card {
+  margin-bottom: 24px;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 6px 28px rgba(30, 60, 114, 0.18);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(15px);
+}
+
+::v-deep .proficiency-card .el-card__header {
+  background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
+  border-bottom: 2px solid #e8f1f8;
+  padding: 16px 20px;
+}
+
+.proficiency-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.1);
+  transition: all 0.3s;
+  margin-bottom: 16px;
+  cursor: pointer;
+  position: relative;
+}
+
+.proficiency-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(30, 60, 114, 0.2);
+}
+
+.proficiency-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(30, 60, 114, 0.2);
+}
+
+.proficiency-icon {
+  font-size: 48px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.proficiency-proficient .proficiency-icon {
+  color: #67c23a;
+}
+
+.proficiency-good .proficiency-icon {
+  color: #409eff;
+}
+
+.proficiency-normal .proficiency-icon {
+  color: #e6a23c;
+}
+
+.proficiency-unfamiliar .proficiency-icon {
+  color: #f56c6c;
+}
+
+.proficiency-content {
+  flex: 1;
+}
+
+.proficiency-label {
+  font-size: 14px;
+  color: #7a8a9a;
+  margin-bottom: 8px;
+}
+
+.proficiency-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.proficiency-proficient .proficiency-value {
+  color: #67c23a;
+}
+
+.proficiency-good .proficiency-value {
+  color: #409eff;
+}
+
+.proficiency-normal .proficiency-value {
+  color: #e6a23c;
+}
+
+.proficiency-unfamiliar .proficiency-value {
+  color: #f56c6c;
+}
+
+.proficiency-desc {
+  font-size: 12px;
+  color: #909399;
+}
+
+.proficiency-item::after {
+  content: '点击查看';
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 11px;
+  color: #909399;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.proficiency-item:hover::after {
+  opacity: 1;
+}
+
+.proficiency-tip {
+  margin-top: 20px;
+  padding: 12px 16px;
+  background: #f0f9ff;
+  border-left: 4px solid #409eff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #606266;
+}
+
+.proficiency-tip i {
+  font-size: 16px;
+  color: #409eff;
 }
 
 /* 响应式设计 */

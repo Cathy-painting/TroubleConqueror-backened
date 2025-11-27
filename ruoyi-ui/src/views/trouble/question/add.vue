@@ -127,6 +127,21 @@
             </el-col>
           </el-row>
 
+          <!-- 熟练度 -->
+          <el-row :gutter="20" class="row-inline">
+            <el-col :xs="24" :sm="24" :md="24">
+              <el-form-item label="熟练度" prop="proficiency">
+                <el-radio-group v-model="form.proficiency">
+                  <el-radio :label="3">熟练</el-radio>
+                  <el-radio :label="2">较好</el-radio>
+                  <el-radio :label="1">一般</el-radio>
+                  <el-radio :label="0">陌生</el-radio>
+                </el-radio-group>
+                <div class="tag-tip">熟练度越高，表示对该题的掌握程度越好，可用于决定是否删除错题</div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
           <!-- 标签 -->
           <el-row :gutter="20" class="row-inline">
             <el-col :xs="24" :sm="24" :md="24">
@@ -223,6 +238,7 @@ export default {
         questionType: "未区分",
         tags: "",
         importance: 2,
+        proficiency: 0,
         remark: "",
       },
       rules: {
@@ -387,6 +403,7 @@ export default {
         questionType: "未区分",
         tags: "",
         importance: 2,
+        proficiency: 0,
         remark: "",
       };
       this.selectedTags = [];

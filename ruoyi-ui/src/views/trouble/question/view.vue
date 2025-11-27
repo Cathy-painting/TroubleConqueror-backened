@@ -68,6 +68,16 @@
             <el-radio-button :label="1">低</el-radio-button>
           </el-radio-group>
         </div>
+        <div class="filter-group">
+          <span class="filter-label">熟练度：</span>
+          <el-radio-group v-model="queryParams.proficiency" @change="handleQuery" class="filter-radios">
+            <el-radio-button label="">全部</el-radio-button>
+            <el-radio-button :label="3">熟练</el-radio-button>
+            <el-radio-button :label="2">较好</el-radio-button>
+            <el-radio-button :label="1">一般</el-radio-button>
+            <el-radio-button :label="0">陌生</el-radio-button>
+          </el-radio-group>
+        </div>
         <div class="view-mode-group">
           <span class="filter-label">视图：</span>
           <el-radio-group v-model="viewMode" @change="handleViewModeChange" class="view-mode-radios">
@@ -199,8 +209,11 @@ export default {
         questionContent: null,
         questionType: null,
         tags: null,
-        importance: ""
-      }
+        importance: "",
+        proficiency: ""
+      },
+      weekStart: null,  // 用于筛选本周题目的开始时间
+      weekEnd: null     // 用于筛选本周题目的结束时间
     };
   },
   created() {
@@ -216,7 +229,16 @@ export default {
       this.queryParams.pageSize = 30;
     }
     
-    // 检查是否有查询参数（从其他页面跳转过来时可能带有 id）
+    // 检查是否有查询参数（从其他页面跳转过来时可能带有 id、proficiency 或时间范围）
+    if (this.$route.query.proficiency !== undefined && this.$route.query.proficiency !== null && this.$route.query.proficiency !== '') {
+      // 如果带有熟练度参数，设置筛选条件
+      this.queryParams.proficiency = parseInt(this.$route.query.proficiency);
+    }
+    // 如果有时间范围参数，保存用于前端筛选
+    if (this.$route.query.weekStart && this.$route.query.weekEnd) {
+      this.weekStart = new Date(this.$route.query.weekStart);
+      this.weekEnd = new Date(this.$route.query.weekEnd);
+    }
     if (this.$route.query.id) {
       // 如果有 id，先加载列表，然后自动打开详情
       this.getList().then(() => {
@@ -246,13 +268,34 @@ export default {
       if (queryParams.importance === "") {
         queryParams.importance = null;
       }
+      // 处理熟练度参数：空字符串转为null
+      if (queryParams.proficiency === "") {
+        queryParams.proficiency = null;
+      }
+      
+      // 如果有时间范围参数，需要获取更多数据以便前端筛选
+      if (this.weekStart && this.weekEnd) {
+        queryParams.pageSize = 1000;  // 获取更多数据以便筛选
+      }
       
       return listQuestion(queryParams).then(response => {
-        const questions = response.rows || [];
+        let questions = response.rows || [];
+        
+        // 如果有时间范围参数，筛选出本周的题目
+        if (this.weekStart && this.weekEnd) {
+          questions = questions.filter(q => {
+            const createDate = new Date(q.createTime);
+            return createDate >= this.weekStart && createDate <= this.weekEnd;
+          });
+          // 更新总数
+          this.total = questions.length;
+        } else {
+          this.total = response.total || 0;
+        }
+        
         // 检查每个错题是否已收藏（这里需要根据实际API返回的数据来判断）
         // 如果API返回了isFavorite字段，则直接使用；否则需要额外查询
         this.questionList = questions;
-        this.total = response.total || 0;
         this.loading = false;
         return response;
       }).catch(() => {
