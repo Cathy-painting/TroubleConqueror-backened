@@ -102,6 +102,69 @@
         </el-radio-group>
       </el-form-item>
 
+      <el-form-item label="错题来源">
+        <el-select
+          v-model="form.questionSource"
+          placeholder="请选择错题来源"
+          style="width: 100%"
+          clearable
+        >
+          <el-option label="课堂练习" value="课堂练习" />
+          <el-option label="课后作业" value="课后作业" />
+          <el-option label="周测/月考" value="周测/月考" />
+          <el-option label="单元测试" value="单元测试" />
+          <el-option label="期中/期末考试" value="期中/期末考试" />
+          <el-option label="模拟考试" value="模拟考试" />
+          <el-option label="真题" value="真题" />
+          <el-option label="教辅资料" value="教辅资料" />
+          <el-option label="竞赛类" value="竞赛类" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="年级">
+        <el-select
+          v-model="form.grade"
+          placeholder="请选择年级"
+          style="width: 100%"
+          clearable
+        >
+          <el-option label="小学一年级" value="小学一年级" />
+          <el-option label="小学二年级" value="小学二年级" />
+          <el-option label="小学三年级" value="小学三年级" />
+          <el-option label="小学四年级" value="小学四年级" />
+          <el-option label="小学五年级" value="小学五年级" />
+          <el-option label="小学六年级" value="小学六年级" />
+          <el-option label="初中一年级" value="初中一年级" />
+          <el-option label="初中二年级" value="初中二年级" />
+          <el-option label="初中三年级" value="初中三年级" />
+          <el-option label="高中一年级" value="高中一年级" />
+          <el-option label="高中二年级" value="高中二年级" />
+          <el-option label="高中三年级" value="高中三年级" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="错误类型">
+        <el-select
+          v-model="form.errorType"
+          placeholder="请选择错误类型"
+          style="width: 100%"
+          clearable
+        >
+          <el-option label="基础薄弱" value="基础薄弱" />
+          <el-option label="粗心失误" value="粗心失误" />
+          <el-option label="思路方法" value="思路方法" />
+          <el-option label="考试场景" value="考试场景" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="难度等级">
+        <el-radio-group v-model="form.difficulty">
+          <el-radio :label="1">简单</el-radio>
+          <el-radio :label="2">中等</el-radio>
+          <el-radio :label="3">困难</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
       <el-form-item label="标签">
         <el-select
           v-model="selectedTags"
@@ -179,6 +242,10 @@ export default {
         tags: "",
         importance: 2,
         proficiency: 0,
+        questionSource: "",
+        grade: "",
+        errorType: "",
+        difficulty: 2,
         remark: ""
       },
       rules: {
@@ -260,6 +327,10 @@ export default {
           tags: response.data.tags || "",
           importance: response.data.importance || 2,
           proficiency: response.data.proficiency !== undefined && response.data.proficiency !== null ? response.data.proficiency : 0,
+          questionSource: response.data.questionSource || "",
+          grade: response.data.grade || "",
+          errorType: response.data.errorType || "",
+          difficulty: response.data.difficulty !== undefined && response.data.difficulty !== null ? response.data.difficulty : 2,
           remark: response.data.remark || ""
         };
         this.selectedTags = this.form.tags ? this.form.tags.split(',').filter(t => t.trim()) : [];
@@ -404,7 +475,7 @@ export default {
 </style>
 
 <style>
-/* 编辑对话框样式 */
+/* 编辑对话框样式 - 蓝色系美化 */
 .question-edit-dialog {
   z-index: 2001 !important;
 }
@@ -419,13 +490,152 @@ export default {
   z-index: 2000 !important;
 }
 
+/* 对话框整体美化 */
+.question-edit-dialog .el-dialog {
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(42, 82, 152, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+/* 对话框头部美化 */
+.question-edit-dialog .el-dialog__header {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-bottom: none;
+  padding: 20px 24px;
+  margin: 0;
+}
+
+.question-edit-dialog .el-dialog__title {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 18px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.question-edit-dialog .el-dialog__headerbtn .el-dialog__close {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 20px;
+}
+
+.question-edit-dialog .el-dialog__headerbtn .el-dialog__close:hover {
+  color: #ffffff;
+}
+
+/* 对话框主体美化 */
+.question-edit-dialog .el-dialog__body {
+  padding: 32px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+}
+
 /* 编辑表单样式 */
 .edit-form {
   padding: 0;
 }
 
 .edit-form .el-form-item {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.edit-form .el-form-item__label {
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* 输入框美化 */
+.question-edit-dialog .el-input__inner,
+.question-edit-dialog .el-textarea__inner {
+  border-radius: 8px;
+  border: 1px solid #d4e8f7;
+  transition: all 0.3s;
+  background: #ffffff;
+}
+
+.question-edit-dialog .el-input__inner:focus,
+.question-edit-dialog .el-textarea__inner:focus {
+  border-color: #2a5298;
+  box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.1);
+}
+
+.question-edit-dialog .el-input__inner:hover,
+.question-edit-dialog .el-textarea__inner:hover {
+  border-color: #4a9ff5;
+}
+
+/* 选择框美化 */
+.question-edit-dialog .el-select {
+  width: 100%;
+}
+
+.question-edit-dialog .el-select .el-input__inner {
+  background: #ffffff;
+}
+
+/* 标签选择美化 */
+.question-edit-dialog .el-tag {
+  border-radius: 6px;
+  border: none;
+  background: linear-gradient(135deg, #e8f4f8 0%, #d4e8f7 100%);
+  color: #2a5298;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.question-edit-dialog .el-tag:hover {
+  background: linear-gradient(135deg, #d4e8f7 0%, #c5dff5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(42, 82, 152, 0.15);
+}
+
+.question-edit-dialog .el-tag .el-tag__close {
+  color: #2a5298;
+}
+
+.question-edit-dialog .el-tag .el-tag__close:hover {
+  background-color: #2a5298;
+  color: #ffffff;
+}
+
+/* 按钮美化 */
+.question-edit-dialog .el-dialog__footer {
+  padding: 16px 24px;
+  border-top: 2px solid #e8f1f8;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  margin: 0;
+}
+
+.question-edit-dialog .el-button {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 12px 32px;
+  transition: all 0.3s;
+  min-width: 100px;
+}
+
+.question-edit-dialog .el-button--primary {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+}
+
+.question-edit-dialog .el-button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(42, 82, 152, 0.3);
+}
+
+.question-edit-dialog .el-button--default {
+  background: #ffffff;
+  border: 1px solid #d4e8f7;
+  color: #5a6c7d;
+}
+
+.question-edit-dialog .el-button--default:hover {
+  background: #f8fbff;
+  border-color: #2a5298;
+  color: #2a5298;
+  transform: translateY(-2px);
 }
 
 /* 移动端响应式设计 */
@@ -456,19 +666,21 @@ export default {
   .question-edit-dialog.mobile-dialog .el-dialog__header {
     padding: 16px;
     flex-shrink: 0;
-    background: #ffffff;
-    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border-bottom: none;
+    border-radius: 0;
   }
 
   .question-edit-dialog.mobile-dialog .el-dialog__title {
     font-size: 18px;
+    color: #ffffff;
   }
 
   .question-edit-dialog.mobile-dialog .el-dialog__body {
     flex: 1;
     overflow-y: auto;
     padding: 20px 16px;
-    background: #ffffff;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
     -webkit-overflow-scrolling: touch;
   }
 
@@ -484,6 +696,7 @@ export default {
     font-size: 14px;
     padding-bottom: 8px;
     line-height: 1.5;
+    color: #2c3e50;
   }
 
   .question-edit-dialog.mobile-dialog .el-input__inner,
@@ -498,8 +711,9 @@ export default {
   .question-edit-dialog.mobile-dialog .el-dialog__footer {
     padding: 16px;
     flex-shrink: 0;
-    border-top: 1px solid #e0e0e0;
-    background: #ffffff;
+    border-top: 2px solid #e8f1f8;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    border-radius: 0;
   }
 
   .question-edit-dialog.mobile-dialog .el-button {
