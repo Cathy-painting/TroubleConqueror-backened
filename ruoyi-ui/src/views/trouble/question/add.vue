@@ -142,6 +142,83 @@
             </el-col>
           </el-row>
 
+          <!-- 错题来源与年级 -->
+          <el-row :gutter="20" class="row-inline">
+            <el-col :xs="24" :sm="12" :md="12">
+              <el-form-item label="错题来源">
+                <el-select
+                  v-model="form.questionSource"
+                  placeholder="请选择错题来源"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option label="课堂练习" value="课堂练习" />
+                  <el-option label="课后作业" value="课后作业" />
+                  <el-option label="周测/月考" value="周测/月考" />
+                  <el-option label="单元测试" value="单元测试" />
+                  <el-option label="期中/期末考试" value="期中/期末考试" />
+                  <el-option label="模拟考试" value="模拟考试" />
+                  <el-option label="真题" value="真题" />
+                  <el-option label="教辅资料" value="教辅资料" />
+                  <el-option label="竞赛类" value="竞赛类" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :xs="24" :sm="12" :md="12">
+              <el-form-item label="年级">
+                <el-select
+                  v-model="form.grade"
+                  placeholder="请选择年级"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option label="小学一年级" value="小学一年级" />
+                  <el-option label="小学二年级" value="小学二年级" />
+                  <el-option label="小学三年级" value="小学三年级" />
+                  <el-option label="小学四年级" value="小学四年级" />
+                  <el-option label="小学五年级" value="小学五年级" />
+                  <el-option label="小学六年级" value="小学六年级" />
+                  <el-option label="初中一年级" value="初中一年级" />
+                  <el-option label="初中二年级" value="初中二年级" />
+                  <el-option label="初中三年级" value="初中三年级" />
+                  <el-option label="高中一年级" value="高中一年级" />
+                  <el-option label="高中二年级" value="高中二年级" />
+                  <el-option label="高中三年级" value="高中三年级" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <!-- 错误类型与难度等级 -->
+          <el-row :gutter="20" class="row-inline">
+            <el-col :xs="24" :sm="12" :md="12">
+              <el-form-item label="错误类型">
+                <el-select
+                  v-model="form.errorType"
+                  placeholder="请选择错误类型"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option label="基础薄弱" value="基础薄弱" />
+                  <el-option label="粗心失误" value="粗心失误" />
+                  <el-option label="思路方法" value="思路方法" />
+                  <el-option label="考试场景" value="考试场景" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :xs="24" :sm="12" :md="12">
+              <el-form-item label="难度等级">
+                <el-radio-group v-model="form.difficulty">
+                  <el-radio :label="1">简单</el-radio>
+                  <el-radio :label="2">中等</el-radio>
+                  <el-radio :label="3">困难</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
           <!-- 标签 -->
           <el-row :gutter="20" class="row-inline">
             <el-col :xs="24" :sm="24" :md="24">
@@ -248,6 +325,10 @@ export default {
         tags: "",
         importance: 2,
         proficiency: 0,
+        questionSource: "",
+        grade: "",
+        errorType: "",
+        difficulty: 2,
         remark: "",
       },
       rules: {
@@ -424,6 +505,10 @@ export default {
         tags: "",
         importance: 2,
         proficiency: 0,
+        questionSource: "",
+        grade: "",
+        errorType: "",
+        difficulty: 2,
         remark: "",
       };
       this.selectedTags = [];

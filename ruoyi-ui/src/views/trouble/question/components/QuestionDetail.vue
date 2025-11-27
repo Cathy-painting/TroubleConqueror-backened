@@ -151,6 +151,49 @@
               <i class="el-icon-medal"></i>
               熟练度：{{ getProficiencyText(question.proficiency) }}
             </el-tag>
+            <el-tag
+              v-if="question.difficulty"
+              :type="getDifficultyTagType(question.difficulty)"
+              size="medium"
+              class="detail-tag"
+            >
+              <i class="el-icon-data-line"></i>
+              难度：{{ getDifficultyText(question.difficulty) }}
+            </el-tag>
+          </div>
+        </div>
+
+        <!-- 错题来源、年级、错误类型 -->
+        <div class="detail-section">
+          <div class="section-header">
+            <div class="section-indicator cyan"></div>
+            <h3 class="section-title">其他信息</h3>
+          </div>
+          <div class="tags-container">
+            <el-tag
+              type="info"
+              size="medium"
+              class="detail-tag"
+            >
+              <i class="el-icon-document"></i>
+              来源：{{ question.questionSource || '未设置' }}
+            </el-tag>
+            <el-tag
+              type="info"
+              size="medium"
+              class="detail-tag"
+            >
+              <i class="el-icon-school"></i>
+              年级：{{ question.grade || '未设置' }}
+            </el-tag>
+            <el-tag
+              type="warning"
+              size="medium"
+              class="detail-tag"
+            >
+              <i class="el-icon-warning-outline"></i>
+              错误类型：{{ question.errorType || '未设置' }}
+            </el-tag>
           </div>
         </div>
       </div>
@@ -279,6 +322,23 @@ export default {
       if (proficiency === 2) return 'primary';
       if (proficiency === 1) return 'warning';
       if (proficiency === 0) return 'danger';
+      return 'info';
+    },
+    getDifficultyText(difficulty) {
+      if (difficulty === null || difficulty === undefined) {
+        return '未设置';
+      }
+      const difficultyMap = {
+        1: '简单',
+        2: '中等',
+        3: '困难'
+      };
+      return difficultyMap[difficulty] || '未设置';
+    },
+    getDifficultyTagType(difficulty) {
+      if (difficulty === 3) return 'danger';
+      if (difficulty === 2) return 'warning';
+      if (difficulty === 1) return 'success';
       return 'info';
     },
     parseTime(time, pattern) {
@@ -450,6 +510,10 @@ export default {
 
 .section-indicator.red {
   background: #f56c6c;
+}
+
+.section-indicator.cyan {
+  background: #00bcd4;
 }
 
 .section-title {

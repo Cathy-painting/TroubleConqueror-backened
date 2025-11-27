@@ -54,6 +54,22 @@ public class TroubleQuestion extends BaseEntity
     @Excel(name = "熟练度", readConverterExp = "0=陌生,1=一般,2=较好,3=熟练")
     private Integer proficiency;
 
+    /** 错题来源 */
+    @Excel(name = "错题来源")
+    private String questionSource;
+
+    /** 年级 */
+    @Excel(name = "年级")
+    private String grade;
+
+    /** 错误类型 */
+    @Excel(name = "错误类型")
+    private String errorType;
+
+    /** 难度等级（1=简单，2=中等，3=困难） */
+    @Excel(name = "难度等级", readConverterExp = "1=简单,2=中等,3=困难")
+    private Integer difficulty;
+
     /** 状态（0正常 1删除） */
     @Excel(name = "状态", readConverterExp = "0=正常,1=删除")
     private String status;
@@ -161,6 +177,46 @@ public class TroubleQuestion extends BaseEntity
         this.proficiency = proficiency;
     }
 
+    public String getQuestionSource()
+    {
+        return questionSource;
+    }
+
+    public void setQuestionSource(String questionSource)
+    {
+        this.questionSource = questionSource;
+    }
+
+    public String getGrade()
+    {
+        return grade;
+    }
+
+    public void setGrade(String grade)
+    {
+        this.grade = grade;
+    }
+
+    public String getErrorType()
+    {
+        return errorType;
+    }
+
+    public void setErrorType(String errorType)
+    {
+        this.errorType = errorType;
+    }
+
+    public Integer getDifficulty()
+    {
+        return difficulty;
+    }
+
+    public void setDifficulty(Integer difficulty)
+    {
+        this.difficulty = difficulty;
+    }
+
     public String getStatus()
     {
         return status;
@@ -194,6 +250,10 @@ public class TroubleQuestion extends BaseEntity
             .append("tags", getTags())
             .append("importance", getImportance())
             .append("proficiency", getProficiency())
+            .append("questionSource", getQuestionSource())
+            .append("grade", getGrade())
+            .append("errorType", getErrorType())
+            .append("difficulty", getDifficulty())
             .append("status", getStatus())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

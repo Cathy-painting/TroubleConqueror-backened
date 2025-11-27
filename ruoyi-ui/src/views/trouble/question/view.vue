@@ -31,71 +31,150 @@
     <!-- 筛选栏 -->
     <div class="filter-bar">
       <div class="filter-inner">
-        <div class="filter-group">
-          <span class="filter-label">题目类型：</span>
-          <el-radio-group v-model="queryParams.questionType" @change="handleQuery" class="filter-radios">
-            <el-radio-button label="">全部</el-radio-button>
-            <el-radio-button label="选择题">选择题</el-radio-button>
-            <el-radio-button label="填空题">填空题</el-radio-button>
-            <el-radio-button label="解答题">解答题</el-radio-button>
-            <el-radio-button label="其他">其他</el-radio-button>
-          </el-radio-group>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">标签：</span>
-          <el-select
-            v-model="selectedTags"
-            multiple
-            placeholder="选择标签筛选"
-            clearable
-            @change="handleTagFilter"
-            class="tag-select"
-          >
-            <el-option
-              v-for="tag in availableTags"
-              :key="tag"
-              :label="tag"
-              :value="tag"
+        <!-- 第一行筛选条件 -->
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">题目类型：</span>
+            <el-radio-group v-model="queryParams.questionType" @change="handleQuery" class="filter-radios">
+              <el-radio-button label="">全部</el-radio-button>
+              <el-radio-button label="选择题">选择题</el-radio-button>
+              <el-radio-button label="填空题">填空题</el-radio-button>
+              <el-radio-button label="解答题">解答题</el-radio-button>
+              <el-radio-button label="其他">其他</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">标签：</span>
+            <el-select
+              v-model="selectedTags"
+              multiple
+              placeholder="选择标签筛选"
+              clearable
+              @change="handleTagFilter"
+              class="tag-select"
             >
-              <span>{{ tag }}</span>
-              <span v-if="!systemTags.includes(tag)" style="float: right; color: #8492a6; font-size: 12px;">
-                <i class="el-icon-star-on"></i> 自定义
-              </span>
-            </el-option>
-          </el-select>
+              <el-option
+                v-for="tag in availableTags"
+                :key="tag"
+                :label="tag"
+                :value="tag"
+              >
+                <span>{{ tag }}</span>
+                <span v-if="!systemTags.includes(tag)" style="float: right; color: #8492a6; font-size: 12px;">
+                  <i class="el-icon-star-on"></i> 自定义
+                </span>
+              </el-option>
+            </el-select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">重要性：</span>
+            <el-radio-group v-model="queryParams.importance" @change="handleQuery" class="filter-radios">
+              <el-radio-button label="">全部</el-radio-button>
+              <el-radio-button :label="3">高</el-radio-button>
+              <el-radio-button :label="2">中</el-radio-button>
+              <el-radio-button :label="1">低</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">熟练度：</span>
+            <el-radio-group v-model="queryParams.proficiency" @change="handleQuery" class="filter-radios">
+              <el-radio-button label="">全部</el-radio-button>
+              <el-radio-button :label="3">熟练</el-radio-button>
+              <el-radio-button :label="2">较好</el-radio-button>
+              <el-radio-button :label="1">一般</el-radio-button>
+              <el-radio-button :label="0">陌生</el-radio-button>
+            </el-radio-group>
+          </div>
         </div>
-        <div class="filter-group">
-          <span class="filter-label">重要性：</span>
-          <el-radio-group v-model="queryParams.importance" @change="handleQuery" class="filter-radios">
-            <el-radio-button label="">全部</el-radio-button>
-            <el-radio-button :label="3">高</el-radio-button>
-            <el-radio-button :label="2">中</el-radio-button>
-            <el-radio-button :label="1">低</el-radio-button>
-          </el-radio-group>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">熟练度：</span>
-          <el-radio-group v-model="queryParams.proficiency" @change="handleQuery" class="filter-radios">
-            <el-radio-button label="">全部</el-radio-button>
-            <el-radio-button :label="3">熟练</el-radio-button>
-            <el-radio-button :label="2">较好</el-radio-button>
-            <el-radio-button :label="1">一般</el-radio-button>
-            <el-radio-button :label="0">陌生</el-radio-button>
-          </el-radio-group>
-        </div>
-        <div class="view-mode-group">
-          <span class="filter-label">视图：</span>
-          <el-radio-group v-model="viewMode" @change="handleViewModeChange" class="view-mode-radios">
-            <el-radio-button label="list">
-              <i class="el-icon-menu"></i> 列表
-            </el-radio-button>
-            <el-radio-button label="card">
-              <i class="el-icon-grid"></i> 卡片
-            </el-radio-button>
-            <el-radio-button label="compact">
-              <i class="el-icon-document"></i> 紧凑
-            </el-radio-button>
-          </el-radio-group>
+        
+        <!-- 第二行筛选条件 -->
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">难度：</span>
+            <el-radio-group v-model="queryParams.difficulty" @change="handleQuery" class="filter-radios">
+              <el-radio-button label="">全部</el-radio-button>
+              <el-radio-button :label="1">简单</el-radio-button>
+              <el-radio-button :label="2">中等</el-radio-button>
+              <el-radio-button :label="3">困难</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">年级：</span>
+            <el-select
+              v-model="queryParams.grade"
+              placeholder="选择年级"
+              clearable
+              @change="handleQuery"
+              class="grade-select"
+            >
+              <el-option label="小学一年级" value="小学一年级"></el-option>
+              <el-option label="小学二年级" value="小学二年级"></el-option>
+              <el-option label="小学三年级" value="小学三年级"></el-option>
+              <el-option label="小学四年级" value="小学四年级"></el-option>
+              <el-option label="小学五年级" value="小学五年级"></el-option>
+              <el-option label="小学六年级" value="小学六年级"></el-option>
+              <el-option label="初中一年级" value="初中一年级"></el-option>
+              <el-option label="初中二年级" value="初中二年级"></el-option>
+              <el-option label="初中三年级" value="初中三年级"></el-option>
+              <el-option label="高中一年级" value="高中一年级"></el-option>
+              <el-option label="高中二年级" value="高中二年级"></el-option>
+              <el-option label="高中三年级" value="高中三年级"></el-option>
+            </el-select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">来源：</span>
+            <el-select
+              v-model="queryParams.questionSource"
+              placeholder="选择错题来源"
+              clearable
+              @change="handleQuery"
+              class="source-select"
+              style="width: 150px;"
+            >
+              <el-option label="课本习题" value="课本习题"></el-option>
+              <el-option label="作业题" value="作业题"></el-option>
+              <el-option label="考试题" value="考试题"></el-option>
+              <el-option label="练习册" value="练习册"></el-option>
+              <el-option label="网络题库" value="网络题库"></el-option>
+              <el-option label="辅导书" value="辅导书"></el-option>
+              <el-option label="其他" value="其他"></el-option>
+            </el-select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">错误类型：</span>
+            <el-select
+              v-model="queryParams.errorType"
+              placeholder="选择错误类型"
+              clearable
+              @change="handleQuery"
+              class="error-type-select"
+              style="width: 150px;"
+            >
+              <el-option label="计算错误" value="计算错误"></el-option>
+              <el-option label="概念理解" value="概念理解"></el-option>
+              <el-option label="公式运用" value="公式运用"></el-option>
+              <el-option label="审题不清" value="审题不清"></el-option>
+              <el-option label="方法选择" value="方法选择"></el-option>
+              <el-option label="步骤遗漏" value="步骤遗漏"></el-option>
+              <el-option label="粗心大意" value="粗心大意"></el-option>
+              <el-option label="知识遗忘" value="知识遗忘"></el-option>
+              <el-option label="其他" value="其他"></el-option>
+            </el-select>
+          </div>
+          <div class="view-mode-group">
+            <span class="filter-label">视图：</span>
+            <el-radio-group v-model="viewMode" @change="handleViewModeChange" class="view-mode-radios">
+              <el-radio-button label="list">
+                <i class="el-icon-menu"></i> 列表
+              </el-radio-button>
+              <el-radio-button label="card">
+                <i class="el-icon-grid"></i> 卡片
+              </el-radio-button>
+              <el-radio-button label="compact">
+                <i class="el-icon-document"></i> 紧凑
+              </el-radio-button>
+            </el-radio-group>
+          </div>
         </div>
       </div>
     </div>
@@ -217,7 +296,11 @@ export default {
         questionType: null,
         tags: null,
         importance: "",
-        proficiency: ""
+        proficiency: "",
+        difficulty: "",
+        grade: null,
+        questionSource: null,
+        errorType: null
       },
       weekStart: null,  // 用于筛选本周题目的开始时间
       weekEnd: null     // 用于筛选本周题目的结束时间
@@ -278,6 +361,10 @@ export default {
       // 处理熟练度参数：空字符串转为null
       if (queryParams.proficiency === "") {
         queryParams.proficiency = null;
+      }
+      // 处理难度参数：空字符串转为null
+      if (queryParams.difficulty === "") {
+        queryParams.difficulty = null;
       }
       
       // 如果有时间范围参数，需要获取更多数据以便前端筛选
@@ -515,8 +602,14 @@ export default {
   margin: 0 auto;
   padding: 16px 24px;
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filter-row {
+  display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
@@ -524,14 +617,15 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .view-mode-group {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-left: auto;
   flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 
 .view-mode-radios {
@@ -602,6 +696,19 @@ export default {
 .tag-select {
   width: 200px;
 }
+
+.grade-select {
+  width: 150px;
+}
+
+.source-select {
+  width: 150px;
+}
+
+.error-type-select {
+  width: 150px;
+}
+
 
 .view-container {
   max-width: 1400px;
@@ -697,6 +804,13 @@ export default {
     gap: 16px;
   }
 
+  .filter-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+  }
+
   .filter-group {
     width: 100%;
     flex-direction: column;
@@ -708,6 +822,12 @@ export default {
   }
 
   .tag-select {
+    width: 100%;
+  }
+
+  .grade-select,
+  .source-select,
+  .error-type-select {
     width: 100%;
   }
 
