@@ -5,7 +5,7 @@
       <div class="header-content">
         <div class="header-left">
           <i class="el-icon-data-analysis header-icon"></i>
-          <h2 class="header-title">本周新增错题统计</h2>
+          <h2 class="header-title">本周错题统计</h2>
         </div>
         <p class="header-desc">查看本周每日新增错题的详细数据和趋势分析</p>
       </div>
@@ -330,7 +330,7 @@ export default {
       
       const option = {
         title: {
-          text: '本周新增错题趋势',
+          text: '本周错题趋势',
           left: 'center',
           textStyle: {
             color: '#2c3e50',
