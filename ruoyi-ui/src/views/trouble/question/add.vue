@@ -152,18 +152,26 @@
                   filterable
                   allow-create
                   default-first-option
-                  placeholder="请选择或输入标签"
+                  placeholder="请选择或输入标签（输入关键词可自动补全）"
                   style="width: 100%"
                   @change="handleTagsChange"
+                  @visible-change="handleTagSelectVisible"
+                  :filter-method="filterTags"
+                  :reserve-keyword="true"
                 >
                   <el-option
-                    v-for="tag in defaultTags"
+                    v-for="tag in filteredTags"
                     :key="tag"
                     :label="tag"
                     :value="tag"
-                  />
+                  >
+                    <span>{{ tag }}</span>
+                    <span v-if="isCustomTag(tag)" style="float: right; color: #8492a6; font-size: 12px;">
+                      <i class="el-icon-star-on"></i> 自定义
+                    </span>
+                  </el-option>
                 </el-select>
-                <div class="tag-tip">可以选择默认标签或自定义标签</div>
+                <div class="tag-tip">可以选择默认标签或自定义标签，输入关键词可自动补全历史标签</div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -225,6 +233,7 @@
 
 <script>
 import { addQuestion, favoriteQuestion } from "@/api/trouble/question";
+import { getAllTags, saveCustomTags, extractAndSaveTags } from "@/utils/tagUtils";
 export default {
   name: "QuestionAdd",
   data() {
@@ -250,6 +259,9 @@ export default {
       isMobile: false,
       selectedTags: [],
       defaultTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"],
+      allAvailableTags: [], // 所有可用标签（系统标签 + 自定义标签）
+      filteredTags: [], // 过滤后的标签列表
+      tagSearchQuery: "", // 标签搜索关键词
       formChanged: false, // 表单是否有修改
     };
   },
@@ -266,6 +278,9 @@ export default {
   created() {
     this.checkIsMobile();
     window.addEventListener("resize", this.checkIsMobile);
+    
+    // 加载所有可用标签（系统标签 + 自定义标签）
+    this.loadAllTags();
 
     // 监听表单变化
     this.$watch('form', () => {
@@ -366,6 +381,11 @@ export default {
               } else {
                 this.submitLoading = false;
                 this.$modal.msgSuccess("错题添加成功");
+                // 保存标签到本地存储
+                if (this.form.tags) {
+                  extractAndSaveTags(this.form.tags);
+                  this.loadAllTags();
+                }
                 this.handleSuccessCallback();
               }
             })
@@ -421,6 +441,44 @@ export default {
       // 返回系统首页
       this.$router.push("/");
     },
+    /** 加载所有可用标签 */
+    loadAllTags() {
+      this.allAvailableTags = getAllTags(this.defaultTags);
+      this.filteredTags = [...this.allAvailableTags];
+    },
+    
+    /** 过滤标签（用于自动补全） */
+    filterTags(query) {
+      this.tagSearchQuery = query || "";
+      if (!query || !query.trim()) {
+        this.filteredTags = [...this.allAvailableTags];
+        return;
+      }
+      
+      const queryLower = query.trim().toLowerCase();
+      this.filteredTags = this.allAvailableTags.filter(tag => 
+        tag.toLowerCase().includes(queryLower)
+      );
+      
+      // 如果查询的内容不在现有标签中，也显示在列表中（用户可以创建）
+      if (!this.allAvailableTags.some(tag => tag.toLowerCase() === queryLower)) {
+        this.filteredTags.push(query.trim());
+      }
+    },
+    
+    /** 判断是否为自定义标签 */
+    isCustomTag(tag) {
+      return !this.defaultTags.includes(tag);
+    },
+    
+    /** 处理标签选择器显示/隐藏 */
+    handleTagSelectVisible(visible) {
+      if (visible) {
+        // 打开时重新加载标签（可能有新的自定义标签）
+        this.loadAllTags();
+      }
+    },
+    
     handleTagsChange(value) {
       if (Array.isArray(value)) {
         const maxTags = 8;
@@ -430,6 +488,14 @@ export default {
           this.$message.info(`标签数量已限制为 ${maxTags} 个`);
         }
         this.form.tags = value.join(",");
+        
+        // 保存自定义标签到本地存储
+        const customTags = value.filter(tag => this.isCustomTag(tag));
+        if (customTags.length > 0) {
+          saveCustomTags(customTags);
+          // 重新加载所有标签
+          this.loadAllTags();
+        }
       }
     },
   },

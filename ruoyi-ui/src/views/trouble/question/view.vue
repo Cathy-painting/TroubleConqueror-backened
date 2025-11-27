@@ -56,7 +56,12 @@
               :key="tag"
               :label="tag"
               :value="tag"
-            />
+            >
+              <span>{{ tag }}</span>
+              <span v-if="!systemTags.includes(tag)" style="float: right; color: #8492a6; font-size: 12px;">
+                <i class="el-icon-star-on"></i> 自定义
+              </span>
+            </el-option>
           </el-select>
         </div>
         <div class="filter-group">
@@ -175,6 +180,7 @@
 
 <script>
 import { listQuestion, delQuestion, favoriteQuestion, unfavoriteQuestion, getQuestion } from "@/api/trouble/question";
+import { getAllTags } from "@/utils/tagUtils";
 import QuestionCard from "./components/QuestionCard.vue";
 import QuestionListItem from "./components/QuestionListItem.vue";
 import QuestionCompactItem from "./components/QuestionCompactItem.vue";
@@ -202,6 +208,7 @@ export default {
       selectedQuestion: null,
       selectedTags: [],
       availableTags: [],
+      systemTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"], // 系统预设标签
       viewMode: 'list', // 默认列表视图: 'list', 'card', 'compact'
       queryParams: {
         pageNum: 1,
@@ -307,6 +314,7 @@ export default {
     },
     /** 加载所有可用标签 */
     loadTags() {
+      // 先从所有错题中提取标签
       listQuestion({ pageNum: 1, pageSize: 1000 }).then(response => {
         const allQuestions = response.rows || [];
         const tagSet = new Set();
@@ -320,7 +328,10 @@ export default {
             });
           }
         });
-        this.availableTags = Array.from(tagSet).sort();
+        
+        // 合并系统标签、题目中的标签和自定义标签
+        const questionTags = Array.from(tagSet);
+        this.availableTags = getAllTags([...this.systemTags, ...questionTags]);
       });
     },
     /** 搜索按钮操作 */
