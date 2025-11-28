@@ -449,7 +449,8 @@ export default {
             .then((response) => {
               // 如果勾选了收藏，则调用收藏接口
               if (this.shouldFavorite && response.data) {
-                const questionId = response.data.questionId || response.data;
+                const questionId = response.data;
+                console.log('准备收藏错题，questionId:', questionId);
                 favoriteQuestion(questionId).then(() => {
                   this.submitLoading = false;
                   this.$modal.msgSuccess("错题添加并收藏成功");
