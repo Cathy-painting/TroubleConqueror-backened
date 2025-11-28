@@ -110,7 +110,13 @@ public class TroubleQuestionController extends BaseController
         if (troubleQuestion.getQuestionType() == null || troubleQuestion.getQuestionType().isEmpty()) {
             troubleQuestion.setQuestionType("未区分");
         }
-        return toAjax(troubleQuestionService.insertTroubleQuestion(troubleQuestion));
+        int result = troubleQuestionService.insertTroubleQuestion(troubleQuestion);
+        if (result > 0) {
+            // 返回新创建的错题ID，供前端收藏功能使用
+            return success(troubleQuestion.getQuestionId());
+        } else {
+            return error("新增失败");
+        }
     }
 
     /**

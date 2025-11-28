@@ -131,13 +131,15 @@
               class="source-select"
               style="width: 150px;"
             >
-              <el-option label="课本习题" value="课本习题"></el-option>
-              <el-option label="作业题" value="作业题"></el-option>
-              <el-option label="考试题" value="考试题"></el-option>
-              <el-option label="练习册" value="练习册"></el-option>
-              <el-option label="网络题库" value="网络题库"></el-option>
-              <el-option label="辅导书" value="辅导书"></el-option>
-              <el-option label="其他" value="其他"></el-option>
+              <el-option label="课堂练习" value="课堂练习"></el-option>
+              <el-option label="课后作业" value="课后作业"></el-option>
+              <el-option label="周测/月考" value="周测/月考"></el-option>
+              <el-option label="单元测试" value="单元测试"></el-option>
+              <el-option label="期中/期末考试" value="期中/期末考试"></el-option>
+              <el-option label="模拟考试" value="模拟考试"></el-option>
+              <el-option label="真题" value="真题"></el-option>
+              <el-option label="教辅资料" value="教辅资料"></el-option>
+              <el-option label="竞赛类" value="竞赛类"></el-option>
             </el-select>
           </div>
           <div class="filter-group">
@@ -150,15 +152,10 @@
               class="error-type-select"
               style="width: 150px;"
             >
-              <el-option label="计算错误" value="计算错误"></el-option>
-              <el-option label="概念理解" value="概念理解"></el-option>
-              <el-option label="公式运用" value="公式运用"></el-option>
-              <el-option label="审题不清" value="审题不清"></el-option>
-              <el-option label="方法选择" value="方法选择"></el-option>
-              <el-option label="步骤遗漏" value="步骤遗漏"></el-option>
-              <el-option label="粗心大意" value="粗心大意"></el-option>
-              <el-option label="知识遗忘" value="知识遗忘"></el-option>
-              <el-option label="其他" value="其他"></el-option>
+              <el-option label="基础薄弱" value="基础薄弱"></el-option>
+              <el-option label="粗心失误" value="粗心失误"></el-option>
+              <el-option label="思路方法" value="思路方法"></el-option>
+              <el-option label="考试场景" value="考试场景"></el-option>
             </el-select>
           </div>
           <div class="view-mode-group">
