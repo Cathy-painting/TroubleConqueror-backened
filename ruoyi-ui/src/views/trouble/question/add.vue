@@ -39,7 +39,7 @@
                   size="mini"
                   type="primary"
                   @click="handleOCR('question')"
-                  style="margin-top: 6px;"
+                  style="margin-top: 6px"
                 >
                   OCR
                 </el-button>
@@ -59,7 +59,6 @@
                 <div class="upload-tip">支持拍照上传，最多1张图片</div>
               </el-form-item>
             </el-col>
-
           </el-row>
 
           <!-- 答案内容 -->
@@ -79,7 +78,7 @@
                   size="mini"
                   type="primary"
                   @click="handleOCR('answer')"
-                  style="margin-top: 6px;"
+                  style="margin-top: 6px"
                 >
                   OCR
                 </el-button>
@@ -137,7 +136,9 @@
                   <el-radio :label="1">一般</el-radio>
                   <el-radio :label="0">陌生</el-radio>
                 </el-radio-group>
-                <div class="tag-tip">熟练度越高，表示对该题的掌握程度越好，可用于决定是否删除错题</div>
+                <div class="tag-tip">
+                  熟练度越高，表示对该题的掌握程度越好，可用于决定是否删除错题
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -202,8 +203,8 @@
                 >
                   <el-option label="基础薄弱" value="基础薄弱" />
                   <el-option label="粗心失误" value="粗心失误" />
-                  <el-option label="思路方法" value="思路方法" />
-                  <el-option label="考试场景" value="考试场景" />
+                  <el-option label="计算错误" value="思路方法" />
+                  <el-option label="审题不清" value="考试场景" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -243,12 +244,17 @@
                     :value="tag"
                   >
                     <span>{{ tag }}</span>
-                    <span v-if="isCustomTag(tag)" style="float: right; color: #8492a6; font-size: 12px;">
+                    <span
+                      v-if="isCustomTag(tag)"
+                      style="float: right; color: #8492a6; font-size: 12px"
+                    >
                       <i class="el-icon-star-on"></i> 自定义
                     </span>
                   </el-option>
                 </el-select>
-                <div class="tag-tip">可以选择默认标签或自定义标签，输入关键词可自动补全历史标签</div>
+                <div class="tag-tip">
+                  可以选择默认标签或自定义标签，输入关键词可自动补全历史标签
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -276,7 +282,9 @@
                 <el-checkbox v-model="shouldFavorite" class="favorite-checkbox">
                   <i class="el-icon-star-on"></i> 同时收藏此错题
                 </el-checkbox>
-                <div class="favorite-tip">勾选后，此错题将自动添加到我的收藏</div>
+                <div class="favorite-tip">
+                  勾选后，此错题将自动添加到我的收藏
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -297,9 +305,7 @@
               <el-button @click="resetForm" :style="buttonStyle">
                 重置
               </el-button>
-              <el-button @click="goBack" :style="buttonStyle">
-                取消
-              </el-button>
+              <el-button @click="goBack" :style="buttonStyle"> 取消 </el-button>
             </el-col>
           </el-row>
         </el-form>
@@ -310,7 +316,11 @@
 
 <script>
 import { addQuestion, favoriteQuestion } from "@/api/trouble/question";
-import { getAllTags, saveCustomTags, extractAndSaveTags } from "@/utils/tagUtils";
+import {
+  getAllTags,
+  saveCustomTags,
+  extractAndSaveTags,
+} from "@/utils/tagUtils";
 export default {
   name: "QuestionAdd",
   data() {
@@ -339,7 +349,17 @@ export default {
       submitLoading: false,
       isMobile: false,
       selectedTags: [],
-      defaultTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"],
+      defaultTags: [
+        "语文",
+        "数学",
+        "英语",
+        "物理",
+        "化学",
+        "生物",
+        "政治",
+        "历史",
+        "地理",
+      ],
       allAvailableTags: [], // 所有可用标签（系统标签 + 自定义标签）
       filteredTags: [], // 过滤后的标签列表
       tagSearchQuery: "", // 标签搜索关键词
@@ -359,14 +379,18 @@ export default {
   created() {
     this.checkIsMobile();
     window.addEventListener("resize", this.checkIsMobile);
-    
+
     // 加载所有可用标签（系统标签 + 自定义标签）
     this.loadAllTags();
 
     // 监听表单变化
-    this.$watch('form', () => {
-      this.formChanged = true;
-    }, { deep: true });
+    this.$watch(
+      "form",
+      () => {
+        this.formChanged = true;
+      },
+      { deep: true }
+    );
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.checkIsMobile);
@@ -374,15 +398,17 @@ export default {
   beforeRouteLeave(to, from, next) {
     // 如果表单有修改且未提交，提示用户
     if (this.formChanged) {
-      this.$confirm('表单内容尚未保存，确定要离开吗？', '提示', {
-        confirmButtonText: '确定离开',
-        cancelButtonText: '留下',
-        type: 'warning'
-      }).then(() => {
-        next();
-      }).catch(() => {
-        next(false);
-      });
+      this.$confirm("表单内容尚未保存，确定要离开吗？", "提示", {
+        confirmButtonText: "确定离开",
+        cancelButtonText: "留下",
+        type: "warning",
+      })
+        .then(() => {
+          next();
+        })
+        .catch(() => {
+          next(false);
+        });
     } else {
       next();
     }
@@ -393,15 +419,15 @@ export default {
     },
     async handleOCR(target) {
       // target = 'question' 或 'answer'
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = 'image/*';
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
       fileInput.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
         try {
           // 动态获取当前页面 host
@@ -410,7 +436,7 @@ export default {
 
           // 上传到 OCR 后端
           const res = await fetch(`http://${host}:${port}/ocr/upload`, {
-            method: 'POST',
+            method: "POST",
             body: formData,
           });
 
@@ -420,21 +446,21 @@ export default {
 
           const data = await res.json();
           if (!data.text) {
-            throw new Error('OCR返回内容为空');
+            throw new Error("OCR返回内容为空");
           }
 
           // 填入输入框
-          if (target === 'question') {
+          if (target === "question") {
             this.form.questionContent = data.text;
-          } else if (target === 'answer') {
+          } else if (target === "answer") {
             this.form.answerContent = data.text;
           }
 
-          this.$message.success('OCR识别成功');
+          this.$message.success("OCR识别成功");
         } catch (err) {
-          this.$message.error('OCR识别失败');
-          if (process.env.NODE_ENV === 'development') {
-            console.error('OCR识别错误:', err);
+          this.$message.error("OCR识别失败");
+          if (process.env.NODE_ENV === "development") {
+            console.error("OCR识别错误:", err);
           }
         }
       };
@@ -450,16 +476,18 @@ export default {
               // 如果勾选了收藏，则调用收藏接口
               if (this.shouldFavorite && response.data) {
                 const questionId = response.data;
-                console.log('准备收藏错题，questionId:', questionId);
-                favoriteQuestion(questionId).then(() => {
-                  this.submitLoading = false;
-                  this.$modal.msgSuccess("错题添加并收藏成功");
-                  this.handleSuccessCallback();
-                }).catch(() => {
-                  this.submitLoading = false;
-                  this.$modal.msgSuccess("错题添加成功，但收藏失败");
-                  this.handleSuccessCallback();
-                });
+                console.log("准备收藏错题，questionId:", questionId);
+                favoriteQuestion(questionId)
+                  .then(() => {
+                    this.submitLoading = false;
+                    this.$modal.msgSuccess("错题添加并收藏成功");
+                    this.handleSuccessCallback();
+                  })
+                  .catch(() => {
+                    this.submitLoading = false;
+                    this.$modal.msgSuccess("错题添加成功，但收藏失败");
+                    this.handleSuccessCallback();
+                  });
               } else {
                 this.submitLoading = false;
                 this.$modal.msgSuccess("错题添加成功");
@@ -484,17 +512,19 @@ export default {
       this.formChanged = false;
 
       // 成功后询问用户是否继续添加
-      this.$confirm('是否继续添加错题？', '提示', {
-        confirmButtonText: '继续添加',
-        cancelButtonText: '返回列表',
-        type: 'success'
-      }).then(() => {
-        // 继续添加：重置表单
-        this.resetForm();
-      }).catch(() => {
-        // 返回列表
-        this.goBack();
-      });
+      this.$confirm("是否继续添加错题？", "提示", {
+        confirmButtonText: "继续添加",
+        cancelButtonText: "返回列表",
+        type: "success",
+      })
+        .then(() => {
+          // 继续添加：重置表单
+          this.resetForm();
+        })
+        .catch(() => {
+          // 返回列表
+          this.goBack();
+        });
     },
     resetForm() {
       this.form = {
@@ -532,7 +562,7 @@ export default {
       this.allAvailableTags = getAllTags(this.defaultTags);
       this.filteredTags = [...this.allAvailableTags];
     },
-    
+
     /** 过滤标签（用于自动补全） */
     filterTags(query) {
       this.tagSearchQuery = query || "";
@@ -540,23 +570,25 @@ export default {
         this.filteredTags = [...this.allAvailableTags];
         return;
       }
-      
+
       const queryLower = query.trim().toLowerCase();
-      this.filteredTags = this.allAvailableTags.filter(tag => 
+      this.filteredTags = this.allAvailableTags.filter((tag) =>
         tag.toLowerCase().includes(queryLower)
       );
-      
+
       // 如果查询的内容不在现有标签中，也显示在列表中（用户可以创建）
-      if (!this.allAvailableTags.some(tag => tag.toLowerCase() === queryLower)) {
+      if (
+        !this.allAvailableTags.some((tag) => tag.toLowerCase() === queryLower)
+      ) {
         this.filteredTags.push(query.trim());
       }
     },
-    
+
     /** 判断是否为自定义标签 */
     isCustomTag(tag) {
       return !this.defaultTags.includes(tag);
     },
-    
+
     /** 处理标签选择器显示/隐藏 */
     handleTagSelectVisible(visible) {
       if (visible) {
@@ -564,7 +596,7 @@ export default {
         this.loadAllTags();
       }
     },
-    
+
     handleTagsChange(value) {
       if (Array.isArray(value)) {
         const maxTags = 8;
@@ -574,9 +606,9 @@ export default {
           this.$message.info(`标签数量已限制为 ${maxTags} 个`);
         }
         this.form.tags = value.join(",");
-        
+
         // 保存自定义标签到本地存储
-        const customTags = value.filter(tag => this.isCustomTag(tag));
+        const customTags = value.filter((tag) => this.isCustomTag(tag));
         if (customTags.length > 0) {
           saveCustomTags(customTags);
           // 重新加载所有标签
@@ -600,13 +632,17 @@ export default {
 
 /* 背景装饰元素 */
 ::v-deep .app-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(33, 150, 243, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(33, 150, 243, 0.1) 0%,
+    transparent 70%
+  );
   animation: rotate 30s linear infinite;
   z-index: 0;
 }
@@ -819,7 +855,10 @@ export default {
   border-color: #2a5298;
 }
 
-::v-deep .favorite-checkbox .el-checkbox__input.is-checked + .el-checkbox__label {
+::v-deep
+  .favorite-checkbox
+  .el-checkbox__input.is-checked
+  + .el-checkbox__label {
   color: #2a5298;
 }
 

@@ -18,19 +18,29 @@
     <el-card class="welcome-card">
       <div slot="header" class="clearfix header-row">
         <span class="welcome-title">Dashboard</span>
-        <el-button style="float: right; padding: 3px 0" type="text" @click="refreshData" class="refresh-btn">
+        <el-button
+          style="padding: 3px 0; margin-left: auto"
+          type="text"
+          @click="refreshData"
+          class="refresh-btn"
+        >
           <i class="el-icon-refresh"></i> 刷新
         </el-button>
       </div>
 
       <div class="welcome-content">
-        <p class="welcome-desc">
-          错题征服者，享受征服错题的乐趣！
-        </p>
+        <p class="welcome-desc">错题征服者，享受征服错题的乐趣！</p>
 
         <!-- 统计卡片：响应式列设置 - 移动端2x2布局 -->
         <el-row :gutter="16" class="stats-row">
-          <el-col :xs="12" :sm="12" :md="6" :lg="6" v-for="(item, idx) in statItems" :key="idx">
+          <el-col
+            :xs="12"
+            :sm="12"
+            :md="6"
+            :lg="6"
+            v-for="(item, idx) in statItems"
+            :key="idx"
+          >
             <el-card
               class="stat-card"
               :class="{ 'stat-card-clickable': item.clickable }"
@@ -41,7 +51,10 @@
                 <div class="stat-number">{{ item.value }}</div>
                 <div class="stat-label">{{ item.label }}</div>
                 <i :class="item.icon" class="stat-icon"></i>
-                <i v-if="item.clickable" class="el-icon-d-arrow-right stat-arrow"></i>
+                <i
+                  v-if="item.clickable"
+                  class="el-icon-d-arrow-right stat-arrow"
+                ></i>
               </div>
             </el-card>
           </el-col>
@@ -53,19 +66,30 @@
     <el-card class="function-card-wrapper">
       <el-row :gutter="16" class="function-row">
         <el-col :xs="8" :sm="8" :md="8" :lg="8">
-          <div class="function-item function-item-primary" @click="goToAddQuestion">
-            <div class="function-icon"><i class="el-icon-edit-outline"></i></div>
+          <div
+            class="function-item function-item-primary"
+            @click="goToAddQuestion"
+          >
+            <div class="function-icon">
+              <i class="el-icon-edit-outline"></i>
+            </div>
             <div class="function-title">添加错题</div>
           </div>
         </el-col>
         <el-col :xs="8" :sm="8" :md="8" :lg="8">
-          <div class="function-item function-item-success" @click="goToQuestionList">
+          <div
+            class="function-item function-item-success"
+            @click="goToQuestionList"
+          >
             <div class="function-icon"><i class="el-icon-view"></i></div>
             <div class="function-title">查看错题</div>
           </div>
         </el-col>
         <el-col :xs="8" :sm="8" :md="8" :lg="8">
-          <div class="function-item function-item-warning" @click="goToFavorite">
+          <div
+            class="function-item function-item-warning"
+            @click="goToFavorite"
+          >
             <div class="function-icon"><i class="el-icon-star-on"></i></div>
             <div class="function-title">我的收藏</div>
           </div>
@@ -77,7 +101,12 @@
     <el-card class="recent-questions">
       <div slot="header" class="clearfix">
         <span>📚 最近添加</span>
-        <el-button style="float: right; padding: 3px 0" type="text" @click="goToQuestionList" class="view-all-btn">
+        <el-button
+          style="float: right; padding: 3px 0"
+          type="text"
+          @click="goToQuestionList"
+          class="view-all-btn"
+        >
           查看全部 <i class="el-icon-arrow-right"></i>
         </el-button>
       </div>
@@ -94,20 +123,57 @@
             <el-col :span="24" v-for="q in recentQuestions" :key="q.questionId">
               <el-card class="mobile-question-card" shadow="never">
                 <div class="mobile-card-header">
-                  <div class="mobile-card-title">{{ truncate(q.questionContent, 100) }}</div>
-                  <div class="mobile-card-meta">{{ parseTime(q.createTime, '{y}-{m}-{d} {h}:{i}') }}</div>
+                  <div class="mobile-card-title">
+                    {{ truncate(q.questionContent, 100) }}
+                  </div>
+                  <div class="mobile-card-meta">
+                    {{ parseTime(q.createTime, "{y}-{m}-{d} {h}:{i}") }}
+                  </div>
                 </div>
                 <div class="mobile-card-body">
-                  <el-tag :type="getTypeTagType(q.questionType)" size="mini" class="mobile-type-tag">{{ q.questionType }}</el-tag>
+                  <el-tag
+                    :type="getTypeTagType(q.questionType)"
+                    size="mini"
+                    class="mobile-type-tag"
+                    >{{ q.questionType }}</el-tag
+                  >
                   <div class="mobile-tags" v-if="q.tags">
-                    <el-tag v-for="tag in getTagsArray(q.tags).slice(0, 3)" :key="tag" size="mini" class="mobile-tag">{{ tag }}</el-tag>
+                    <el-tag
+                      v-for="tag in getTagsArray(q.tags).slice(0, 3)"
+                      :key="tag"
+                      size="mini"
+                      class="mobile-tag"
+                      >{{ tag }}</el-tag
+                    >
                   </div>
                 </div>
                 <div class="mobile-card-actions">
-                  <el-button size="mini" type="text" @click.stop="viewQuestion(q)">查看</el-button>
-                  <el-button size="mini" type="text" @click.stop="editQuestion(q)">编辑</el-button>
-                  <el-button size="mini" type="text" @click.stop="handleFavorite(q)" :style="{ color: q.isFavorite ? '#f56c6c' : '#909399' }">收藏</el-button>
-                  <el-button size="mini" type="text" @click.stop="handleDelete(q)" style="color: #f56c6c;">删除</el-button>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click.stop="viewQuestion(q)"
+                    >查看</el-button
+                  >
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click.stop="editQuestion(q)"
+                    >编辑</el-button
+                  >
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click.stop="handleFavorite(q)"
+                    :style="{ color: q.isFavorite ? '#f56c6c' : '#909399' }"
+                    >收藏</el-button
+                  >
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click.stop="handleDelete(q)"
+                    style="color: #f56c6c"
+                    >删除</el-button
+                  >
                 </div>
               </el-card>
             </el-col>
@@ -116,35 +182,80 @@
 
         <!-- 桌面端表格 -->
         <div v-else class="desktop-table-wrapper">
-          <el-table :data="recentQuestions" style="width: 100%" :stripe="true" :border="true">
-            <el-table-column prop="questionContent" label="题目内容" :show-overflow-tooltip="true" min-width="200">
+          <el-table
+            :data="recentQuestions"
+            style="width: 100%"
+            :stripe="true"
+            :border="true"
+          >
+            <el-table-column
+              prop="questionContent"
+              label="题目内容"
+              :show-overflow-tooltip="true"
+              min-width="200"
+            >
               <template #default="{ row }">
                 <div class="question-preview">
-                  {{ row.questionContent.length > 80 ? row.questionContent.substring(0, 80) + '...' : row.questionContent }}
+                  {{
+                    row.questionContent.length > 80
+                      ? row.questionContent.substring(0, 80) + "..."
+                      : row.questionContent
+                  }}
                 </div>
               </template>
             </el-table-column>
             <el-table-column prop="questionType" label="类型" width="100">
               <template #default="{ row }">
-                <el-tag :type="getTypeTagType(row.questionType)" size="small">{{ row.questionType }}</el-tag>
+                <el-tag :type="getTypeTagType(row.questionType)" size="small">{{
+                  row.questionType
+                }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="tags" label="标签" width="180" :show-overflow-tooltip="true">
+            <el-table-column
+              prop="tags"
+              label="标签"
+              width="180"
+              :show-overflow-tooltip="true"
+            >
               <template #default="{ row }">
-                <el-tag v-for="tag in getTagsArray(row.tags)" :key="tag" size="mini" style="margin-right: 5px;">{{ tag }}</el-tag>
+                <el-tag
+                  v-for="tag in getTagsArray(row.tags)"
+                  :key="tag"
+                  size="mini"
+                  style="margin-right: 5px"
+                  >{{ tag }}</el-tag
+                >
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="添加时间" width="160">
               <template #default="{ row }">
-                <span>{{ parseTime(row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+                <span>{{
+                  parseTime(row.createTime, "{y}-{m}-{d} {h}:{i}")
+                }}</span>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="200" fixed="right">
               <template #default="{ row }">
-                <el-button size="mini" type="text" @click="viewQuestion(row)">查看</el-button>
-                <el-button size="mini" type="text" @click="editQuestion(row)">编辑</el-button>
-                <el-button size="mini" type="text" @click="handleFavorite(row)" :style="{ color: row.isFavorite ? '#f56c6c' : '#909399' }">收藏</el-button>
-                <el-button size="mini" type="text" @click="handleDelete(row)" style="color: #f56c6c;">删除</el-button>
+                <el-button size="mini" type="text" @click="viewQuestion(row)"
+                  >查看</el-button
+                >
+                <el-button size="mini" type="text" @click="editQuestion(row)"
+                  >编辑</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="handleFavorite(row)"
+                  :style="{ color: row.isFavorite ? '#f56c6c' : '#909399' }"
+                  >收藏</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="handleDelete(row)"
+                  style="color: #f56c6c"
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
@@ -170,7 +281,12 @@
 </template>
 
 <script>
-import { listQuestion, delQuestion, favoriteQuestion, unfavoriteQuestion } from "@/api/trouble/question";
+import {
+  listQuestion,
+  delQuestion,
+  favoriteQuestion,
+  unfavoriteQuestion,
+} from "@/api/trouble/question";
 import { getTroubleStatistics } from "@/api/trouble/statistics";
 import QuestionEditDialog from "@/views/trouble/question/components/QuestionEditDialog.vue";
 import QuestionDetail from "@/views/trouble/question/components/QuestionDetail.vue";
@@ -180,7 +296,7 @@ export default {
   name: "TroubleDashboard",
   components: {
     QuestionEditDialog,
-    QuestionDetail
+    QuestionDetail,
   },
   data() {
     return {
@@ -189,7 +305,7 @@ export default {
         totalQuestions: 0,
         todayQuestions: 0,
         thisWeekQuestions: 0,
-        tagsCount: 0
+        tagsCount: 0,
       },
       // 最近错题
       recentQuestions: [],
@@ -198,28 +314,40 @@ export default {
       // 选中的错题（用于查看详情）
       selectedQuestion: null,
       // 编辑的错题ID（用于编辑窗口）
-      editQuestionId: null
+      editQuestionId: null,
     };
   },
   computed: {
-    ...mapGetters(['name', 'nickName']),
+    ...mapGetters(["name", "nickName"]),
     userName() {
-      return this.nickName || this.name || '用户';
+      return this.nickName || this.name || "用户";
     },
     statItems() {
       return [
-        { label: "总错题数", value: this.stats.totalQuestions, icon: "el-icon-document" },
-        { label: "今日新增", value: this.stats.todayQuestions, icon: "el-icon-plus" },
+        {
+          label: "总错题数",
+          value: this.stats.totalQuestions,
+          icon: "el-icon-document",
+        },
+        {
+          label: "今日新增",
+          value: this.stats.todayQuestions,
+          icon: "el-icon-plus",
+        },
         {
           label: "本周新增",
           value: this.stats.thisWeekQuestions,
           icon: "el-icon-date",
           clickable: true,
-          onClick: () => this.goToWeeklyChart()
+          onClick: () => this.goToWeeklyChart(),
         },
-        { label: "标签数量", value: this.stats.tagsCount, icon: "el-icon-collection-tag" }
+        {
+          label: "标签数量",
+          value: this.stats.tagsCount,
+          icon: "el-icon-collection-tag",
+        },
       ];
-    }
+    },
   },
   created() {
     this.loadData();
@@ -244,53 +372,61 @@ export default {
 
     /** 加载统计数据 */
     loadStats() {
-      getTroubleStatistics().then(response => {
-        if (response.code === 200) {
+      getTroubleStatistics()
+        .then((response) => {
+          if (response.code === 200) {
+            this.stats = {
+              totalQuestions: response.data.totalQuestions || 0,
+              todayQuestions: response.data.todayQuestions || 0,
+              thisWeekQuestions: response.data.thisWeekQuestions || 0,
+              tagsCount: response.data.tagsCount || 0,
+            };
+          }
+        })
+        .catch(() => {
           this.stats = {
-            totalQuestions: response.data.totalQuestions || 0,
-            todayQuestions: response.data.todayQuestions || 0,
-            thisWeekQuestions: response.data.thisWeekQuestions || 0,
-            tagsCount: response.data.tagsCount || 0
+            totalQuestions: 0,
+            todayQuestions: 0,
+            thisWeekQuestions: 0,
+            tagsCount: 0,
           };
-        }
-      }).catch(() => {
-        this.stats = { totalQuestions: 0, todayQuestions: 0, thisWeekQuestions: 0, tagsCount: 0 };
-      });
+        });
     },
 
     /** 加载最近错题 */
     loadRecentQuestions() {
-      listQuestion({ pageNum: 1, pageSize: 5 }).then(response => {
-        this.recentQuestions = response.rows || [];
-      }).catch(() => {
-        this.recentQuestions = [];
-      });
+      listQuestion({ pageNum: 1, pageSize: 5 })
+        .then((response) => {
+          this.recentQuestions = response.rows || [];
+        })
+        .catch(() => {
+          this.recentQuestions = [];
+        });
     },
 
     refreshData() {
       this.loadData();
-      this.$message.success('数据已刷新 (Refreshed)');
+      this.$message.success("数据已刷新 (Refreshed)");
     },
 
     goToAddQuestion() {
-      this.$router.push('/trouble/question/add');
+      this.$router.push("/trouble/question/add");
     },
 
     goToQuestionList() {
-      this.$router.push('/trouble/question/view');
+      this.$router.push("/trouble/question/view");
     },
 
-
     goToFavorite() {
-      this.$router.push('/trouble/favorite');
+      this.$router.push("/trouble/favorite");
     },
 
     goToTrash() {
-      this.$router.push('/trouble/trash');
+      this.$router.push("/trouble/trash");
     },
 
     goToWeeklyChart() {
-      this.$router.push('/trouble/weekly-chart');
+      this.$router.push("/trouble/weekly-chart");
     },
 
     viewQuestion(row) {
@@ -311,24 +447,30 @@ export default {
     handleFavorite(question) {
       const isFavorite = question.isFavorite;
       const action = isFavorite ? unfavoriteQuestion : favoriteQuestion;
-      const actionText = isFavorite ? '取消收藏' : '收藏';
+      const actionText = isFavorite ? "取消收藏" : "收藏";
 
-      action(question.questionId).then(() => {
-        this.$message.success(`${actionText}成功`);
-        question.isFavorite = !isFavorite;
-        this.loadRecentQuestions();
-      }).catch(() => {
-        this.$message.error(`${actionText}失败`);
-      });
+      action(question.questionId)
+        .then(() => {
+          this.$message.success(`${actionText}成功`);
+          question.isFavorite = !isFavorite;
+          this.loadRecentQuestions();
+        })
+        .catch(() => {
+          this.$message.error(`${actionText}失败`);
+        });
     },
 
     handleDelete(question) {
-      this.$modal.confirm('确认要删除该错题吗？').then(() => {
-        return delQuestion(question.questionId);
-      }).then(() => {
-        this.$message.success('删除成功');
-        this.loadRecentQuestions();
-      }).catch(() => {});
+      this.$modal
+        .confirm("确认要删除该错题吗？")
+        .then(() => {
+          return delQuestion(question.questionId);
+        })
+        .then(() => {
+          this.$message.success("删除成功");
+          this.loadRecentQuestions();
+        })
+        .catch(() => {});
     },
 
     handleEditSuccess() {
@@ -342,7 +484,9 @@ export default {
       if (this.selectedQuestion) {
         const questionId = this.selectedQuestion.questionId;
         this.loadRecentQuestions().then(() => {
-          const updatedQuestion = this.recentQuestions.find(q => q.questionId == questionId);
+          const updatedQuestion = this.recentQuestions.find(
+            (q) => q.questionId == questionId
+          );
           if (updatedQuestion) {
             this.selectedQuestion = updatedQuestion;
           }
@@ -351,51 +495,53 @@ export default {
     },
 
     handleLogout() {
-      this.$confirm('确定注销并退出系统吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$store.dispatch('LogOut').then(() => {
-          location.href = '/index';
-        });
-      }).catch(() => {});
+      this.$confirm("确定注销并退出系统吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$store.dispatch("LogOut").then(() => {
+            location.href = "/index";
+          });
+        })
+        .catch(() => {});
     },
 
     exportQuestions() {
-      this.$router.push('/trouble/question');
+      this.$router.push("/trouble/question");
       this.$nextTick(() => {
-        this.$message.info('请在错题列表页面点击导出按钮 (Please use Export on list)');
+        this.$message.info(
+          "请在错题列表页面点击导出按钮 (Please use Export on list)"
+        );
       });
     },
 
-
     getTypeTagType(type) {
       const typeMap = {
-        '选择题': 'success',
-        '填空题': 'warning',
-        '解答题': 'danger',
-        '未区分': 'info'
+        选择题: "success",
+        填空题: "warning",
+        解答题: "danger",
+        未区分: "info",
       };
-      return typeMap[type] || 'info';
+      return typeMap[type] || "info";
     },
 
     getTagsArray(tags) {
       if (!tags) return [];
-      return tags.split(',').filter(tag => tag.trim());
+      return tags.split(",").filter((tag) => tag.trim());
     },
 
-
     truncate(text, n = 100) {
-      if (!text) return '';
-      return text.length > n ? text.substring(0, n) + '...' : text;
+      if (!text) return "";
+      return text.length > n ? text.substring(0, n) + "..." : text;
     },
 
     // 时间格式化函数：保持与现有 parseTime 调用一致（如果项目已有全局工具可替换）
     parseTime(time, cFormat) {
-      if (!time) return '';
-      const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}';
-      let date = typeof time === 'object' ? time : new Date(time);
+      if (!time) return "";
+      const format = cFormat || "{y}-{m}-{d} {h}:{i}:{s}";
+      let date = typeof time === "object" ? time : new Date(time);
       const formatObj = {
         y: date.getFullYear(),
         m: date.getMonth() + 1,
@@ -403,15 +549,16 @@ export default {
         h: date.getHours(),
         i: date.getMinutes(),
         s: date.getSeconds(),
-        a: date.getDay()
+        a: date.getDay(),
       };
       return format.replace(/{([ymdhisa])+}/g, (result, key) => {
         let value = formatObj[key];
-        if (key === 'a') return ['日', '一', '二', '三', '四', '五', '六'][value];
-        return value < 10 ? '0' + value : value;
+        if (key === "a")
+          return ["日", "一", "二", "三", "四", "五", "六"][value];
+        return value < 10 ? "0" + value : value;
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -601,7 +748,6 @@ export default {
   text-align: center;
 }
 
-
 /* 统计卡片风格 - 优化间距，参考收藏页面 */
 .stats-row {
   margin-top: 20px;
@@ -733,7 +879,7 @@ export default {
 }
 
 .function-item::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -744,15 +890,27 @@ export default {
 }
 
 .function-item-primary::before {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
 }
 
 .function-item-success::before {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(56, 142, 60, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.1) 0%,
+    rgba(56, 142, 60, 0.1) 100%
+  );
 }
 
 .function-item-warning::before {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(245, 124, 0, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 152, 0, 0.1) 0%,
+    rgba(245, 124, 0, 0.1) 100%
+  );
 }
 
 .function-item:hover::before {
@@ -922,7 +1080,12 @@ export default {
   border-bottom: 1px solid #e0e0e0;
 }
 
-::v-deep .desktop-table-wrapper .el-table--striped .el-table__body tr.el-table__row--striped td {
+::v-deep
+  .desktop-table-wrapper
+  .el-table--striped
+  .el-table__body
+  tr.el-table__row--striped
+  td {
   background: #fafafa;
 }
 
@@ -1026,7 +1189,6 @@ export default {
   margin: 0;
 }
 
-
 /* 响应式微调 */
 @media (max-width: 767px) {
   .app-container {
@@ -1068,4 +1230,3 @@ export default {
   }
 }
 </style>
-

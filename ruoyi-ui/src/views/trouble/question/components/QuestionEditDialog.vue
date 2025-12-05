@@ -7,7 +7,9 @@
     :modal="true"
     :append-to-body="true"
     :lock-scroll="false"
-    :custom-class="isMobile ? 'question-edit-dialog mobile-dialog' : 'question-edit-dialog'"
+    :custom-class="
+      isMobile ? 'question-edit-dialog mobile-dialog' : 'question-edit-dialog'
+    "
     @close="handleCancel"
     @opened="handleDialogOpened"
     @closed="handleDialogClosed"
@@ -32,17 +34,14 @@
           size="mini"
           type="primary"
           @click="handleOCR('question')"
-          style="margin-top: 6px;"
+          style="margin-top: 6px"
         >
           OCR识别
         </el-button>
       </el-form-item>
 
       <el-form-item label="题目图片">
-        <image-upload
-          v-model="form.questionImages"
-          :limit="5"
-        />
+        <image-upload v-model="form.questionImages" :limit="5" />
       </el-form-item>
 
       <el-form-item label="答案内容">
@@ -58,17 +57,14 @@
           size="mini"
           type="primary"
           @click="handleOCR('answer')"
-          style="margin-top: 6px;"
+          style="margin-top: 6px"
         >
           OCR识别
         </el-button>
       </el-form-item>
 
       <el-form-item label="答案图片">
-        <image-upload
-          v-model="form.answerImages"
-          :limit="5"
-        />
+        <image-upload v-model="form.answerImages" :limit="5" />
       </el-form-item>
 
       <el-form-item label="题目类型" prop="questionType">
@@ -152,8 +148,8 @@
         >
           <el-option label="基础薄弱" value="基础薄弱" />
           <el-option label="粗心失误" value="粗心失误" />
-          <el-option label="思路方法" value="思路方法" />
-          <el-option label="考试场景" value="考试场景" />
+          <el-option label="计算错误" value="思路方法" />
+          <el-option label="审题不清" value="考试场景" />
         </el-select>
       </el-form-item>
 
@@ -186,13 +182,17 @@
             :value="tag"
           >
             <span>{{ tag }}</span>
-            <span v-if="isCustomTag(tag)" style="float: right; color: #8492a6; font-size: 12px;">
+            <span
+              v-if="isCustomTag(tag)"
+              style="float: right; color: #8492a6; font-size: 12px"
+            >
               <i class="el-icon-star-on"></i> 自定义
             </span>
           </el-option>
         </el-select>
-        <div style="font-size: 12px; color: #909399; margin-top: 5px;">
-          <i class="el-icon-info"></i> 输入关键词可自动补全历史标签，自定义标签会自动保存
+        <div style="font-size: 12px; color: #909399; margin-top: 5px">
+          <i class="el-icon-info"></i>
+          输入关键词可自动补全历史标签，自定义标签会自动保存
         </div>
       </el-form-item>
 
@@ -210,22 +210,28 @@
 
     <div slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
-      <el-button type="primary" :loading="submitLoading" @click="handleSubmit">确 定</el-button>
+      <el-button type="primary" :loading="submitLoading" @click="handleSubmit"
+        >确 定</el-button
+      >
     </div>
   </el-dialog>
 </template>
 
 <script>
 import { getQuestion, updateQuestion } from "@/api/trouble/question";
-import { getAllTags, saveCustomTags, extractAndSaveTags } from "@/utils/tagUtils";
+import {
+  getAllTags,
+  saveCustomTags,
+  extractAndSaveTags,
+} from "@/utils/tagUtils";
 
 export default {
   name: "QuestionEditDialog",
   props: {
     questionId: {
       type: [Number, String],
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
@@ -246,18 +252,28 @@ export default {
         grade: "",
         errorType: "",
         difficulty: 2,
-        remark: ""
+        remark: "",
       },
       rules: {
         questionContent: [
-          { required: true, message: "题目内容不能为空", trigger: "blur" }
-        ]
+          { required: true, message: "题目内容不能为空", trigger: "blur" },
+        ],
       },
       selectedTags: [],
-      defaultTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"],
+      defaultTags: [
+        "语文",
+        "数学",
+        "英语",
+        "物理",
+        "化学",
+        "生物",
+        "政治",
+        "历史",
+        "地理",
+      ],
       allAvailableTags: [], // 所有可用标签（系统标签 + 自定义标签）
       filteredTags: [], // 过滤后的标签列表
-      tagSearchQuery: "" // 标签搜索关键词
+      tagSearchQuery: "", // 标签搜索关键词
     };
   },
   created() {
@@ -279,7 +295,7 @@ export default {
       if (newVal && this.questionId) {
         this.loadQuestion();
       }
-    }
+    },
   },
   methods: {
     checkIsMobile() {
@@ -294,7 +310,7 @@ export default {
     handleDialogOpened() {
       // 移除可能存在的多余遮罩层
       this.$nextTick(() => {
-        const modals = document.querySelectorAll('.v-modal');
+        const modals = document.querySelectorAll(".v-modal");
         if (modals.length > 1) {
           // 如果存在多个遮罩，移除多余的
           for (let i = 1; i < modals.length; i++) {
@@ -306,9 +322,9 @@ export default {
     handleDialogClosed() {
       // 确保关闭时清理遮罩
       this.$nextTick(() => {
-        const modals = document.querySelectorAll('.v-modal');
-        modals.forEach(modal => {
-          if (!modal.getAttribute('data-keep')) {
+        const modals = document.querySelectorAll(".v-modal");
+        modals.forEach((modal) => {
+          if (!modal.getAttribute("data-keep")) {
             modal.remove();
           }
         });
@@ -316,7 +332,7 @@ export default {
     },
     loadQuestion() {
       if (!this.questionId) return;
-      getQuestion(this.questionId).then(response => {
+      getQuestion(this.questionId).then((response) => {
         this.form = {
           questionId: response.data.questionId,
           questionContent: response.data.questionContent || "",
@@ -326,33 +342,43 @@ export default {
           questionType: response.data.questionType || "未区分",
           tags: response.data.tags || "",
           importance: response.data.importance || 2,
-          proficiency: response.data.proficiency !== undefined && response.data.proficiency !== null ? response.data.proficiency : 0,
+          proficiency:
+            response.data.proficiency !== undefined &&
+            response.data.proficiency !== null
+              ? response.data.proficiency
+              : 0,
           questionSource: response.data.questionSource || "",
           grade: response.data.grade || "",
           errorType: response.data.errorType || "",
-          difficulty: response.data.difficulty !== undefined && response.data.difficulty !== null ? response.data.difficulty : 2,
-          remark: response.data.remark || ""
+          difficulty:
+            response.data.difficulty !== undefined &&
+            response.data.difficulty !== null
+              ? response.data.difficulty
+              : 2,
+          remark: response.data.remark || "",
         };
-        this.selectedTags = this.form.tags ? this.form.tags.split(',').filter(t => t.trim()) : [];
+        this.selectedTags = this.form.tags
+          ? this.form.tags.split(",").filter((t) => t.trim())
+          : [];
       });
     },
     async handleOCR(target) {
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = 'image/*';
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
       fileInput.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
         try {
           const host = window.location.hostname;
           const port = 9000;
 
           const res = await fetch(`http://${host}:${port}/ocr/upload`, {
-            method: 'POST',
+            method: "POST",
             body: formData,
           });
 
@@ -362,18 +388,18 @@ export default {
 
           const data = await res.json();
           if (!data.text) {
-            throw new Error('OCR返回内容为空');
+            throw new Error("OCR返回内容为空");
           }
 
-          if (target === 'question') {
+          if (target === "question") {
             this.form.questionContent = data.text;
-          } else if (target === 'answer') {
+          } else if (target === "answer") {
             this.form.answerContent = data.text;
           }
 
-          this.$message.success('OCR识别成功');
+          this.$message.success("OCR识别成功");
         } catch (err) {
-          this.$message.error('OCR识别失败: ' + (err.message || '未知错误'));
+          this.$message.error("OCR识别失败: " + (err.message || "未知错误"));
           console.error(err);
         }
       };
@@ -385,7 +411,7 @@ export default {
       this.allAvailableTags = getAllTags(this.defaultTags);
       this.filteredTags = [...this.allAvailableTags];
     },
-    
+
     /** 过滤标签（用于自动补全） */
     filterTags(query) {
       this.tagSearchQuery = query || "";
@@ -393,23 +419,25 @@ export default {
         this.filteredTags = [...this.allAvailableTags];
         return;
       }
-      
+
       const queryLower = query.trim().toLowerCase();
-      this.filteredTags = this.allAvailableTags.filter(tag => 
+      this.filteredTags = this.allAvailableTags.filter((tag) =>
         tag.toLowerCase().includes(queryLower)
       );
-      
+
       // 如果查询的内容不在现有标签中，也显示在列表中（用户可以创建）
-      if (!this.allAvailableTags.some(tag => tag.toLowerCase() === queryLower)) {
+      if (
+        !this.allAvailableTags.some((tag) => tag.toLowerCase() === queryLower)
+      ) {
         this.filteredTags.push(query.trim());
       }
     },
-    
+
     /** 判断是否为自定义标签 */
     isCustomTag(tag) {
       return !this.defaultTags.includes(tag);
     },
-    
+
     /** 处理标签选择器显示/隐藏 */
     handleTagSelectVisible(visible) {
       if (visible) {
@@ -417,7 +445,7 @@ export default {
         this.loadAllTags();
       }
     },
-    
+
     handleTagsChange(value) {
       if (Array.isArray(value)) {
         const maxTags = 8;
@@ -427,9 +455,9 @@ export default {
           this.$message.info(`标签数量已限制为 ${maxTags} 个`);
         }
         this.form.tags = value.join(",");
-        
+
         // 保存自定义标签到本地存储
-        const customTags = value.filter(tag => this.isCustomTag(tag));
+        const customTags = value.filter((tag) => this.isCustomTag(tag));
         if (customTags.length > 0) {
           saveCustomTags(customTags);
           // 重新加载所有标签
@@ -450,7 +478,7 @@ export default {
                 this.loadAllTags();
               }
               this.submitLoading = false;
-              this.$emit('success');
+              this.$emit("success");
               this.close();
             })
             .catch(() => {
@@ -461,10 +489,10 @@ export default {
     },
     handleCancel() {
       this.$refs.form.resetFields();
-      this.$emit('cancel');
+      this.$emit("cancel");
       this.close();
-    }
-  }
+    },
+  },
 };
 </script>
 

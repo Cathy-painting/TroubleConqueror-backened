@@ -7,7 +7,11 @@
         <el-button type="text" @click="refreshData" class="header-btn">
           <i class="el-icon-refresh"></i> 刷新
         </el-button>
-        <el-button type="text" @click="handleLogout" class="header-btn logout-btn">
+        <el-button
+          type="text"
+          @click="handleLogout"
+          class="header-btn logout-btn"
+        >
           <i class="el-icon-switch-button"></i> 退出登录
         </el-button>
       </div>
@@ -68,7 +72,11 @@
       <!-- 功能按钮区域 -->
       <el-row :gutter="20" class="function-row">
         <el-col :xs="24" :sm="12" :md="12" :lg="12">
-          <el-card class="function-card" shadow="hover" @click.native="goToAddQuestion">
+          <el-card
+            class="function-card"
+            shadow="hover"
+            @click.native="goToAddQuestion"
+          >
             <div class="function-content">
               <div class="function-icon">
                 <i class="el-icon-edit-outline"></i>
@@ -83,7 +91,11 @@
         </el-col>
 
         <el-col :xs="24" :sm="12" :md="12" :lg="12">
-          <el-card class="function-card" shadow="hover" @click.native="goToQuestionList">
+          <el-card
+            class="function-card"
+            shadow="hover"
+            @click.native="goToQuestionList"
+          >
             <div class="function-content">
               <div class="function-icon">
                 <i class="el-icon-view"></i>
@@ -115,56 +127,109 @@
         <div v-else class="questions-wrapper">
           <!-- 桌面端表格 -->
           <el-table :data="recentQuestions" class="desktop-table">
-            <el-table-column prop="questionContent" label="题目内容" :show-overflow-tooltip="true">
+            <el-table-column
+              prop="questionContent"
+              label="题目内容"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <div class="question-preview">
-                  {{ scope.row.questionContent.length > 50 ? scope.row.questionContent.substring(0, 50) + '...' : scope.row.questionContent }}
+                  {{
+                    scope.row.questionContent.length > 50
+                      ? scope.row.questionContent.substring(0, 50) + "..."
+                      : scope.row.questionContent
+                  }}
                 </div>
               </template>
             </el-table-column>
             <el-table-column prop="questionType" label="类型" width="100">
               <template slot-scope="scope">
-                <el-tag :type="getTypeTagType(scope.row.questionType)" size="small">
+                <el-tag
+                  :type="getTypeTagType(scope.row.questionType)"
+                  size="small"
+                >
                   {{ scope.row.questionType }}
                 </el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="tags" label="标签" width="150">
               <template slot-scope="scope">
-                <el-tag v-for="tag in getTagsArray(scope.row.tags)" :key="tag" size="mini" style="margin-right: 5px;">
+                <el-tag
+                  v-for="tag in getTagsArray(scope.row.tags)"
+                  :key="tag"
+                  size="mini"
+                  style="margin-right: 5px"
+                >
                   {{ tag }}
                 </el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="添加时间" width="180">
               <template slot-scope="scope">
-                <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+                <span>{{
+                  parseTime(scope.row.createTime, "{y}-{m}-{d} {h}:{i}")
+                }}</span>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="120">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="viewQuestion(scope.row)">查看</el-button>
-                <el-button size="mini" type="text" @click="editQuestion(scope.row)">编辑</el-button>
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="viewQuestion(scope.row)"
+                  >查看</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="editQuestion(scope.row)"
+                  >编辑</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
 
           <!-- 移动端卡片 -->
           <div class="mobile-cards">
-            <div v-for="item in recentQuestions" :key="item.questionId" class="question-card">
+            <div
+              v-for="item in recentQuestions"
+              :key="item.questionId"
+              class="question-card"
+            >
               <div class="question-card-content">
-                <div class="question-text">{{ item.questionContent.length > 80 ? item.questionContent.substring(0, 80) + '...' : item.questionContent }}</div>
+                <div class="question-text">
+                  {{
+                    item.questionContent.length > 80
+                      ? item.questionContent.substring(0, 80) + "..."
+                      : item.questionContent
+                  }}
+                </div>
                 <div class="question-meta">
-                  <el-tag :type="getTypeTagType(item.questionType)" size="mini">{{ item.questionType }}</el-tag>
-                  <el-tag v-for="tag in getTagsArray(item.tags).slice(0, 2)" :key="tag" size="mini" style="margin-left: 5px;">
+                  <el-tag
+                    :type="getTypeTagType(item.questionType)"
+                    size="mini"
+                    >{{ item.questionType }}</el-tag
+                  >
+                  <el-tag
+                    v-for="tag in getTagsArray(item.tags).slice(0, 2)"
+                    :key="tag"
+                    size="mini"
+                    style="margin-left: 5px"
+                  >
                     {{ tag }}
                   </el-tag>
                 </div>
-                <div class="question-time">{{ parseTime(item.createTime, '{y}-{m}-{d} {h}:{i}') }}</div>
+                <div class="question-time">
+                  {{ parseTime(item.createTime, "{y}-{m}-{d} {h}:{i}") }}
+                </div>
               </div>
               <div class="question-card-actions">
-                <el-button size="mini" type="text" @click="viewQuestion(item)">查看</el-button>
-                <el-button size="mini" type="text" @click="editQuestion(item)">编辑</el-button>
+                <el-button size="mini" type="text" @click="viewQuestion(item)"
+                  >查看</el-button
+                >
+                <el-button size="mini" type="text" @click="editQuestion(item)"
+                  >编辑</el-button
+                >
               </div>
             </div>
           </div>
@@ -187,9 +252,9 @@ export default {
         totalQuestions: 0,
         todayQuestions: 0,
         thisWeekQuestions: 0,
-        tagsCount: 0
+        tagsCount: 0,
       },
-      recentQuestions: []
+      recentQuestions: [],
     };
   },
   created() {
@@ -201,78 +266,84 @@ export default {
       this.loadRecentQuestions();
     },
     loadStats() {
-      getTroubleStatistics().then(response => {
-        if (response.code === 200) {
+      getTroubleStatistics()
+        .then((response) => {
+          if (response.code === 200) {
+            this.stats = {
+              totalQuestions: response.data.totalQuestions || 0,
+              todayQuestions: response.data.todayQuestions || 0,
+              thisWeekQuestions: response.data.thisWeekQuestions || 0,
+              tagsCount: response.data.tagsCount || 0,
+            };
+          }
+        })
+        .catch(() => {
           this.stats = {
-            totalQuestions: response.data.totalQuestions || 0,
-            todayQuestions: response.data.todayQuestions || 0,
-            thisWeekQuestions: response.data.thisWeekQuestions || 0,
-            tagsCount: response.data.tagsCount || 0
+            totalQuestions: 0,
+            todayQuestions: 0,
+            thisWeekQuestions: 0,
+            tagsCount: 0,
           };
-        }
-      }).catch(() => {
-        this.stats = {
-          totalQuestions: 0,
-          todayQuestions: 0,
-          thisWeekQuestions: 0,
-          tagsCount: 0
-        };
-      });
+        });
     },
     loadRecentQuestions() {
-      listQuestion({ pageNum: 1, pageSize: 5 }).then(response => {
-        this.recentQuestions = response.rows || [];
-      }).catch(() => {
-        this.recentQuestions = [];
-      });
+      listQuestion({ pageNum: 1, pageSize: 5 })
+        .then((response) => {
+          this.recentQuestions = response.rows || [];
+        })
+        .catch(() => {
+          this.recentQuestions = [];
+        });
     },
     refreshData() {
       this.loadData();
-      this.$message.success('数据已刷新');
+      this.$message.success("数据已刷新");
     },
     goToAddQuestion() {
-      this.$router.push('/trouble/question/add');
+      this.$router.push("/trouble/question/add");
     },
     goToQuestionList() {
-      this.$router.push('/trouble/question/view');
+      this.$router.push("/trouble/question/view");
     },
     viewQuestion(row) {
       this.$router.push({
-        path: '/trouble/question/view',
-        query: { id: row.questionId }
+        path: "/trouble/question/view",
+        query: { id: row.questionId },
       });
     },
     editQuestion(row) {
       this.$router.push({
-        path: '/trouble/question',
-        query: { edit: row.questionId }
+        path: "/trouble/question",
+        query: { edit: row.questionId },
       });
     },
     getTypeTagType(type) {
       const typeMap = {
-        '选择题': 'success',
-        '填空题': 'warning',
-        '解答题': 'danger',
-        '未区分': 'info'
+        选择题: "success",
+        填空题: "warning",
+        解答题: "danger",
+        未区分: "info",
       };
-      return typeMap[type] || 'info';
+      return typeMap[type] || "info";
     },
     getTagsArray(tags) {
       if (!tags) return [];
-      return tags.split(',').filter(tag => tag.trim());
+      return tags.split(",").filter((tag) => tag.trim());
     },
     handleLogout() {
-      this.$confirm('确定要退出登录吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$store.dispatch('LogOut').then(() => {
-          this.$router.push('/login');
-        });
-      }).catch(() => {});
-    }
-  }
+      this.$confirm("确定要退出登录吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$store.dispatch("LogOut").then(() => {
+            this.$router.push("/login");
+          });
+        })
+        .catch(() => {});
+    },
+  },
 };
 </script>
 
@@ -302,7 +373,7 @@ export default {
 .header-title {
   font-size: 20px;
   font-weight: bold;
-  color: #409EFF;
+  color: #409eff;
 }
 
 .header-actions {
@@ -317,7 +388,7 @@ export default {
 }
 
 .header-btn:hover {
-  color: #409EFF;
+  color: #409eff;
 }
 
 .logout-btn {
@@ -342,7 +413,7 @@ export default {
 .welcome-title {
   font-size: 18px;
   font-weight: bold;
-  color: #409EFF;
+  color: #409eff;
 }
 
 .refresh-btn {
@@ -385,7 +456,7 @@ export default {
 .stat-number {
   font-size: 24px;
   font-weight: bold;
-  color: #409EFF;
+  color: #409eff;
   margin-bottom: 5px;
 }
 
@@ -427,7 +498,7 @@ export default {
 
 .function-icon {
   font-size: 48px;
-  color: #409EFF;
+  color: #409eff;
   margin-bottom: 15px;
 }
 

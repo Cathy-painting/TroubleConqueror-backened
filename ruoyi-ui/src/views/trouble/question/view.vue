@@ -17,11 +17,7 @@
             @clear="handleQuery"
             class="search-input"
           />
-          <el-button
-            type="text"
-            class="back-btn"
-            @click="goToDashboard"
-          >
+          <el-button type="text" class="back-btn" @click="goToDashboard">
             <i class="el-icon-house"></i> 返回主页
           </el-button>
         </div>
@@ -35,7 +31,11 @@
         <div class="filter-row">
           <div class="filter-group">
             <span class="filter-label">题目类型：</span>
-            <el-radio-group v-model="queryParams.questionType" @change="handleQuery" class="filter-radios">
+            <el-radio-group
+              v-model="queryParams.questionType"
+              @change="handleQuery"
+              class="filter-radios"
+            >
               <el-radio-button label="">全部</el-radio-button>
               <el-radio-button label="选择题">选择题</el-radio-button>
               <el-radio-button label="填空题">填空题</el-radio-button>
@@ -60,7 +60,10 @@
                 :value="tag"
               >
                 <span>{{ tag }}</span>
-                <span v-if="!systemTags.includes(tag)" style="float: right; color: #8492a6; font-size: 12px;">
+                <span
+                  v-if="!systemTags.includes(tag)"
+                  style="float: right; color: #8492a6; font-size: 12px"
+                >
                   <i class="el-icon-star-on"></i> 自定义
                 </span>
               </el-option>
@@ -68,7 +71,11 @@
           </div>
           <div class="filter-group">
             <span class="filter-label">重要性：</span>
-            <el-radio-group v-model="queryParams.importance" @change="handleQuery" class="filter-radios">
+            <el-radio-group
+              v-model="queryParams.importance"
+              @change="handleQuery"
+              class="filter-radios"
+            >
               <el-radio-button label="">全部</el-radio-button>
               <el-radio-button :label="3">高</el-radio-button>
               <el-radio-button :label="2">中</el-radio-button>
@@ -77,7 +84,11 @@
           </div>
           <div class="filter-group">
             <span class="filter-label">熟练度：</span>
-            <el-radio-group v-model="queryParams.proficiency" @change="handleQuery" class="filter-radios">
+            <el-radio-group
+              v-model="queryParams.proficiency"
+              @change="handleQuery"
+              class="filter-radios"
+            >
               <el-radio-button label="">全部</el-radio-button>
               <el-radio-button :label="3">熟练</el-radio-button>
               <el-radio-button :label="2">较好</el-radio-button>
@@ -86,12 +97,16 @@
             </el-radio-group>
           </div>
         </div>
-        
+
         <!-- 第二行筛选条件 -->
         <div class="filter-row">
           <div class="filter-group">
             <span class="filter-label">难度：</span>
-            <el-radio-group v-model="queryParams.difficulty" @change="handleQuery" class="filter-radios">
+            <el-radio-group
+              v-model="queryParams.difficulty"
+              @change="handleQuery"
+              class="filter-radios"
+            >
               <el-radio-button label="">全部</el-radio-button>
               <el-radio-button :label="1">简单</el-radio-button>
               <el-radio-button :label="2">中等</el-radio-button>
@@ -129,13 +144,16 @@
               clearable
               @change="handleQuery"
               class="source-select"
-              style="width: 150px;"
+              style="width: 150px"
             >
               <el-option label="课堂练习" value="课堂练习"></el-option>
               <el-option label="课后作业" value="课后作业"></el-option>
               <el-option label="周测/月考" value="周测/月考"></el-option>
               <el-option label="单元测试" value="单元测试"></el-option>
-              <el-option label="期中/期末考试" value="期中/期末考试"></el-option>
+              <el-option
+                label="期中/期末考试"
+                value="期中/期末考试"
+              ></el-option>
               <el-option label="模拟考试" value="模拟考试"></el-option>
               <el-option label="真题" value="真题"></el-option>
               <el-option label="教辅资料" value="教辅资料"></el-option>
@@ -150,17 +168,21 @@
               clearable
               @change="handleQuery"
               class="error-type-select"
-              style="width: 150px;"
+              style="width: 150px"
             >
               <el-option label="基础薄弱" value="基础薄弱"></el-option>
               <el-option label="粗心失误" value="粗心失误"></el-option>
-              <el-option label="思路方法" value="思路方法"></el-option>
-              <el-option label="考试场景" value="考试场景"></el-option>
+              <el-option label="计算错误" value="思路方法"></el-option>
+              <el-option label="审题不清" value="考试场景"></el-option>
             </el-select>
           </div>
           <div class="view-mode-group">
             <span class="filter-label">视图：</span>
-            <el-radio-group v-model="viewMode" @change="handleViewModeChange" class="view-mode-radios">
+            <el-radio-group
+              v-model="viewMode"
+              @change="handleViewModeChange"
+              class="view-mode-radios"
+            >
               <el-radio-button label="list">
                 <i class="el-icon-menu"></i> 列表
               </el-radio-button>
@@ -179,7 +201,11 @@
     <!-- 题目列表 -->
     <div class="view-container">
       <!-- 列表视图 -->
-      <div v-if="viewMode === 'list'" v-loading="loading" class="questions-list">
+      <div
+        v-if="viewMode === 'list'"
+        v-loading="loading"
+        class="questions-list"
+      >
         <question-list-item
           v-for="question in questionList"
           :key="question.questionId"
@@ -193,7 +219,11 @@
       </div>
 
       <!-- 卡片视图 -->
-      <div v-else-if="viewMode === 'card'" v-loading="loading" class="questions-grid">
+      <div
+        v-else-if="viewMode === 'card'"
+        v-loading="loading"
+        class="questions-grid"
+      >
         <question-card
           v-for="question in questionList"
           :key="question.questionId"
@@ -207,7 +237,11 @@
       </div>
 
       <!-- 紧凑视图 -->
-      <div v-else-if="viewMode === 'compact'" v-loading="loading" class="questions-compact">
+      <div
+        v-else-if="viewMode === 'compact'"
+        v-loading="loading"
+        class="questions-compact"
+      >
         <question-compact-item
           v-for="question in questionList"
           :key="question.questionId"
@@ -255,7 +289,13 @@
 </template>
 
 <script>
-import { listQuestion, delQuestion, favoriteQuestion, unfavoriteQuestion, getQuestion } from "@/api/trouble/question";
+import {
+  listQuestion,
+  delQuestion,
+  favoriteQuestion,
+  unfavoriteQuestion,
+  getQuestion,
+} from "@/api/trouble/question";
 import { getAllTags } from "@/utils/tagUtils";
 import QuestionCard from "./components/QuestionCard.vue";
 import QuestionListItem from "./components/QuestionListItem.vue";
@@ -271,10 +311,10 @@ export default {
     QuestionListItem,
     QuestionCompactItem,
     QuestionDetail,
-    QuestionEditDialog
+    QuestionEditDialog,
   },
   computed: {
-    ...mapGetters(['roles'])
+    ...mapGetters(["roles"]),
   },
   data() {
     return {
@@ -284,8 +324,18 @@ export default {
       selectedQuestion: null,
       selectedTags: [],
       availableTags: [],
-      systemTags: ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"], // 系统预设标签
-      viewMode: 'list', // 默认列表视图: 'list', 'card', 'compact'
+      systemTags: [
+        "语文",
+        "数学",
+        "英语",
+        "物理",
+        "化学",
+        "生物",
+        "政治",
+        "历史",
+        "地理",
+      ], // 系统预设标签
+      viewMode: "list", // 默认列表视图: 'list', 'card', 'compact'
       queryParams: {
         pageNum: 1,
         pageSize: 12,
@@ -297,27 +347,31 @@ export default {
         difficulty: "",
         grade: null,
         questionSource: null,
-        errorType: null
+        errorType: null,
       },
-      weekStart: null,  // 用于筛选本周题目的开始时间
-      weekEnd: null     // 用于筛选本周题目的结束时间
+      weekStart: null, // 用于筛选本周题目的开始时间
+      weekEnd: null, // 用于筛选本周题目的结束时间
     };
   },
   created() {
     // 从localStorage读取视图模式
-    const savedViewMode = localStorage.getItem('questionViewMode');
-    if (savedViewMode && ['list', 'card', 'compact'].includes(savedViewMode)) {
+    const savedViewMode = localStorage.getItem("questionViewMode");
+    if (savedViewMode && ["list", "card", "compact"].includes(savedViewMode)) {
       this.viewMode = savedViewMode;
     }
     // 根据视图模式设置每页数量
-    if (this.viewMode === 'list') {
+    if (this.viewMode === "list") {
       this.queryParams.pageSize = 20;
-    } else if (this.viewMode === 'compact') {
+    } else if (this.viewMode === "compact") {
       this.queryParams.pageSize = 30;
     }
-    
+
     // 检查是否有查询参数（从其他页面跳转过来时可能带有 id、proficiency 或时间范围）
-    if (this.$route.query.proficiency !== undefined && this.$route.query.proficiency !== null && this.$route.query.proficiency !== '') {
+    if (
+      this.$route.query.proficiency !== undefined &&
+      this.$route.query.proficiency !== null &&
+      this.$route.query.proficiency !== ""
+    ) {
       // 如果带有熟练度参数，设置筛选条件
       this.queryParams.proficiency = parseInt(this.$route.query.proficiency);
     }
@@ -329,7 +383,9 @@ export default {
     if (this.$route.query.id) {
       // 如果有 id，先加载列表，然后自动打开详情
       this.getList().then(() => {
-        const question = this.questionList.find(q => q.questionId == this.$route.query.id);
+        const question = this.questionList.find(
+          (q) => q.questionId == this.$route.query.id
+        );
         if (question) {
           this.selectedQuestion = question;
         }
@@ -345,11 +401,11 @@ export default {
       this.loading = true;
       // 如果有选中的标签，添加到查询参数
       if (this.selectedTags.length > 0) {
-        this.queryParams.tags = this.selectedTags.join(',');
+        this.queryParams.tags = this.selectedTags.join(",");
       } else {
         this.queryParams.tags = null;
       }
-      
+
       // 处理重要性参数：空字符串转为null
       const queryParams = { ...this.queryParams };
       if (queryParams.importance === "") {
@@ -363,48 +419,50 @@ export default {
       if (queryParams.difficulty === "") {
         queryParams.difficulty = null;
       }
-      
+
       // 如果有时间范围参数，需要获取更多数据以便前端筛选
       if (this.weekStart && this.weekEnd) {
-        queryParams.pageSize = 1000;  // 获取更多数据以便筛选
+        queryParams.pageSize = 1000; // 获取更多数据以便筛选
       }
-      
-      return listQuestion(queryParams).then(response => {
-        let questions = response.rows || [];
-        
-        // 如果有时间范围参数，筛选出本周的题目
-        if (this.weekStart && this.weekEnd) {
-          questions = questions.filter(q => {
-            const createDate = new Date(q.createTime);
-            return createDate >= this.weekStart && createDate <= this.weekEnd;
-          });
-          // 更新总数
-          this.total = questions.length;
-        } else {
-          this.total = response.total || 0;
-        }
-        
-        // 检查每个错题是否已收藏（这里需要根据实际API返回的数据来判断）
-        // 如果API返回了isFavorite字段，则直接使用；否则需要额外查询
-        this.questionList = questions;
-        this.loading = false;
-        return response;
-      }).catch(() => {
-        this.questionList = [];
-        this.total = 0;
-        this.loading = false;
-        return Promise.reject();
-      });
+
+      return listQuestion(queryParams)
+        .then((response) => {
+          let questions = response.rows || [];
+
+          // 如果有时间范围参数，筛选出本周的题目
+          if (this.weekStart && this.weekEnd) {
+            questions = questions.filter((q) => {
+              const createDate = new Date(q.createTime);
+              return createDate >= this.weekStart && createDate <= this.weekEnd;
+            });
+            // 更新总数
+            this.total = questions.length;
+          } else {
+            this.total = response.total || 0;
+          }
+
+          // 检查每个错题是否已收藏（这里需要根据实际API返回的数据来判断）
+          // 如果API返回了isFavorite字段，则直接使用；否则需要额外查询
+          this.questionList = questions;
+          this.loading = false;
+          return response;
+        })
+        .catch(() => {
+          this.questionList = [];
+          this.total = 0;
+          this.loading = false;
+          return Promise.reject();
+        });
     },
     /** 加载所有可用标签 */
     loadTags() {
       // 先从所有错题中提取标签
-      listQuestion({ pageNum: 1, pageSize: 1000 }).then(response => {
+      listQuestion({ pageNum: 1, pageSize: 1000 }).then((response) => {
         const allQuestions = response.rows || [];
         const tagSet = new Set();
-        allQuestions.forEach(q => {
+        allQuestions.forEach((q) => {
           if (q.tags) {
-            q.tags.split(',').forEach(tag => {
+            q.tags.split(",").forEach((tag) => {
               const trimmedTag = tag.trim();
               if (trimmedTag) {
                 tagSet.add(trimmedTag);
@@ -412,7 +470,7 @@ export default {
             });
           }
         });
-        
+
         // 合并系统标签、题目中的标签和自定义标签
         const questionTags = Array.from(tagSet);
         this.availableTags = getAllTags([...this.systemTags, ...questionTags]);
@@ -431,11 +489,11 @@ export default {
     /** 视图模式切换 */
     handleViewModeChange() {
       // 保存视图模式到localStorage
-      localStorage.setItem('questionViewMode', this.viewMode);
+      localStorage.setItem("questionViewMode", this.viewMode);
       // 根据视图模式调整每页数量
-      if (this.viewMode === 'list') {
+      if (this.viewMode === "list") {
         this.queryParams.pageSize = 20;
-      } else if (this.viewMode === 'compact') {
+      } else if (this.viewMode === "compact") {
         this.queryParams.pageSize = 30;
       } else {
         this.queryParams.pageSize = 12;
@@ -454,7 +512,9 @@ export default {
       if (this.selectedQuestion) {
         const questionId = this.selectedQuestion.questionId;
         this.getList().then(() => {
-          const updatedQuestion = this.questionList.find(q => q.questionId == questionId);
+          const updatedQuestion = this.questionList.find(
+            (q) => q.questionId == questionId
+          );
           if (updatedQuestion) {
             this.selectedQuestion = updatedQuestion;
           }
@@ -467,7 +527,9 @@ export default {
       if (this.selectedQuestion) {
         const questionId = this.selectedQuestion.questionId;
         this.getList().then(() => {
-          const updatedQuestion = this.questionList.find(q => q.questionId == questionId);
+          const updatedQuestion = this.questionList.find(
+            (q) => q.questionId == questionId
+          );
           if (updatedQuestion) {
             this.selectedQuestion = updatedQuestion;
           }
@@ -495,28 +557,34 @@ export default {
     handleFavorite(question) {
       const isFavorite = question.isFavorite;
       const action = isFavorite ? unfavoriteQuestion : favoriteQuestion;
-      const actionText = isFavorite ? '取消收藏' : '收藏';
-      
-      action(question.questionId).then(() => {
-        this.$message.success(`${actionText}成功`);
-        // 更新本地状态
-        question.isFavorite = !isFavorite;
-        // 刷新列表
-        this.getList();
-      }).catch(() => {
-        this.$message.error(`${actionText}失败`);
-      });
+      const actionText = isFavorite ? "取消收藏" : "收藏";
+
+      action(question.questionId)
+        .then(() => {
+          this.$message.success(`${actionText}成功`);
+          // 更新本地状态
+          question.isFavorite = !isFavorite;
+          // 刷新列表
+          this.getList();
+        })
+        .catch(() => {
+          this.$message.error(`${actionText}失败`);
+        });
     },
     /** 删除 */
     handleDelete(question) {
-      this.$modal.confirm('确认要删除该错题吗？').then(() => {
-        return delQuestion(question.questionId);
-      }).then(() => {
-        this.$message.success('删除成功');
-        this.getList();
-      }).catch(() => {});
-    }
-  }
+      this.$modal
+        .confirm("确认要删除该错题吗？")
+        .then(() => {
+          return delQuestion(question.questionId);
+        })
+        .then(() => {
+          this.$message.success("删除成功");
+          this.getList();
+        })
+        .catch(() => {});
+    },
+  },
 };
 </script>
 
@@ -650,7 +718,9 @@ export default {
   color: #2196f3;
 }
 
-.view-mode-radios >>> .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+.view-mode-radios
+  >>> .el-radio-button__orig-radio:checked
+  + .el-radio-button__inner {
   background: #2196f3;
   border-color: #2196f3;
   color: #ffffff;
@@ -658,9 +728,9 @@ export default {
 }
 
 .filter-label {
-  font-size: 14px;
+  font-size: 15px;
   color: #616161;
-  font-weight: 500;
+  font-weight: 800;
   white-space: nowrap;
 }
 
@@ -683,7 +753,9 @@ export default {
   color: #2196f3;
 }
 
-.filter-radios >>> .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+.filter-radios
+  >>> .el-radio-button__orig-radio:checked
+  + .el-radio-button__inner {
   background: #2196f3;
   border-color: #2196f3;
   color: #ffffff;
@@ -705,7 +777,6 @@ export default {
 .error-type-select {
   width: 150px;
 }
-
 
 .view-container {
   max-width: 1400px;
