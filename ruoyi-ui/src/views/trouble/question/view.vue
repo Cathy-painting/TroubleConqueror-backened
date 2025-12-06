@@ -713,7 +713,24 @@ export default {
 }
 
 .back-btn {
-  display: none;
+  margin-left: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #409eff; /* Element 主色 */
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* 悬停效果 */
+.back-btn:hover {
+  background: rgba(64, 158, 255, 0.12);
+  color: #337ecc;
 }
 
 .mobile-filter-btn {
@@ -1119,7 +1136,7 @@ export default {
     display: none !important;
   }
 
-  /* 高级筛选侧边栏 */
+  /* 筛选侧边栏 */
   .filter-bar {
     position: fixed;
     top: 0;
