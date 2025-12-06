@@ -1,4 +1,4 @@
-## Baidu OCR 服务模块运行与使用教程（Python + FastAPI）
+## OCR 服务模块运行与使用教程（Python + FastAPI）
 
 ### ① 环境准备
 
@@ -16,31 +16,27 @@
    python --version
    ```
 
-
 3. **创建虚拟环境**
-
-   * **Linux / macOS**：
+   - **Linux / macOS**：
 
      ```bash
      python -m venv venv
      source venv/bin/activate
      ```
 
-   * **Windows (CMD)**：
+   - **Windows (CMD)**：
 
      ```cmd
      python -m venv venv
      venv\Scripts\activate
      ```
 
-   * **Windows (PowerShell)**：
+   - **Windows (PowerShell)**：
 
      ```powershell
      python -m venv venv
      .\venv\Scripts\Activate.ps1
      ```
-
-   > ✅ 使用虚拟环境可以隔离依赖，避免与系统 Python 冲突。
 
 4. **安装依赖**
    在虚拟环境中运行：
@@ -48,6 +44,7 @@
    ```bash
    pip install -r requirements.txt
    ```
+
 ---
 
 ### ② 运行 OCR 服务
@@ -58,6 +55,8 @@
    uvicorn ocr_service:app --host 0.0.0.0 --port 9000
    ```
 
+   把ocr_service替换为baidu或者xfyun
+
 2. 打开浏览器访问文档：
 
    ```
@@ -65,6 +64,5 @@
    ```
 
    这里可以直接测试两个接口：
-
-   * `/ocr/json`：通过图片路径传输
-   * `/ocr/upload`：通过文件上传传输
+   - `/ocr/json`：通过图片路径传输
+   - `/ocr/upload`：通过文件上传传输

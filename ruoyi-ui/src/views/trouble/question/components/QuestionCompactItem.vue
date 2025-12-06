@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="question-compact-item"
-    @click="handleClick"
-  >
+  <div class="question-compact-item" @click="handleClick">
     <div class="compact-content">
       <div class="compact-left">
         <div class="compact-icon" v-if="!hasImages">
@@ -23,9 +20,11 @@
               class="compact-tag"
               effect="plain"
             >
-              {{ question.questionType || '未区分' }}
+              {{ question.questionType || "未区分" }}
             </el-tag>
-            <span class="compact-time">{{ formatTime(question.createTime) }}</span>
+            <span class="compact-time">{{
+              formatTime(question.createTime)
+            }}</span>
           </div>
           <div class="compact-title" :title="question.questionContent">
             {{ question.questionContent }}
@@ -70,7 +69,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete"
-            style="color: #f56c6c;"
+            style="color: #f56c6c"
             title="删除"
           ></el-button>
         </div>
@@ -85,75 +84,82 @@ export default {
   props: {
     question: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  emits: ['view', 'edit', 'favorite', 'delete', 'click'],
+  emits: ["view", "edit", "favorite", "delete", "click"],
   computed: {
     hasImages() {
-      return this.question.questionImages && this.question.questionImages.trim() !== '';
+      return (
+        this.question.questionImages &&
+        this.question.questionImages.trim() !== ""
+      );
     },
     imageArray() {
       if (!this.hasImages) return [];
-      return this.question.questionImages.split(',').filter(img => img.trim());
+      return this.question.questionImages
+        .split(",")
+        .filter((img) => img.trim());
     },
     tagArray() {
       if (!this.question.tags) return [];
-      return this.question.tags.split(',').filter(tag => tag.trim());
-    }
+      return this.question.tags.split(",").filter((tag) => tag.trim());
+    },
   },
   methods: {
     handleClick() {
-      this.$emit('click', this.question);
+      this.$emit("click", this.question);
     },
     handleView() {
-      this.$emit('view', this.question);
+      this.$emit("view", this.question);
     },
     handleEdit() {
-      this.$emit('edit', this.question);
+      this.$emit("edit", this.question);
     },
     handleFavorite() {
-      this.$emit('favorite', this.question);
+      this.$emit("favorite", this.question);
     },
     handleDelete() {
-      this.$emit('delete', this.question);
+      this.$emit("delete", this.question);
     },
     getImageUrl(imagePath) {
-      if (!imagePath) return '';
-      if (imagePath.startsWith('http')) {
+      if (!imagePath) return "";
+      if (imagePath.startsWith("http")) {
         return imagePath;
       }
       const baseUrl = process.env.VUE_APP_BASE_API;
-      return baseUrl + (imagePath.startsWith('/') ? imagePath : '/' + imagePath);
+      return (
+        baseUrl + (imagePath.startsWith("/") ? imagePath : "/" + imagePath)
+      );
     },
     formatTime(time) {
-      if (!time) return '';
-      return this.parseTime(time, '{y}-{m}-{d}');
+      if (!time) return "";
+      return this.parseTime(time, "{y}-{m}-{d}");
     },
     getTypeTagType(type) {
       const typeMap = {
-        '选择题': 'success',
-        '填空题': 'warning',
-        '解答题': 'danger',
-        '未区分': 'info'
+        选择题: "success",
+        填空题: "warning",
+        解答题: "danger",
+        未区分: "info",
       };
-      return typeMap[type] || 'info';
+      return typeMap[type] || "info";
     },
     parseTime(time, pattern) {
-      if (!time) return '';
+      if (!time) return "";
       const date = new Date(time);
       const formatObj = {
         y: date.getFullYear(),
         m: date.getMonth() + 1,
-        d: date.getDate()
+        d: date.getDate(),
       };
-      const format = pattern || '{y}-{m}-{d}';
+      const format = pattern || "{y}-{m}-{d}";
       return format.replace(/{(\w+)}/g, (result, key) => {
         const value = formatObj[key];
-        return value < 10 ? '0' + value : value;
+        return value < 10 ? "0" + value : value;
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

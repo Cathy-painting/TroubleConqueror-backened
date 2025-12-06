@@ -1,5 +1,9 @@
 <template>
-  <div class="question-detail-overlay" @click.self="handleClose" style="z-index: 2000;">
+  <div
+    class="question-detail-overlay"
+    @click.self="handleClose"
+    style="z-index: 2000"
+  >
     <div class="question-detail-dialog">
       <!-- 头部 -->
       <div class="detail-header">
@@ -9,7 +13,7 @@
             size="medium"
             class="header-tag"
           >
-            {{ question.questionType || '未区分' }}
+            {{ question.questionType || "未区分" }}
           </el-tag>
           <span class="header-time">{{ formatTime(question.createTime) }}</span>
         </div>
@@ -78,7 +82,7 @@
             <h3 class="section-title">答案解析</h3>
           </div>
           <div class="section-content answer-content">
-            {{ question.answerContent || '暂无答案' }}
+            {{ question.answerContent || "暂无答案" }}
           </div>
         </div>
 
@@ -95,7 +99,10 @@
               height="400px"
               indicator-position="outside"
             >
-              <el-carousel-item v-for="(img, idx) in answerImageArray" :key="idx">
+              <el-carousel-item
+                v-for="(img, idx) in answerImageArray"
+                :key="idx"
+              >
                 <el-image
                   :src="getImageUrl(img)"
                   fit="contain"
@@ -170,29 +177,17 @@
             <h3 class="section-title">其他信息</h3>
           </div>
           <div class="tags-container">
-            <el-tag
-              type="info"
-              size="medium"
-              class="detail-tag"
-            >
+            <el-tag type="info" size="medium" class="detail-tag">
               <i class="el-icon-document"></i>
-              来源：{{ question.questionSource || '未设置' }}
+              来源：{{ question.questionSource || "未设置" }}
             </el-tag>
-            <el-tag
-              type="info"
-              size="medium"
-              class="detail-tag"
-            >
+            <el-tag type="info" size="medium" class="detail-tag">
               <i class="el-icon-school"></i>
-              年级：{{ question.grade || '未设置' }}
+              年级：{{ question.grade || "未设置" }}
             </el-tag>
-            <el-tag
-              type="warning"
-              size="medium"
-              class="detail-tag"
-            >
+            <el-tag type="warning" size="medium" class="detail-tag">
               <i class="el-icon-warning-outline"></i>
-              错误类型：{{ question.errorType || '未设置' }}
+              错误类型：{{ question.errorType || "未设置" }}
             </el-tag>
           </div>
         </div>
@@ -214,48 +209,55 @@ import QuestionEditDialog from "./QuestionEditDialog.vue";
 export default {
   name: "QuestionDetail",
   components: {
-    QuestionEditDialog
+    QuestionEditDialog,
   },
   props: {
     question: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      editDialogVisible: false
+      editDialogVisible: false,
     };
   },
   computed: {
     hasImages() {
-      return this.question.questionImages && this.question.questionImages.trim() !== '';
+      return (
+        this.question.questionImages &&
+        this.question.questionImages.trim() !== ""
+      );
     },
     imageArray() {
       if (!this.hasImages) return [];
-      return this.question.questionImages.split(',').filter(img => img.trim());
+      return this.question.questionImages
+        .split(",")
+        .filter((img) => img.trim());
     },
     previewList() {
-      return this.imageArray.map(img => this.getImageUrl(img));
+      return this.imageArray.map((img) => this.getImageUrl(img));
     },
     hasAnswerImages() {
-      return this.question.answerImages && this.question.answerImages.trim() !== '';
+      return (
+        this.question.answerImages && this.question.answerImages.trim() !== ""
+      );
     },
     answerImageArray() {
       if (!this.hasAnswerImages) return [];
-      return this.question.answerImages.split(',').filter(img => img.trim());
+      return this.question.answerImages.split(",").filter((img) => img.trim());
     },
     answerPreviewList() {
-      return this.answerImageArray.map(img => this.getImageUrl(img));
+      return this.answerImageArray.map((img) => this.getImageUrl(img));
     },
     tagArray() {
       if (!this.question.tags) return [];
-      return this.question.tags.split(',').filter(tag => tag.trim());
-    }
+      return this.question.tags.split(",").filter((tag) => tag.trim());
+    },
   },
   methods: {
     handleClose() {
-      this.$emit('close');
+      this.$emit("close");
     },
     handleEdit() {
       this.editDialogVisible = true;
@@ -264,85 +266,87 @@ export default {
       });
     },
     handleEditSuccess() {
-      this.$emit('refresh');
-      this.$message.success('修改成功');
+      this.$emit("refresh");
+      this.$message.success("修改成功");
     },
     getImageUrl(imagePath) {
-      if (!imagePath) return '';
-      if (imagePath.startsWith('http')) {
+      if (!imagePath) return "";
+      if (imagePath.startsWith("http")) {
         return imagePath;
       }
       const baseUrl = process.env.VUE_APP_BASE_API;
-      return baseUrl + (imagePath.startsWith('/') ? imagePath : '/' + imagePath);
+      return (
+        baseUrl + (imagePath.startsWith("/") ? imagePath : "/" + imagePath)
+      );
     },
     formatTime(time) {
-      if (!time) return '';
-      return this.parseTime(time, '{y}-{m}-{d} {h}:{i}:{s}');
+      if (!time) return "";
+      return this.parseTime(time, "{y}-{m}-{d} {h}:{i}:{s}");
     },
     getTypeTagType(type) {
       const typeMap = {
-        '选择题': 'success',
-        '填空题': 'warning',
-        '解答题': 'danger',
-        '未区分': 'info'
+        选择题: "success",
+        填空题: "warning",
+        解答题: "danger",
+        未区分: "info",
       };
-      return typeMap[type] || 'info';
+      return typeMap[type] || "info";
     },
     getImportanceText(importance) {
       if (importance === null || importance === undefined) {
-        return '未设置';
+        return "未设置";
       }
       const importanceMap = {
-        1: '低',
-        2: '中',
-        3: '高'
+        1: "低",
+        2: "中",
+        3: "高",
       };
-      return importanceMap[importance] || '未设置';
+      return importanceMap[importance] || "未设置";
     },
     getImportanceTagType(importance) {
-      if (importance === 3) return 'danger';
-      if (importance === 2) return 'warning';
-      if (importance === 1) return 'info';
-      return 'info';
+      if (importance === 3) return "danger";
+      if (importance === 2) return "warning";
+      if (importance === 1) return "info";
+      return "info";
     },
     getProficiencyText(proficiency) {
       if (proficiency === null || proficiency === undefined) {
-        return '未设置';
+        return "未设置";
       }
       const proficiencyMap = {
-        0: '陌生',
-        1: '一般',
-        2: '较好',
-        3: '熟练'
+        0: "陌生",
+        1: "一般",
+        2: "较好",
+        3: "熟练",
       };
-      return proficiencyMap[proficiency] || '未设置';
+      return proficiencyMap[proficiency] || "未设置";
     },
     getProficiencyTagType(proficiency) {
-      if (proficiency === 3) return 'success';
-      if (proficiency === 2) return 'primary';
-      if (proficiency === 1) return 'warning';
-      if (proficiency === 0) return 'danger';
-      return 'info';
+      if (proficiency === 3) return "success";
+      if (proficiency === 2) return "primary";
+      if (proficiency === 1) return "warning";
+      if (proficiency === 0) return "danger";
+      return "info";
     },
     getDifficultyText(difficulty) {
       if (difficulty === null || difficulty === undefined) {
-        return '未设置';
+        return "未设置";
       }
       const difficultyMap = {
-        1: '简单',
-        2: '中等',
-        3: '困难'
+        1: "简单",
+        2: "中等",
+        3: "困难",
       };
-      return difficultyMap[difficulty] || '未设置';
+      return difficultyMap[difficulty] || "未设置";
     },
     getDifficultyTagType(difficulty) {
-      if (difficulty === 3) return 'danger';
-      if (difficulty === 2) return 'warning';
-      if (difficulty === 1) return 'success';
-      return 'info';
+      if (difficulty === 3) return "danger";
+      if (difficulty === 2) return "warning";
+      if (difficulty === 1) return "success";
+      return "info";
     },
     parseTime(time, pattern) {
-      if (!time) return '';
+      if (!time) return "";
       const date = new Date(time);
       const formatObj = {
         y: date.getFullYear(),
@@ -350,15 +354,15 @@ export default {
         d: date.getDate(),
         h: date.getHours(),
         i: date.getMinutes(),
-        s: date.getSeconds()
+        s: date.getSeconds(),
       };
-      const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}';
+      const format = pattern || "{y}-{m}-{d} {h}:{i}:{s}";
       return format.replace(/{(\w+)}/g, (result, key) => {
         const value = formatObj[key];
-        return value < 10 ? '0' + value : value;
+        return value < 10 ? "0" + value : value;
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -409,7 +413,7 @@ export default {
 }
 
 .detail-header {
-  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   padding: 24px;
   color: white;
   position: relative;

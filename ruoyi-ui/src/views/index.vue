@@ -432,7 +432,6 @@ export default {
     },
 
     editQuestion(row) {
-      // 只打开编辑窗口，不打开详情窗口
       this.selectedQuestion = null;
       this.editQuestionId = row.questionId;
       this.$nextTick(() => {
