@@ -76,7 +76,10 @@
       </div>
 
       <!-- 空状态 -->
-      <div v-if="!loading && filteredQuestions.length === 0" class="empty-state">
+      <div
+        v-if="!loading && filteredQuestions.length === 0"
+        class="empty-state"
+      >
         <i class="el-icon-document-delete"></i>
         <p>没有找到相关题目</p>
       </div>
@@ -110,7 +113,7 @@ export default {
   name: "QuestionList",
   components: {
     QuestionCard,
-    QuestionDetail
+    QuestionDetail,
   },
   data() {
     return {
@@ -124,32 +127,34 @@ export default {
         pageSize: 10,
         questionContent: null,
         questionType: null,
-        tags: null
-      }
+        tags: null,
+      },
     };
   },
   computed: {
     filteredQuestions() {
-      if (this.filterType === 'all') {
+      if (this.filterType === "all") {
         return this.questionList;
-      } else if (this.filterType === 'with-image') {
-        return this.questionList.filter(q => 
-          q.questionImages && q.questionImages.trim() !== ''
+      } else if (this.filterType === "with-image") {
+        return this.questionList.filter(
+          (q) => q.questionImages && q.questionImages.trim() !== ""
         );
-      } else if (this.filterType === 'no-image') {
-        return this.questionList.filter(q => 
-          !q.questionImages || q.questionImages.trim() === ''
+      } else if (this.filterType === "no-image") {
+        return this.questionList.filter(
+          (q) => !q.questionImages || q.questionImages.trim() === ""
         );
       }
       return this.questionList;
-    }
+    },
   },
   created() {
     // 检查是否有查询参数（从其他页面跳转过来时可能带有 id）
     if (this.$route.query.id) {
       // 如果有 id，先加载列表，然后自动打开详情
       this.getList().then(() => {
-        const question = this.questionList.find(q => q.questionId == this.$route.query.id);
+        const question = this.questionList.find(
+          (q) => q.questionId == this.$route.query.id
+        );
         if (question) {
           this.selectedQuestion = question;
         }
@@ -162,28 +167,30 @@ export default {
     /** 查询错题列表 */
     getList() {
       this.loading = true;
-      return listQuestion(this.queryParams).then(response => {
-        let allQuestions = response.rows || [];
-        // 根据过滤类型过滤数据
-        if (this.filterType === 'with-image') {
-          allQuestions = allQuestions.filter(q => 
-            q.questionImages && q.questionImages.trim() !== ''
-          );
-        } else if (this.filterType === 'no-image') {
-          allQuestions = allQuestions.filter(q => 
-            !q.questionImages || q.questionImages.trim() === ''
-          );
-        }
-        this.questionList = allQuestions;
-        this.total = response.total || 0;
-        this.loading = false;
-        return response;
-      }).catch(() => {
-        this.questionList = [];
-        this.total = 0;
-        this.loading = false;
-        return Promise.reject();
-      });
+      return listQuestion(this.queryParams)
+        .then((response) => {
+          let allQuestions = response.rows || [];
+          // 根据过滤类型过滤数据
+          if (this.filterType === "with-image") {
+            allQuestions = allQuestions.filter(
+              (q) => q.questionImages && q.questionImages.trim() !== ""
+            );
+          } else if (this.filterType === "no-image") {
+            allQuestions = allQuestions.filter(
+              (q) => !q.questionImages || q.questionImages.trim() === ""
+            );
+          }
+          this.questionList = allQuestions;
+          this.total = response.total || 0;
+          this.loading = false;
+          return response;
+        })
+        .catch(() => {
+          this.questionList = [];
+          this.total = 0;
+          this.loading = false;
+          return Promise.reject();
+        });
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -203,7 +210,7 @@ export default {
     /** 返回主页 */
     goToDashboard() {
       this.$router.push("/trouble/dashboard");
-    }
+    },
   },
 };
 </script>

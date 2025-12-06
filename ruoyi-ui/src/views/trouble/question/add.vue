@@ -6,7 +6,7 @@
           <span class="card-title">添加错题</span>
           <div class="header-buttons">
             <el-button
-              style="padding: 3px 0"
+              style="padding: 3px 0; font-size: 1em"
               type="text"
               @click="goToDashboard"
             >
@@ -30,9 +30,10 @@
                   v-model="form.questionContent"
                   type="textarea"
                   :rows="6"
-                  placeholder="请输入题目内容，支持拍照识别"
+                  placeholder="请输入题目内容，支持拍照识别和LaTeX公式"
                   show-word-limit
                   maxlength="2000"
+                  @input="debouncedRenderMath"
                 />
                 <!-- OCR 按钮 -->
                 <el-button
@@ -41,8 +42,16 @@
                   @click="handleOCR('question')"
                   style="margin-top: 6px"
                 >
-                  OCR
+                  识别文字
                 </el-button>
+                <!-- 预览公式 -->
+                <div v-if="form.questionContent" class="math-preview">
+                  <div class="preview-label">预览：</div>
+                  <div
+                    class="preview-content"
+                    v-html="renderedQuestionContent"
+                  ></div>
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -53,10 +62,10 @@
               <el-form-item label="题目图片">
                 <image-upload
                   v-model="form.questionImages"
-                  :limit="1"
+                  :limit="3"
                   class="image-upload-full"
                 />
-                <div class="upload-tip">支持拍照上传，最多1张图片</div>
+                <div class="upload-tip">最多3张图片</div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -69,9 +78,10 @@
                   v-model="form.answerContent"
                   type="textarea"
                   :rows="4"
-                  placeholder="请输入答案内容或解析"
+                  placeholder="请输入答案内容或解析，支持LaTeX公式"
                   show-word-limit
                   maxlength="2000"
+                  @input="debouncedRenderMath"
                 />
                 <!-- OCR 按钮 -->
                 <el-button
@@ -80,8 +90,16 @@
                   @click="handleOCR('answer')"
                   style="margin-top: 6px"
                 >
-                  OCR
+                  识别文字
                 </el-button>
+                <!-- 预览公式 -->
+                <div v-if="form.answerContent" class="math-preview">
+                  <div class="preview-label">预览：</div>
+                  <div
+                    class="preview-content"
+                    v-html="renderedAnswerContent"
+                  ></div>
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -90,13 +108,18 @@
               <el-form-item label="答案图片">
                 <image-upload
                   v-model="form.answerImages"
-                  :limit="1"
+                  :limit="3"
                   class="image-upload-full"
                 />
-                <div class="upload-tip">支持拍照上传，最多1张图片</div>
+                <div class="upload-tip">最多3张图片</div>
               </el-form-item>
             </el-col>
           </el-row>
+
+          <div class="section-divider">
+            <span>可选属性设置</span>
+          </div>
+
           <!-- 类型与重要性 -->
           <el-row :gutter="20" class="row-inline">
             <el-col :xs="24" :sm="12" :md="12">
@@ -136,9 +159,6 @@
                   <el-radio :label="1">一般</el-radio>
                   <el-radio :label="0">陌生</el-radio>
                 </el-radio-group>
-                <div class="tag-tip">
-                  熟练度越高，表示对该题的掌握程度越好，可用于决定是否删除错题
-                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -230,7 +250,7 @@
                   filterable
                   allow-create
                   default-first-option
-                  placeholder="请选择或输入标签（输入关键词可自动补全）"
+                  placeholder="请选择或输入标签"
                   style="width: 100%"
                   @change="handleTagsChange"
                   @visible-change="handleTagSelectVisible"
@@ -252,9 +272,6 @@
                     </span>
                   </el-option>
                 </el-select>
-                <div class="tag-tip">
-                  可以选择默认标签或自定义标签，输入关键词可自动补全历史标签
-                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -282,9 +299,6 @@
                 <el-checkbox v-model="shouldFavorite" class="favorite-checkbox">
                   <i class="el-icon-star-on"></i> 同时收藏此错题
                 </el-checkbox>
-                <div class="favorite-tip">
-                  勾选后，此错题将自动添加到我的收藏
-                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -321,11 +335,13 @@ import {
   saveCustomTags,
   extractAndSaveTags,
 } from "@/utils/tagUtils";
+import { renderMathContent } from "@/utils/mathRender";
+
 export default {
   name: "QuestionAdd",
   data() {
     return {
-      shouldFavorite: false, // 是否收藏错题
+      shouldFavorite: false,
       form: {
         questionContent: "",
         questionImages: "",
@@ -360,10 +376,13 @@ export default {
         "历史",
         "地理",
       ],
-      allAvailableTags: [], // 所有可用标签（系统标签 + 自定义标签）
-      filteredTags: [], // 过滤后的标签列表
-      tagSearchQuery: "", // 标签搜索关键词
-      formChanged: false, // 表单是否有修改
+      allAvailableTags: [],
+      filteredTags: [],
+      tagSearchQuery: "",
+      formChanged: false,
+      renderedQuestionContent: "",
+      renderedAnswerContent: "",
+      renderTimer: null,
     };
   },
   computed: {
@@ -373,17 +392,13 @@ export default {
     buttonStyle() {
       return this.isMobile
         ? { width: "100%", marginBottom: "10px", transition: "all 0.3s" }
-        : { marginLeft: "8px", transition: "all 0.3s" };
+        : { transition: "all 0.3s" };
     },
   },
   created() {
     this.checkIsMobile();
     window.addEventListener("resize", this.checkIsMobile);
-
-    // 加载所有可用标签（系统标签 + 自定义标签）
     this.loadAllTags();
-
-    // 监听表单变化
     this.$watch(
       "form",
       () => {
@@ -394,9 +409,11 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.checkIsMobile);
+    if (this.renderTimer) {
+      clearTimeout(this.renderTimer);
+    }
   },
   beforeRouteLeave(to, from, next) {
-    // 如果表单有修改且未提交，提示用户
     if (this.formChanged) {
       this.$confirm("表单内容尚未保存，确定要离开吗？", "提示", {
         confirmButtonText: "确定离开",
@@ -417,8 +434,26 @@ export default {
     checkIsMobile() {
       this.isMobile = window.matchMedia("(max-width: 767px)").matches;
     },
+
+    // 防抖渲染数学公式
+    debouncedRenderMath() {
+      if (this.renderTimer) {
+        clearTimeout(this.renderTimer);
+      }
+      this.renderTimer = setTimeout(() => {
+        this.renderMath();
+      }, 500);
+    },
+
+    // 渲染数学公式
+    renderMath() {
+      this.renderedQuestionContent = renderMathContent(
+        this.form.questionContent
+      );
+      this.renderedAnswerContent = renderMathContent(this.form.answerContent);
+    },
+
     async handleOCR(target) {
-      // target = 'question' 或 'answer'
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = "image/*";
@@ -430,11 +465,9 @@ export default {
         formData.append("file", file);
 
         try {
-          // 动态获取当前页面 host
-          const host = window.location.hostname; // 手机访问时就是电脑局域网 IP
-          const port = 9000; // OCR 服务端口
+          const host = window.location.hostname;
+          const port = 9000;
 
-          // 上传到 OCR 后端
           const res = await fetch(`http://${host}:${port}/ocr/upload`, {
             method: "POST",
             body: formData,
@@ -449,13 +482,13 @@ export default {
             throw new Error("OCR返回内容为空");
           }
 
-          // 填入输入框
           if (target === "question") {
             this.form.questionContent = data.text;
           } else if (target === "answer") {
             this.form.answerContent = data.text;
           }
 
+          this.renderMath();
           this.$message.success("OCR识别成功");
         } catch (err) {
           this.$message.error("OCR识别失败");
@@ -467,13 +500,13 @@ export default {
 
       fileInput.click();
     },
+
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           this.submitLoading = true;
           addQuestion(this.form)
             .then((response) => {
-              // 如果勾选了收藏，则调用收藏接口
               if (this.shouldFavorite && response.data) {
                 const questionId = response.data;
                 console.log("准备收藏错题，questionId:", questionId);
@@ -491,7 +524,6 @@ export default {
               } else {
                 this.submitLoading = false;
                 this.$modal.msgSuccess("错题添加成功");
-                // 保存标签到本地存储
                 if (this.form.tags) {
                   extractAndSaveTags(this.form.tags);
                   this.loadAllTags();
@@ -506,26 +538,21 @@ export default {
       });
     },
 
-    // 处理成功回调
     handleSuccessCallback() {
-      // 清除表单修改标记（已成功保存）
       this.formChanged = false;
-
-      // 成功后询问用户是否继续添加
       this.$confirm("是否继续添加错题？", "提示", {
         confirmButtonText: "继续添加",
         cancelButtonText: "返回列表",
         type: "success",
       })
         .then(() => {
-          // 继续添加：重置表单
           this.resetForm();
         })
         .catch(() => {
-          // 返回列表
           this.goBack();
         });
     },
+
     resetForm() {
       this.form = {
         questionContent: "",
@@ -543,27 +570,28 @@ export default {
         remark: "",
       };
       this.selectedTags = [];
-      this.shouldFavorite = false; // 重置收藏选项
-      this.formChanged = false; // 重置表单修改标记
+      this.shouldFavorite = false;
+      this.formChanged = false;
+      this.renderedQuestionContent = "";
+      this.renderedAnswerContent = "";
       this.$nextTick(() => {
         if (this.$refs.form) this.$refs.form.resetFields();
       });
     },
+
     goBack() {
-      // 返回系统首页
       this.$router.push("/");
     },
+
     goToDashboard() {
-      // 返回系统首页
       this.$router.push("/");
     },
-    /** 加载所有可用标签 */
+
     loadAllTags() {
       this.allAvailableTags = getAllTags(this.defaultTags);
       this.filteredTags = [...this.allAvailableTags];
     },
 
-    /** 过滤标签（用于自动补全） */
     filterTags(query) {
       this.tagSearchQuery = query || "";
       if (!query || !query.trim()) {
@@ -576,7 +604,6 @@ export default {
         tag.toLowerCase().includes(queryLower)
       );
 
-      // 如果查询的内容不在现有标签中，也显示在列表中（用户可以创建）
       if (
         !this.allAvailableTags.some((tag) => tag.toLowerCase() === queryLower)
       ) {
@@ -584,15 +611,12 @@ export default {
       }
     },
 
-    /** 判断是否为自定义标签 */
     isCustomTag(tag) {
       return !this.defaultTags.includes(tag);
     },
 
-    /** 处理标签选择器显示/隐藏 */
     handleTagSelectVisible(visible) {
       if (visible) {
-        // 打开时重新加载标签（可能有新的自定义标签）
         this.loadAllTags();
       }
     },
@@ -607,11 +631,9 @@ export default {
         }
         this.form.tags = value.join(",");
 
-        // 保存自定义标签到本地存储
         const customTags = value.filter((tag) => this.isCustomTag(tag));
         if (customTags.length > 0) {
           saveCustomTags(customTags);
-          // 重新加载所有标签
           this.loadAllTags();
         }
       }
@@ -621,7 +643,7 @@ export default {
 </script>
 
 <style scoped>
-/* 蓝色系美化 - 添加错题页面 */
+/* 保留原有样式 */
 ::v-deep .app-container {
   background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
   min-height: calc(100vh - 50px);
@@ -630,7 +652,6 @@ export default {
   overflow: hidden;
 }
 
-/* 背景装饰元素 */
 ::v-deep .app-container::before {
   content: "";
   position: absolute;
@@ -690,7 +711,6 @@ export default {
   transform: translateY(-2px);
 }
 
-/* 头部样式 */
 ::v-deep .box-card .el-card__header {
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   border-bottom: none;
@@ -698,11 +718,7 @@ export default {
 }
 
 .header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  position: relative;
 }
 
 .card-title {
@@ -713,14 +729,14 @@ export default {
 }
 
 .header-buttons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .header-buttons .el-button {
   color: rgba(255, 255, 255, 0.95);
-  font-weight: 500;
   transition: all 0.3s;
 }
 
@@ -729,7 +745,6 @@ export default {
   transform: scale(1.05);
 }
 
-/* 表单布局 */
 ::v-deep .box-card .el-card__body {
   padding: 32px;
   background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
@@ -750,7 +765,6 @@ export default {
   font-size: 14px;
 }
 
-/* 输入框美化 */
 ::v-deep .el-input__inner,
 ::v-deep .el-textarea__inner {
   border-radius: 8px;
@@ -770,7 +784,6 @@ export default {
   border-color: #4a9ff5;
 }
 
-/* 选择框美化 */
 ::v-deep .el-select {
   width: 100%;
 }
@@ -779,7 +792,6 @@ export default {
   background: #ffffff;
 }
 
-/* 标签选择美化 */
 ::v-deep .el-tag {
   border-radius: 6px;
   border: none;
@@ -804,7 +816,6 @@ export default {
   color: #ffffff;
 }
 
-/* 上传组件美化 */
 .image-upload-full {
   display: block;
   width: 100%;
@@ -837,7 +848,6 @@ export default {
   color: #2a5298;
 }
 
-/* 收藏复选框美化 */
 .favorite-checkbox {
   font-size: 15px;
   font-weight: 500;
@@ -931,6 +941,28 @@ export default {
 
 .button-press-enter {
   transform: scale(0.98);
+}
+
+/* 分割线 */
+.section-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #d4e8f7;
+}
+
+.section-divider span {
+  padding: 0 12px;
+  color: #5a6c7d;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 /* 小屏优化 */

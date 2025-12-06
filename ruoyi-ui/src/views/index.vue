@@ -29,9 +29,7 @@
       </div>
 
       <div class="welcome-content">
-        <p class="welcome-desc">错题征服者，享受征服错题的乐趣！</p>
-
-        <!-- 统计卡片：响应式列设置 - 移动端2x2布局 -->
+        <!-- 统计卡片 -->
         <el-row :gutter="16" class="stats-row">
           <el-col
             :xs="12"
@@ -62,7 +60,7 @@
       </div>
     </el-card>
 
-    <!-- 功能按钮区域：三个并排 -->
+    <!-- 功能按钮区域 -->
     <el-card class="function-card-wrapper">
       <el-row :gutter="16" class="function-row">
         <el-col :xs="8" :sm="8" :md="8" :lg="8">
@@ -735,17 +733,8 @@ export default {
   color: #764ba2;
 }
 
-/* 欢迎描述 */
 .welcome-content {
   padding: 24px;
-}
-
-.welcome-desc {
-  font-size: 15px;
-  color: #5a6c7d;
-  line-height: 1.8;
-  margin-bottom: 24px;
-  text-align: center;
 }
 
 /* 统计卡片风格 - 优化间距，参考收藏页面 */
@@ -868,6 +857,7 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
+  margin: 10px 0;
   cursor: pointer;
   transition: all 0.3s ease;
   background: #ffffff;
