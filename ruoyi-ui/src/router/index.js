@@ -106,6 +106,33 @@ export const constantRoutes = [
       },
     ],
   },
+
+  {
+    path: "/trouble/total-chart",
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/trouble/charts/total-chart"),
+        name: "TroubleTotalChart",
+        meta: { title: "总错题趋势", icon: "chart" },
+      },
+    ],
+  },
+  {
+    path: "/trouble/tags",
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/trouble/tags"),
+        name: "TroubleTags",
+        meta: { title: "标签分析", icon: "collection-tag" },
+      },
+    ],
+  },
   {
     path: "/trouble/favorite",
     component: Layout,

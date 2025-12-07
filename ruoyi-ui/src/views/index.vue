@@ -326,11 +326,15 @@ export default {
           label: "总错题数",
           value: this.stats.totalQuestions,
           icon: "el-icon-document",
+          clickable: true,
+          onClick: () => this.goToTotalChart(),
         },
         {
           label: "今日新增",
           value: this.stats.todayQuestions,
           icon: "el-icon-plus",
+          clickable: true,
+          onClick: () => this.goToTodayChart(),
         },
         {
           label: "本周新增",
@@ -343,6 +347,8 @@ export default {
           label: "标签数量",
           value: this.stats.tagsCount,
           icon: "el-icon-collection-tag",
+          clickable: true,
+          onClick: () => this.goToTags(),
         },
       ];
     },
@@ -425,6 +431,26 @@ export default {
 
     goToWeeklyChart() {
       this.$router.push("/trouble/weekly-chart");
+    },
+
+    goToTodayChart() {
+      const today = new Date();
+      const y = today.getFullYear();
+      const m = String(today.getMonth() + 1).padStart(2, "0");
+      const d = String(today.getDate()).padStart(2, "0");
+      const dateStr = `${y}-${m}-${d}`;
+      this.$router.push({
+        path: "/trouble/question/view",
+        query: { dateStart: dateStr, dateEnd: dateStr },
+      });
+    },
+
+    goToTotalChart() {
+      this.$router.push("/trouble/total-chart");
+    },
+
+    goToTags() {
+      this.$router.push("/trouble/tags");
     },
 
     viewQuestion(row) {

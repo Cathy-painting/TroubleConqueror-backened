@@ -27,7 +27,7 @@
             class="item-type-tag"
             effect="plain"
           >
-            {{ question.questionType || '未区分' }}
+            {{ question.questionType || "未区分" }}
           </el-tag>
           <span class="item-time">{{ formatTime(question.createTime) }}</span>
         </div>
@@ -50,27 +50,31 @@
               type="text"
               icon="el-icon-view"
               @click="handleView"
-            >查看</el-button>
+              >查看</el-button
+            >
             <el-button
               size="mini"
               type="text"
               icon="el-icon-edit"
               @click="handleEdit"
-            >编辑</el-button>
+              >编辑</el-button
+            >
             <el-button
               size="mini"
               type="text"
               icon="el-icon-star-on"
               @click="handleFavorite"
               :style="{ color: question.isFavorite ? '#f56c6c' : '#909399' }"
-            >收藏</el-button>
+              >收藏</el-button
+            >
             <el-button
               size="mini"
               type="text"
               icon="el-icon-delete"
               @click="handleDelete"
-              style="color: #f56c6c;"
-            >删除</el-button>
+              style="color: #f56c6c"
+              >删除</el-button
+            >
           </div>
         </div>
       </div>
@@ -89,7 +93,7 @@
             class="item-type-tag"
             effect="plain"
           >
-            {{ question.questionType || '未区分' }}
+            {{ question.questionType || "未区分" }}
           </el-tag>
           <span class="item-time">{{ formatTime(question.createTime) }}</span>
         </div>
@@ -98,11 +102,7 @@
         </div>
         <div class="item-footer">
           <div class="item-tags" v-if="question.tags">
-            <span
-              v-for="(tag, idx) in tagArray"
-              :key="idx"
-              class="item-tag"
-            >
+            <span v-for="(tag, idx) in tagArray" :key="idx" class="item-tag">
               {{ tag }}
             </span>
           </div>
@@ -112,27 +112,31 @@
               type="text"
               icon="el-icon-view"
               @click="handleView"
-            >查看</el-button>
+              >查看</el-button
+            >
             <el-button
               size="mini"
               type="text"
               icon="el-icon-edit"
               @click="handleEdit"
-            >编辑</el-button>
+              >编辑</el-button
+            >
             <el-button
               size="mini"
               type="text"
               icon="el-icon-star-on"
               @click="handleFavorite"
               :style="{ color: question.isFavorite ? '#f56c6c' : '#909399' }"
-            >收藏</el-button>
+              >收藏</el-button
+            >
             <el-button
               size="mini"
               type="text"
               icon="el-icon-delete"
               @click="handleDelete"
-              style="color: #f56c6c;"
-            >删除</el-button>
+              style="color: #f56c6c"
+              >删除</el-button
+            >
           </div>
         </div>
       </div>
@@ -146,91 +150,97 @@ export default {
   props: {
     question: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  emits: ['view', 'edit', 'favorite', 'delete', 'click'],
+  emits: ["view", "edit", "favorite", "delete", "click"],
   computed: {
     hasImages() {
-      return this.question.questionImages && this.question.questionImages.trim() !== '';
+      return (
+        this.question.questionImages &&
+        this.question.questionImages.trim() !== ""
+      );
     },
     imageArray() {
       if (!this.hasImages) return [];
-      return this.question.questionImages.split(',').filter(img => img.trim());
+      return this.question.questionImages
+        .split(",")
+        .filter((img) => img.trim());
     },
     imageCount() {
       return this.imageArray.length;
     },
     previewList() {
-      return this.imageArray.map(img => this.getImageUrl(img));
+      return this.imageArray.map((img) => this.getImageUrl(img));
     },
     tagArray() {
       if (!this.question.tags) return [];
-      return this.question.tags.split(',').filter(tag => tag.trim());
-    }
+      return this.question.tags.split(",").filter((tag) => tag.trim());
+    },
   },
   methods: {
     handleClick() {
-      this.$emit('click', this.question);
+      this.$emit("click", this.question);
     },
     handleView() {
-      this.$emit('view', this.question);
+      this.$emit("view", this.question);
     },
     handleEdit() {
-      this.$emit('edit', this.question);
+      this.$emit("edit", this.question);
     },
     handleFavorite() {
-      this.$emit('favorite', this.question);
+      this.$emit("favorite", this.question);
     },
     handleDelete() {
-      this.$emit('delete', this.question);
+      this.$emit("delete", this.question);
     },
     getImageUrl(imagePath) {
-      if (!imagePath) return '';
-      if (imagePath.startsWith('http')) {
+      if (!imagePath) return "";
+      if (imagePath.startsWith("http")) {
         return imagePath;
       }
       const baseUrl = process.env.VUE_APP_BASE_API;
-      return baseUrl + (imagePath.startsWith('/') ? imagePath : '/' + imagePath);
+      return (
+        baseUrl + (imagePath.startsWith("/") ? imagePath : "/" + imagePath)
+      );
     },
     formatTime(time) {
-      if (!time) return '';
-      return this.parseTime(time, '{y}-{m}-{d}');
+      if (!time) return "";
+      return this.parseTime(time, "{y}-{m}-{d}");
     },
     getTypeTagType(type) {
       const typeMap = {
-        '选择题': 'success',
-        '填空题': 'warning',
-        '解答题': 'danger',
-        '未区分': 'info'
+        选择题: "success",
+        填空题: "warning",
+        解答题: "danger",
+        未区分: "info",
       };
-      return typeMap[type] || 'info';
+      return typeMap[type] || "info";
     },
     parseTime(time, pattern) {
-      if (!time) return '';
+      if (!time) return "";
       const date = new Date(time);
       const formatObj = {
         y: date.getFullYear(),
         m: date.getMonth() + 1,
-        d: date.getDate()
+        d: date.getDate(),
       };
-      const format = pattern || '{y}-{m}-{d}';
+      const format = pattern || "{y}-{m}-{d}";
       return format.replace(/{(\w+)}/g, (result, key) => {
         const value = formatObj[key];
-        return value < 10 ? '0' + value : value;
+        return value < 10 ? "0" + value : value;
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
 .question-list-item {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 0;
+  border: 2px solid #e0e0e0;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.5s ease;
   margin-bottom: 1px;
 }
 

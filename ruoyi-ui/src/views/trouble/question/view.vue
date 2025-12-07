@@ -79,6 +79,7 @@
             </el-option>
           </el-select>
         </div>
+
         <div class="view-mode-group desktop-only">
           <span class="filter-label">视图</span>
           <el-radio-group
@@ -121,6 +122,35 @@
             @click="showMobileFilter = false"
             class="close-btn"
           ></el-button>
+        </div>
+
+        <!-- 移动端：时间筛选（新增） -->
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">时间</span>
+            <el-radio-group
+              v-model="timeRange"
+              @change="handleTimeRangeChange"
+              class="filter-radios"
+            >
+              <el-radio-button label="all">全部</el-radio-button>
+              <el-radio-button label="today">今日</el-radio-button>
+              <el-radio-button label="range">时间范围</el-radio-button>
+              <el-radio-button label="week">本周</el-radio-button>
+            </el-radio-group>
+          </div>
+
+          <div class="filter-group" v-if="timeRange === 'range'">
+            <el-date-picker
+              v-model="selectedRange"
+              type="daterange"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              range-separator="至"
+              @change="handleRangeChange"
+              format="yyyy-MM-dd"
+            />
+          </div>
         </div>
 
         <!-- 第一行筛选条件 -->
@@ -386,6 +416,13 @@ export default {
       ],
       viewMode: "list",
       showMobileFilter: false,
+      // 时间筛选相关：all | today | range | week
+      timeRange: "all",
+      // 使用日期范围选择 (daterange) 或单日兼容字段
+      selectedRange: null,
+      selectedDate: null,
+      // 如果为 true，表示当前 weekStart/weekEnd 来源于路由（点击图表或 URL），getList 不应覆盖
+      appliedRouteRange: false,
       queryParams: {
         pageNum: 1,
         pageSize: 12,
@@ -421,10 +458,61 @@ export default {
     ) {
       this.queryParams.proficiency = parseInt(this.$route.query.proficiency);
     }
-    if (this.$route.query.weekStart && this.$route.query.weekEnd) {
+    // 优先处理路由里明确的区间：优先 dateStart/dateEnd (YYYY-MM-DD)，其次 weekStart/weekEnd（ISO），最后单日 date 或 today
+    if (this.$route.query.dateStart && this.$route.query.dateEnd) {
+      // dateStart/dateEnd 格式为本地 YYYY-MM-DD，构造当天的起止时间
+      const s = new Date(this.$route.query.dateStart + "T00:00:00");
+      const e = new Date(this.$route.query.dateEnd + "T23:59:59");
+      this.weekStart = s;
+      this.weekEnd = e;
+      this.timeRange = "range";
+      this.selectedRange = [new Date(s), new Date(e)];
+      this.appliedRouteRange = true;
+    } else if (this.$route.query.weekStart && this.$route.query.weekEnd) {
+      // 如果没有 dateStart/dateEnd，则处理后端或其它组件传来的 ISO weekStart/weekEnd
       this.weekStart = new Date(this.$route.query.weekStart);
       this.weekEnd = new Date(this.$route.query.weekEnd);
+      // 判断是否为以周一为起点的 7 天区间（weekStart ~ weekStart+6）
+      const diffDays = Math.round(
+        (this.weekEnd - this.weekStart) / (24 * 3600 * 1000)
+      );
+      const startDay = this.weekStart.getDay();
+      if (diffDays === 6 && startDay === 1) {
+        // 明确为一周（周一开始，7 天）
+        this.timeRange = "week";
+        this.selectedRange = null;
+      } else {
+        // 非标准一周，按一般时间范围处理并把 selectedRange 显示为该区间（Date 对象）
+        this.timeRange = "range";
+        const ss = new Date(this.weekStart);
+        const ee = new Date(this.weekEnd);
+        ss.setHours(0, 0, 0, 0);
+        ee.setHours(23, 59, 59, 999);
+        this.selectedRange = [ss, ee];
+      }
+      this.appliedRouteRange = true;
+    } else if (this.$route.query.date) {
+      // 单日跳转（来自图表点击），从 route ?date=YYYY-MM-DD 接收
+      const d = new Date(this.$route.query.date + "T00:00:00");
+      const e = new Date(this.$route.query.date + "T23:59:59");
+      this.selectedRange = [d, e];
+      this.weekStart = d;
+      this.weekEnd = e;
+      this.timeRange = "range";
+      this.appliedRouteRange = true;
+    } else if (this.$route.query.today) {
+      // 支持 ?today=true 或者仅作为跳转标记
+      const today = new Date();
+      const s = new Date(today);
+      s.setHours(0, 0, 0, 0);
+      const e = new Date(today);
+      e.setHours(23, 59, 59, 999);
+      this.weekStart = s;
+      this.weekEnd = e;
+      this.timeRange = "today";
+      this.appliedRouteRange = true;
     }
+
     if (this.$route.query.id) {
       this.getList().then(() => {
         const question = this.questionList.find(
@@ -438,6 +526,72 @@ export default {
       this.getList();
     }
     this.loadTags();
+
+    // 监听路由 query 的变化（用于从图表点击跳转后更新视图）
+    this.$watch(
+      () => this.$route.query,
+      (newQ) => {
+        // 优先使用 weekStart/weekEnd（如果存在），避免 date 字符串在不同时区解释不同
+        // 优先处理路由传入的 dateStart/dateEnd（格式 YYYY-MM-DD），其次处理 weekStart/weekEnd，最后处理单日 date 或 today
+        if (newQ.dateStart && newQ.dateEnd) {
+          const s = new Date(newQ.dateStart);
+          const e = new Date(newQ.dateEnd);
+          this.weekStart = s;
+          this.weekEnd = e;
+          this.timeRange = "range";
+          this.selectedRange = [new Date(s), new Date(e)];
+          this.appliedRouteRange = true;
+        } else if (newQ.weekStart && newQ.weekEnd) {
+          const s = new Date(newQ.weekStart);
+          const e = new Date(newQ.weekEnd);
+          this.weekStart = s;
+          this.weekEnd = e;
+          // 如果恰好是周一开始并包含 7 天，则视为 week，否则作为自定义 range
+          const diffDays = Math.round((e - s) / (24 * 3600 * 1000));
+          const startDay = s.getDay();
+          if (diffDays === 6 && startDay === 1) {
+            this.timeRange = "week";
+            this.selectedRange = null;
+          } else {
+            this.timeRange = "range";
+            const ss = new Date(s);
+            const ee = new Date(e);
+            ss.setHours(0, 0, 0, 0);
+            ee.setHours(23, 59, 59, 999);
+            this.selectedRange = [ss, ee];
+          }
+          this.appliedRouteRange = true;
+        } else if (newQ.date) {
+          // 单日 date：把 selectedRange 设置为 Date 对象数组
+          const d = new Date(newQ.date);
+          d.setHours(0, 0, 0, 0);
+          const e = new Date(d);
+          e.setHours(23, 59, 59, 999);
+          this.selectedRange = [d, e];
+          this.weekStart = d;
+          this.weekEnd = e;
+          this.timeRange = "range";
+          this.appliedRouteRange = true;
+        } else if (newQ.today) {
+          const t = new Date();
+          const s = new Date(t);
+          s.setHours(0, 0, 0, 0);
+          const e = new Date(t);
+          e.setHours(23, 59, 59, 999);
+          this.weekStart = s;
+          this.weekEnd = e;
+          this.timeRange = "today";
+          this.appliedRouteRange = true;
+        } else {
+          this.weekStart = null;
+          this.weekEnd = null;
+          this.timeRange = "all";
+          // 清除路由来源标志
+          this.appliedRouteRange = false;
+        }
+        this.getList();
+      }
+    );
   },
   methods: {
     getList() {
@@ -447,6 +601,71 @@ export default {
       } else {
         this.queryParams.tags = null;
       }
+
+      // 如果路由携带时间范围，则优先使用路由提供的区间，不被 UI 的 timeRange 覆盖
+      if (!this.appliedRouteRange) {
+        // 根据 timeRange 计算 weekStart / weekEnd（用于客户端过滤）
+        if (this.timeRange === "all") {
+          this.weekStart = null;
+          this.weekEnd = null;
+        } else if (this.timeRange === "today") {
+          const today = new Date();
+          const s = new Date(today);
+          s.setHours(0, 0, 0, 0);
+          const e = new Date(today);
+          e.setHours(23, 59, 59, 999);
+          this.weekStart = s;
+          this.weekEnd = e;
+        } else if (this.timeRange === "range" && this.selectedRange) {
+          // selectedRange 现在为 Date 对象数组（或兼容的字符串），优先按数组中实际值计算 start/end
+          if (Array.isArray(this.selectedRange)) {
+            const s =
+              this.selectedRange[0] instanceof Date
+                ? new Date(this.selectedRange[0])
+                : new Date(this.selectedRange[0]);
+            const e =
+              this.selectedRange[1] instanceof Date
+                ? new Date(this.selectedRange[1])
+                : new Date(this.selectedRange[1]);
+            s.setHours(0, 0, 0, 0);
+            e.setHours(23, 59, 59, 999);
+            this.weekStart = s;
+            this.weekEnd = e;
+          } else {
+            const d =
+              this.selectedRange instanceof Date
+                ? new Date(this.selectedRange)
+                : new Date(this.selectedRange);
+            d.setHours(0, 0, 0, 0);
+            const e = new Date(d);
+            e.setHours(23, 59, 59, 999);
+            this.weekStart = d;
+            this.weekEnd = e;
+          }
+        } else if (this.timeRange === "week") {
+          // 优先使用已有 weekStart/weekEnd，否则以 selectedRange 的第一天或今天计算本周范围
+          const ref =
+            this.selectedRange &&
+            (Array.isArray(this.selectedRange)
+              ? this.selectedRange[0]
+              : this.selectedRange)
+              ? new Date(
+                  Array.isArray(this.selectedRange)
+                    ? this.selectedRange[0]
+                    : this.selectedRange
+                )
+              : new Date();
+          const dayOfWeek = ref.getDay() || 7;
+          const s = new Date(ref);
+          s.setDate(ref.getDate() - (dayOfWeek - 1));
+          s.setHours(0, 0, 0, 0);
+          const e = new Date(s);
+          e.setDate(s.getDate() + 7);
+          e.setHours(23, 59, 59, 999);
+          this.weekStart = s;
+          this.weekEnd = e;
+        }
+      } // end if !appliedRouteRange
 
       const queryParams = { ...this.queryParams };
       if (queryParams.importance === "") {
@@ -518,6 +737,66 @@ export default {
     handleTagFilter() {
       this.queryParams.pageNum = 1;
       this.getList();
+    },
+    handleTimeRangeChange() {
+      // 切换时间范围后刷新列表
+      this.queryParams.pageNum = 1;
+      // 如果不是选择范围，则清除 selectedRange
+      if (this.timeRange !== "range") {
+        this.selectedRange = null;
+      }
+      // 用户通过 UI 操作改变筛选，应清除路由来源标志，允许按 UI 计算区间
+      this.appliedRouteRange = false;
+      this.getList();
+    },
+    handleRangeChange(val) {
+      // val 现在可能为 Date 对象或 Date 对象数组（由 el-date-picker 在未指定 value-format 时返回）
+      if (!val) {
+        this.selectedRange = null;
+        this.weekStart = null;
+        this.weekEnd = null;
+        this.appliedRouteRange = false;
+      } else if (Array.isArray(val)) {
+        const s = val[0] instanceof Date ? new Date(val[0]) : new Date(val[0]);
+        const e = val[1] instanceof Date ? new Date(val[1]) : new Date(val[1]);
+        s.setHours(0, 0, 0, 0);
+        e.setHours(23, 59, 59, 999);
+        this.selectedRange = [s, e];
+        this.weekStart = s;
+        this.weekEnd = e;
+        // 由于用户选择了范围并我们将其写入路由，标记当前区间来源为“路由/显式范围”
+        this.appliedRouteRange = true;
+      } else {
+        const d = val instanceof Date ? new Date(val) : new Date(val);
+        d.setHours(0, 0, 0, 0);
+        const e = new Date(d);
+        e.setHours(23, 59, 59, 999);
+        this.selectedRange = [d, e];
+        this.weekStart = d;
+        this.weekEnd = e;
+        this.appliedRouteRange = true;
+      }
+      this.queryParams.pageNum = 1;
+      // 更新路由，保留其它查询参数（以 ISO 字符串传递明确区间）
+      this.$router.replace({
+        path: this.$route.path,
+        query: Object.assign({}, this.$route.query, {
+          // 使用 YYYY-MM-DD 格式的 dateStart / dateEnd in route so charts & view use consistent simple dates
+          dateStart: this.weekStart
+            ? this.formatDate(this.weekStart)
+            : undefined,
+          dateEnd: this.weekEnd ? this.formatDate(this.weekEnd) : undefined,
+        }),
+      });
+      this.getList();
+    },
+    formatDate(date) {
+      const d = typeof date === "string" ? new Date(date) : date;
+      if (!(d instanceof Date) || isNaN(d.getTime())) return "";
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
     },
     handleViewModeChange() {
       localStorage.setItem("questionViewMode", this.viewMode);

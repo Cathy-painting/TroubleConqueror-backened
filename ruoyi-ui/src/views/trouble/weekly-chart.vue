@@ -487,6 +487,43 @@ export default {
       };
 
       this.chart.setOption(option);
+
+      // 点击图表某一项时，跳转到错题列表并传递对应日期（仅传 date，列表页面会用 date 或范围自行处理）
+      try {
+        if (this.chart && this.chart.on) {
+          // 防止重复绑定
+          if (this.chart.off) {
+            this.chart.off("click");
+          }
+          this.chart.on("click", (params) => {
+            if (!params) return;
+            // 通过 dataIndex 定位 weeklyData 中的具体日期
+            const idx =
+              typeof params.dataIndex === "number" ? params.dataIndex : null;
+            if (idx === null) return;
+            const row = this.weeklyData && this.weeklyData[idx];
+            if (!row || !row.date) return;
+            const dateStr = row.date; // 格式 YYYY-MM-DD
+            // 点击传递单日及明确的起止时间（当天 00:00:00 ~ 23:59:59），便于 view 使用明确范围筛选
+            const s = new Date(dateStr);
+            s.setHours(0, 0, 0, 0);
+            const e = new Date(dateStr);
+            e.setHours(23, 59, 59, 999);
+            this.$router.push({
+              path: "/trouble/question/view",
+              query: {
+                date: dateStr,
+                dateStart: this.formatDate(s),
+                dateEnd: this.formatDate(e),
+              },
+            });
+          });
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV === "development") {
+          console.error("chart click bind error:", err);
+        }
+      }
     },
 
     /** 响应式处理 */

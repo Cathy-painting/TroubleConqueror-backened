@@ -9,7 +9,7 @@
       class="drawer-bg"
       @click="handleClickOutside"
     />
-    <sidebar v-if="!sidebar.hide" class="sidebar-container" />
+    <sidebar v-if="!sidebar.hide && showSidebar" class="sidebar-container" />
     <div
       :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }"
       class="main-container"
@@ -66,7 +66,18 @@ export default {
       const roles = this.roles || [];
       const isAdmin = roles.includes("admin");
       const currentPath = this.$route.path;
-      // 非管理员访问index、dashboard、添加或 view 页面时隐藏顶部栏
+
+      // 对于图表 / 标签页（四个页面），始终隐藏顶部栏
+      const hideTopBarPaths = [
+        "/trouble/weekly-chart",
+        "/trouble/total-chart",
+        "/trouble/tags",
+      ];
+      if (hideTopBarPaths.includes(currentPath)) {
+        return false;
+      }
+
+      // 非管理员访问index、dashboard、添加或 view 页面时隐藏顶部栏（保持原有逻辑）
       if (
         !isAdmin &&
         (currentPath === "/index" ||
@@ -75,6 +86,21 @@ export default {
           currentPath === "/trouble/favorite" ||
           currentPath === "/trouble/question/add")
       ) {
+        return false;
+      }
+      return true;
+    },
+
+    // 控制是否显示左侧侧边栏（在特定页面隐藏）
+    showSidebar() {
+      const currentPath = this.$route.path;
+      const hideSidebarPaths = [
+        "/trouble/weekly-chart",
+        "/trouble/total-chart",
+        "/trouble/tags",
+      ];
+      // 如果当前是图表或标签页，隐藏侧栏（实际渲染由模板中的 v-if 控制）
+      if (hideSidebarPaths.includes(currentPath)) {
         return false;
       }
       return true;
