@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.TroubleQuestionMapper">
-    
+
     <resultMap type="TroubleQuestion" id="TroubleQuestionResult">
         <result property="questionId"    column="question_id"    />
         <result property="userId"    column="user_id"    />
@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectTroubleQuestionList" parameterType="TroubleQuestion" resultMap="TroubleQuestionResult">
         <include refid="selectTroubleQuestionVo"/>
-        <where>  
+        <where>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="questionContent != null  and questionContent != ''"> and question_content like concat('%', #{questionContent}, '%')</if>
             <if test="questionImages != null  and questionImages != ''"> and question_images = #{questionImages}</if>
@@ -47,20 +47,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="grade != null  and grade != ''"> and grade = #{grade}</if>
             <if test="errorType != null  and errorType != ''"> and error_type = #{errorType}</if>
             <if test="difficulty != null"> and difficulty = #{difficulty}</if>
+            <if test="params != null and params['beginTime'] != null and params['beginTime'] != ''">
+            and create_time &gt;= #{params['beginTime']}
+            </if>
+            <if test="params != null and params['endTime'] != null and params['endTime'] != ''">
+            and create_time &lt; #{params['endTime']}
+            </if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
         order by create_time desc
     </select>
-    
+
     <select id="selectTroubleQuestionByQuestionId" parameterType="Long" resultMap="TroubleQuestionResult">
         <include refid="selectTroubleQuestionVo"/>
         where question_id = #{questionId}
     </select>
 
     <select id="selectFavoriteQuestionList" parameterType="TroubleQuestion" resultMap="TroubleQuestionResult">
-        select tq.question_id, tq.user_id, tq.question_content, tq.question_images, 
-               tq.answer_content, tq.answer_images, tq.question_type, tq.tags, tq.proficiency, tq.importance, 
-               tq.question_source, tq.grade, tq.error_type, tq.difficulty, tq.status, 
+        select tq.question_id, tq.user_id, tq.question_content, tq.question_images,
+               tq.answer_content, tq.answer_images, tq.question_type, tq.tags, tq.proficiency, tq.importance,
+               tq.question_source, tq.grade, tq.error_type, tq.difficulty, tq.status,
                tq.create_by, tq.create_time, tq.update_by, tq.update_time, tq.remark,
                tqf.create_time as favorite_time
         from trouble_question tq
@@ -75,7 +81,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by tqf.create_time desc
     </select>
-        
+
     <insert id="insertTroubleQuestion" parameterType="TroubleQuestion" useGeneratedKeys="true" keyProperty="questionId">
         insert into trouble_question
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -153,12 +159,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteTroubleQuestionByQuestionIds" parameterType="String">
-        delete from trouble_question where question_id in 
+        delete from trouble_question where question_id in
         <foreach item="questionId" collection="array" open="(" separator="," close=")">
             #{questionId}
         </foreach>
     </delete>
 </mapper>
-
-
-

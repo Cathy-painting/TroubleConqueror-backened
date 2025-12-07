@@ -34,8 +34,12 @@ app.add_middleware(
 )
 
 # 百度 OCR 配置
-BAIDU_OCR_URL = "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic"
-ACCESS_TOKEN = "24.5b9f988ee132efb81112f43014de6b4c.2592000.1764796396.282335-120485535"
+# BAIDU_OCR_URL = "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic"
+
+
+BAIDU_OCR_URL = "https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic"
+ACCESS_TOKEN = "24.0018c369225cff45750d49dd51004d45.2592000.1767343705.282335-121154390"
+
 
 # JSON 请求模型
 
@@ -49,8 +53,14 @@ class OCRRequest(BaseModel):
     probability: Optional[bool] = False
 
 
-def call_baidu_ocr(img_bytes, language_type="CHN_ENG", detect_direction=False,
-                   detect_language=False, paragraph=False, probability=False):
+def call_baidu_ocr(
+    img_bytes,
+    language_type="CHN_ENG",
+    detect_direction=False,
+    detect_language=False,
+    paragraph=False,
+    probability=False,
+):
     img_base64 = base64.b64encode(img_bytes).decode()
     url = f"{BAIDU_OCR_URL}?access_token={ACCESS_TOKEN}"
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -60,17 +70,19 @@ def call_baidu_ocr(img_bytes, language_type="CHN_ENG", detect_direction=False,
         "detect_direction": str(detect_direction).lower(),
         "detect_language": str(detect_language).lower(),
         "paragraph": str(paragraph).lower(),
-        "probability": str(probability).lower()
+        "probability": str(probability).lower(),
     }
     resp = requests.post(url, headers=headers, data=data, timeout=30)
     if resp.status_code != 200:
-        raise HTTPException(status_code=resp.status_code,
-                            detail=f"百度API请求失败：{resp.text}")
+        raise HTTPException(
+            status_code=resp.status_code, detail=f"百度API请求失败：{resp.text}"
+        )
     result = resp.json()
     if "words_result" not in result:
         raise HTTPException(status_code=500, detail=f"OCR失败：{result}")
     text = "\n".join([item["words"] for item in result["words_result"]])
     return text
+
 
 # ==== JSON 路径模式 ====
 
@@ -88,20 +100,23 @@ async def ocr_json(req: OCRRequest):
         detect_direction=req.detect_direction,
         detect_language=req.detect_language,
         paragraph=req.paragraph,
-        probability=req.probability
+        probability=req.probability,
     )
     return {"text": text}
+
 
 # ==== 文件上传模式 ====
 
 
 @app.post("/ocr/upload")
-async def ocr_upload(file: UploadFile = File(...),
-                     language_type: str = Form("CHN_ENG"),
-                     detect_direction: bool = Form(False),
-                     detect_language: bool = Form(False),
-                     paragraph: bool = Form(False),
-                     probability: bool = Form(False)):
+async def ocr_upload(
+    file: UploadFile = File(...),
+    language_type: str = Form("CHN_ENG"),
+    detect_direction: bool = Form(False),
+    detect_language: bool = Form(False),
+    paragraph: bool = Form(False),
+    probability: bool = Form(False),
+):
     try:
         img_bytes = await file.read()
         text = call_baidu_ocr(
@@ -110,7 +125,7 @@ async def ocr_upload(file: UploadFile = File(...),
             detect_direction,
             detect_language,
             paragraph,
-            probability
+            probability,
         )
         return {"text": text}
     except Exception as e:

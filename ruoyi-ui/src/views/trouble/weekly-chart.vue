@@ -20,7 +20,8 @@
           icon="el-icon-back"
           size="mini"
           @click="goBack"
-        >返回首页</el-button>
+          >返回首页</el-button
+        >
       </el-col>
     </el-row>
 
@@ -57,8 +58,15 @@
         <el-card class="overview-card">
           <div class="overview-content">
             <div class="overview-label">增长趋势</div>
-            <div class="overview-value trend" :class="weeklyStats.trend > 0 ? 'trend-up' : 'trend-down'">
-              <i :class="weeklyStats.trend > 0 ? 'el-icon-top' : 'el-icon-bottom'"></i>
+            <div
+              class="overview-value trend"
+              :class="weeklyStats.trend > 0 ? 'trend-up' : 'trend-down'"
+            >
+              <i
+                :class="
+                  weeklyStats.trend > 0 ? 'el-icon-top' : 'el-icon-bottom'
+                "
+              ></i>
               {{ Math.abs(weeklyStats.trend) }}%
             </div>
             <i class="el-icon-s-data overview-icon"></i>
@@ -84,58 +92,66 @@
       </div>
       <el-row :gutter="16">
         <el-col :xs="24" :sm="12" :md="6">
-          <div class="proficiency-item proficiency-proficient" @click="handleProficiencyClick(3)">
+          <div
+            class="proficiency-item proficiency-proficient"
+            @click="handleProficiencyClick(3)"
+          >
             <div class="proficiency-icon">
               <i class="el-icon-success"></i>
             </div>
             <div class="proficiency-content">
               <div class="proficiency-label">熟练</div>
-              <div class="proficiency-value">{{ proficiencyStats.proficient }}</div>
-              <div class="proficiency-desc">已熟练掌握的错题</div>
+              <div class="proficiency-value">
+                {{ proficiencyStats.proficient }}
+              </div>
             </div>
           </div>
         </el-col>
         <el-col :xs="24" :sm="12" :md="6">
-          <div class="proficiency-item proficiency-good" @click="handleProficiencyClick(2)">
+          <div
+            class="proficiency-item proficiency-good"
+            @click="handleProficiencyClick(2)"
+          >
             <div class="proficiency-icon">
               <i class="el-icon-check"></i>
             </div>
             <div class="proficiency-content">
               <div class="proficiency-label">较好</div>
               <div class="proficiency-value">{{ proficiencyStats.good }}</div>
-              <div class="proficiency-desc">掌握程度较好的错题</div>
             </div>
           </div>
         </el-col>
         <el-col :xs="24" :sm="12" :md="6">
-          <div class="proficiency-item proficiency-normal" @click="handleProficiencyClick(1)">
+          <div
+            class="proficiency-item proficiency-normal"
+            @click="handleProficiencyClick(1)"
+          >
             <div class="proficiency-icon">
               <i class="el-icon-warning"></i>
             </div>
             <div class="proficiency-content">
               <div class="proficiency-label">一般</div>
               <div class="proficiency-value">{{ proficiencyStats.normal }}</div>
-              <div class="proficiency-desc">掌握程度一般的错题</div>
             </div>
           </div>
         </el-col>
         <el-col :xs="24" :sm="12" :md="6">
-          <div class="proficiency-item proficiency-unfamiliar" @click="handleProficiencyClick(0)">
+          <div
+            class="proficiency-item proficiency-unfamiliar"
+            @click="handleProficiencyClick(0)"
+          >
             <div class="proficiency-icon">
               <i class="el-icon-question"></i>
             </div>
             <div class="proficiency-content">
               <div class="proficiency-label">陌生</div>
-              <div class="proficiency-value">{{ proficiencyStats.unfamiliar }}</div>
-              <div class="proficiency-desc">需要重点复习的错题</div>
+              <div class="proficiency-value">
+                {{ proficiencyStats.unfamiliar }}
+              </div>
             </div>
           </div>
         </el-col>
       </el-row>
-      <div class="proficiency-tip">
-        <i class="el-icon-info"></i>
-        <span>提示：熟练度标签可以帮助您判断是否应该删除错题。熟练度越高，说明掌握程度越好，可以考虑删除。</span>
-      </div>
     </el-card>
 
     <!-- 详细数据表格 -->
@@ -149,22 +165,32 @@
             <i class="el-icon-date"></i> {{ scope.row.date }}
           </template>
         </el-table-column>
-        <el-table-column prop="dayOfWeek" label="星期" width="100" align="center">
+        <el-table-column
+          prop="dayOfWeek"
+          label="星期"
+          width="100"
+          align="center"
+        >
           <template slot-scope="scope">
             <el-tag size="small" :type="scope.row.isToday ? 'success' : 'info'">
               {{ scope.row.dayOfWeek }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="count" label="新增数量" width="120" align="center">
+        <el-table-column
+          prop="count"
+          label="新增数量"
+          width="120"
+          align="center"
+        >
           <template slot-scope="scope">
             <span class="count-number">{{ scope.row.count }}</span>
           </template>
         </el-table-column>
         <el-table-column label="占比" width="150" align="center">
           <template slot-scope="scope">
-            <el-progress 
-              :percentage="calculatePercentage(scope.row.count)" 
+            <el-progress
+              :percentage="calculatePercentage(scope.row.count)"
               :color="getProgressColor(scope.row.count)"
             ></el-progress>
           </template>
@@ -172,11 +198,18 @@
         <el-table-column label="趋势" align="center">
           <template slot-scope="scope">
             <div class="trend-info">
-              <i v-if="scope.row.trend > 0" class="el-icon-top trend-up-icon"></i>
-              <i v-else-if="scope.row.trend < 0" class="el-icon-bottom trend-down-icon"></i>
+              <i
+                v-if="scope.row.trend > 0"
+                class="el-icon-top trend-up-icon"
+              ></i>
+              <i
+                v-else-if="scope.row.trend < 0"
+                class="el-icon-bottom trend-down-icon"
+              ></i>
               <i v-else class="el-icon-minus trend-stable-icon"></i>
               <span :class="getTrendClass(scope.row.trend)">
-                {{ scope.row.trend > 0 ? '+' : '' }}{{ scope.row.trend !== 0 ? scope.row.trend : '持平' }}
+                {{ scope.row.trend > 0 ? "+" : ""
+                }}{{ scope.row.trend !== 0 ? scope.row.trend : "持平" }}
               </span>
             </div>
           </template>
@@ -187,7 +220,7 @@
 </template>
 
 <script>
-import * as echarts from 'echarts';
+import * as echarts from "echarts";
 import { listQuestion } from "@/api/trouble/question";
 
 export default {
@@ -200,25 +233,25 @@ export default {
         total: 0,
         average: 0,
         max: 0,
-        trend: 0
+        trend: 0,
       },
       proficiencyStats: {
-        proficient: 0,  // 熟练
-        good: 0,        // 较好
-        normal: 0,      // 一般
-        unfamiliar: 0   // 陌生
+        proficient: 0, // 熟练
+        good: 0, // 较好
+        normal: 0, // 一般
+        unfamiliar: 0, // 陌生
       },
       chart: null,
-      chartHeight: '400px'
+      chartHeight: "400px",
     };
   },
   mounted() {
     this.initData();
     this.handleResize();
-    window.addEventListener('resize', this.handleResize);
+    window.addEventListener("resize", this.handleResize);
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener("resize", this.handleResize);
     if (this.chart) {
       this.chart.dispose();
     }
@@ -235,7 +268,7 @@ export default {
         });
       } catch (error) {
         this.$modal.msgError("加载数据失败");
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.error(error);
         }
       } finally {
@@ -248,7 +281,7 @@ export default {
       const today = new Date();
       const dayOfWeek = today.getDay() || 7; // 将周日(0)转换为7
       const dates = [];
-      
+
       // 生成本周七天的日期（从周一到周日）
       for (let i = 1; i <= 7; i++) {
         const date = new Date(today);
@@ -264,34 +297,40 @@ export default {
       const weekStart = new Date(today);
       weekStart.setDate(today.getDate() - (dayOfWeek - 1));
       weekStart.setHours(0, 0, 0, 0);
-      
+
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 7);
       weekEnd.setHours(23, 59, 59, 999);
 
       // 筛选本周的错题
-      const thisWeekQuestions = questions.filter(q => {
+      const thisWeekQuestions = questions.filter((q) => {
         const createDate = new Date(q.createTime);
         return createDate >= weekStart && createDate < weekEnd;
       });
 
       // 统计熟练度
       this.proficiencyStats = {
-        proficient: thisWeekQuestions.filter(q => q.proficiency === 3).length,
-        good: thisWeekQuestions.filter(q => q.proficiency === 2).length,
-        normal: thisWeekQuestions.filter(q => q.proficiency === 1).length,
-        unfamiliar: thisWeekQuestions.filter(q => q.proficiency === 0 || q.proficiency === null || q.proficiency === undefined).length
+        proficient: thisWeekQuestions.filter((q) => q.proficiency === 3).length,
+        good: thisWeekQuestions.filter((q) => q.proficiency === 2).length,
+        normal: thisWeekQuestions.filter((q) => q.proficiency === 1).length,
+        unfamiliar: thisWeekQuestions.filter(
+          (q) =>
+            q.proficiency === 0 ||
+            q.proficiency === null ||
+            q.proficiency === undefined
+        ).length,
       };
 
       // 统计每天的数量
       this.weeklyData = dates.map((date, index) => {
         const dateStr = this.formatDate(date);
-        const count = questions.filter(q => {
+        const count = questions.filter((q) => {
           const createDate = new Date(q.createTime);
           return this.formatDate(createDate) === dateStr;
         }).length;
 
-        const prevCount = index > 0 ? this.weeklyData[index - 1]?.count || 0 : 0;
+        const prevCount =
+          index > 0 ? this.weeklyData[index - 1]?.count || 0 : 0;
         const trend = index > 0 ? count - prevCount : 0;
 
         return {
@@ -299,23 +338,25 @@ export default {
           dayOfWeek: this.getDayOfWeek(date.getDay()),
           count: count,
           trend: trend,
-          isToday: this.formatDate(date) === this.formatDate(today)
+          isToday: this.formatDate(date) === this.formatDate(today),
         };
       });
     },
 
     /** 计算统计数据 */
     calculateStats() {
-      const counts = this.weeklyData.map(d => d.count);
+      const counts = this.weeklyData.map((d) => d.count);
       this.weeklyStats.total = counts.reduce((a, b) => a + b, 0);
       this.weeklyStats.average = Math.round(this.weeklyStats.total / 7);
       this.weeklyStats.max = Math.max(...counts);
-      
+
       // 计算趋势（本周与上周对比，这里简化为前3天vs后3天）
       const firstHalf = counts.slice(0, 3).reduce((a, b) => a + b, 0);
       const secondHalf = counts.slice(4, 7).reduce((a, b) => a + b, 0);
       if (firstHalf > 0) {
-        this.weeklyStats.trend = Math.round(((secondHalf - firstHalf) / firstHalf) * 100);
+        this.weeklyStats.trend = Math.round(
+          ((secondHalf - firstHalf) / firstHalf) * 100
+        );
       } else {
         this.weeklyStats.trend = secondHalf > 0 ? 100 : 0;
       }
@@ -323,28 +364,28 @@ export default {
 
     /** 初始化图表 */
     initChart() {
-      const chartDom = document.getElementById('weeklyChart');
+      const chartDom = document.getElementById("weeklyChart");
       if (!chartDom) return;
 
       this.chart = echarts.init(chartDom);
-      
+
       const option = {
         title: {
-          text: '本周错题趋势',
-          left: 'center',
+          text: "本周错题趋势",
+          left: "center",
           textStyle: {
-            color: '#2c3e50',
+            color: "#2c3e50",
             fontSize: 16,
-            fontWeight: 600
-          }
+            fontWeight: 600,
+          },
         },
         tooltip: {
-          trigger: 'axis',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: '#2a5298',
+          trigger: "axis",
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          borderColor: "#2a5298",
           borderWidth: 1,
           textStyle: {
-            color: '#2c3e50'
+            color: "#2c3e50",
           },
           formatter: (params) => {
             const data = params[0];
@@ -354,108 +395,145 @@ export default {
                 <div style="color: #2a5298;">新增错题: ${data.value} 道</div>
               </div>
             `;
-          }
+          },
         },
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
         },
         xAxis: {
-          type: 'category',
-          data: this.weeklyData.map(d => d.dayOfWeek),
+          type: "category",
+          data: this.weeklyData.map((d) => d.dayOfWeek),
           axisLine: {
             lineStyle: {
-              color: '#d4e8f7'
-            }
+              color: "#d4e8f7",
+            },
           },
           axisLabel: {
-            color: '#5a6c7d',
-            fontSize: 12
-          }
+            color: "#5a6c7d",
+            fontSize: 12,
+          },
         },
         yAxis: {
-          type: 'value',
-          name: '错题数量',
+          type: "value",
+          name: "错题数量",
           nameTextStyle: {
-            color: '#5a6c7d',
-            fontSize: 12
+            color: "#5a6c7d",
+            fontSize: 12,
           },
           axisLine: {
             lineStyle: {
-              color: '#d4e8f7'
-            }
+              color: "#d4e8f7",
+            },
           },
           axisLabel: {
-            color: '#5a6c7d'
+            color: "#5a6c7d",
           },
           splitLine: {
             lineStyle: {
-              color: '#e8f1f8',
-              type: 'dashed'
-            }
-          }
+              color: "#e8f1f8",
+              type: "dashed",
+            },
+          },
         },
         series: [
           {
-            name: '新增错题',
-            type: 'line',
-            data: this.weeklyData.map(d => d.count),
+            name: "新增错题",
+            type: "line",
+            data: this.weeklyData.map((d) => d.count),
             smooth: true,
             lineStyle: {
               width: 3,
               color: {
-                type: 'linear',
+                type: "linear",
                 x: 0,
                 y: 0,
                 x2: 1,
                 y2: 0,
                 colorStops: [
-                  { offset: 0, color: '#1e3c72' },
-                  { offset: 1, color: '#2a5298' }
-                ]
-              }
+                  { offset: 0, color: "#1e3c72" },
+                  { offset: 1, color: "#2a5298" },
+                ],
+              },
             },
             areaStyle: {
               color: {
-                type: 'linear',
+                type: "linear",
                 x: 0,
                 y: 0,
                 x2: 0,
                 y2: 1,
                 colorStops: [
-                  { offset: 0, color: 'rgba(42, 82, 152, 0.3)' },
-                  { offset: 1, color: 'rgba(42, 82, 152, 0.05)' }
-                ]
-              }
+                  { offset: 0, color: "rgba(42, 82, 152, 0.3)" },
+                  { offset: 1, color: "rgba(42, 82, 152, 0.05)" },
+                ],
+              },
             },
             itemStyle: {
-              color: '#2a5298',
-              borderColor: '#ffffff',
-              borderWidth: 2
+              color: "#2a5298",
+              borderColor: "#ffffff",
+              borderWidth: 2,
             },
             emphasis: {
               itemStyle: {
-                color: '#1e3c72',
-                borderWidth: 3
-              }
-            }
-          }
-        ]
+                color: "#1e3c72",
+                borderWidth: 3,
+              },
+            },
+          },
+        ],
       };
 
       this.chart.setOption(option);
+
+      // 点击图表某一项时，跳转到错题列表并传递对应日期（仅传 date，列表页面会用 date 或范围自行处理）
+      try {
+        if (this.chart && this.chart.on) {
+          // 防止重复绑定
+          if (this.chart.off) {
+            this.chart.off("click");
+          }
+          this.chart.on("click", (params) => {
+            if (!params) return;
+            // 通过 dataIndex 定位 weeklyData 中的具体日期
+            const idx =
+              typeof params.dataIndex === "number" ? params.dataIndex : null;
+            if (idx === null) return;
+            const row = this.weeklyData && this.weeklyData[idx];
+            if (!row || !row.date) return;
+            const dateStr = row.date; // 格式 YYYY-MM-DD
+            // 点击传递单日及明确的起止时间（当天 00:00:00 ~ 23:59:59），便于 view 使用明确范围筛选
+            const s = new Date(dateStr);
+            s.setHours(0, 0, 0, 0);
+            const e = new Date(dateStr);
+            e.setHours(23, 59, 59, 999);
+            this.$router.push({
+              path: "/trouble/question/view",
+              query: {
+                date: dateStr,
+                dateStart: this.formatDate(s),
+                dateEnd: this.formatDate(e),
+              },
+            });
+          });
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV === "development") {
+          console.error("chart click bind error:", err);
+        }
+      }
     },
 
     /** 响应式处理 */
     handleResize() {
       if (window.innerWidth < 768) {
-        this.chartHeight = '300px';
+        this.chartHeight = "300px";
       } else {
-        this.chartHeight = '400px';
+        this.chartHeight = "400px";
       }
-      
+
       if (this.chart) {
         this.chart.resize();
       }
@@ -464,14 +542,14 @@ export default {
     /** 格式化日期 */
     formatDate(date) {
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     },
 
     /** 获取星期 */
     getDayOfWeek(day) {
-      const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const days = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
       return days[day];
     },
 
@@ -484,21 +562,21 @@ export default {
     /** 获取进度条颜色 */
     getProgressColor(count) {
       const percentage = this.calculatePercentage(count);
-      if (percentage >= 30) return '#2a5298';
-      if (percentage >= 20) return '#4a9ff5';
-      return '#90caf9';
+      if (percentage >= 30) return "#2a5298";
+      if (percentage >= 20) return "#4a9ff5";
+      return "#90caf9";
     },
 
     /** 获取趋势类名 */
     getTrendClass(trend) {
-      if (trend > 0) return 'trend-up-text';
-      if (trend < 0) return 'trend-down-text';
-      return 'trend-stable-text';
+      if (trend > 0) return "trend-up-text";
+      if (trend < 0) return "trend-down-text";
+      return "trend-stable-text";
     },
 
     /** 返回首页 */
     goBack() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
 
     /** 处理熟练度点击 */
@@ -509,22 +587,22 @@ export default {
       const weekStart = new Date(today);
       weekStart.setDate(today.getDate() - (dayOfWeek - 1));
       weekStart.setHours(0, 0, 0, 0);
-      
+
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 7);
       weekEnd.setHours(23, 59, 59, 999);
 
       // 跳转到错题列表页面，并筛选对应熟练度的题目，同时传递时间范围参数
       this.$router.push({
-        path: '/trouble/question/view',
+        path: "/trouble/question/view",
         query: {
           proficiency: proficiency,
           weekStart: weekStart.toISOString(),
-          weekEnd: weekEnd.toISOString()
-        }
+          weekEnd: weekEnd.toISOString(),
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -540,13 +618,17 @@ export default {
 
 /* 背景装饰元素 */
 ::v-deep .app-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(33, 150, 243, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(33, 150, 243, 0.1) 0%,
+    transparent 70%
+  );
   animation: rotate 30s linear infinite;
   z-index: 0;
 }
@@ -916,7 +998,7 @@ export default {
 }
 
 .proficiency-item::after {
-  content: '点击查看';
+  content: "点击查看";
   position: absolute;
   bottom: 8px;
   right: 12px;
@@ -984,4 +1066,3 @@ export default {
   }
 }
 </style>
-
